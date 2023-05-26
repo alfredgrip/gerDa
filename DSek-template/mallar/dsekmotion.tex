@@ -1,0 +1,36 @@
+\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
+
+\usepackage{dsekcommon}
+\usepackage{dsekdokument}
+\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
+\usepackage[swedish]{babel}
+
+\newcommand{\MOTE}{} % Fyll i vilket möte det gäller
+\newcommand{\YEAR}{} % Fyll i år
+\newcommand{\TITLE}{} % Fyll i titel på motionen
+\newcommand{\PLACE}{} % Fyll i plats där motionen skrevs, oftast bara "Lund"
+\newcommand{\TEXT}{} % Fyll i motionens brödtext
+\newcommand{\UNDER}{Undertecknad yrkar att sektionsmötet må besluta}
+\newcommand{\ATT}[1]{\item #1}
+\newcommand{\ATTDESC}[2]{\item #1 \begin{description} \item #2 \end{description}}
+
+\setheader{}{Motion \MOTE - \YEAR}{\PLACE, \today}
+\title{Motion: \TITLE}
+
+\begin{document}
+\section*{Motion: \TITLE}
+
+\TEXT
+
+\UNDER
+
+\begin{attlista}
+	\ATT{detta är en att-sats} % Fyll i att-satsen. Lägg till fler att-satser om det behövs
+	\ATTDESC{detta är en att-sats med beskrivning}{detta är en beskrivning}
+	
+\end{attlista}
+
+\signature{Lund, dag som ovan}{Namn}{Titel}
+% Lägg till fler signaturer om det behövs
+\end{document}

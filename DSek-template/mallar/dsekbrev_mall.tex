@@ -1,0 +1,68 @@
+\documentclass[11pt,twoside,a4paper]{article}
+\usepackage{dsekbrev}
+
+\begin{document}
+
+\header{SEKTIONSSTYRELSEN}{1999--11--13}
+
+\fromaddress{D-Sektionen inom TLTH \\
+  Box 118 \\
+  221 00~~Lund}
+
+\toaddress{Bengt Öste \\
+  Fiskvägen 66 \\
+  123 46~~Norrkøping}
+
+\section*{En kort beskrivning (om det behövs)}
+
+Jag ska i det här dokumentet försöka reda ut och förklara vad
+Perl är bra till samt hur det kan användas som ett verktyg för
+att förenkla vardagen för programmerare, webmasters och helt
+vanliga användare. De exempel jag använder är tagna från
+verkligheten.
+
+Så här kan en URL se ut: \url{http://www.dsek.se/}.
+
+Förutom Perl kommer jag även att ta upp ett antal hjälpprogram
+som ofta är praktiska att använda tillsammans med Perl, allt för
+att skapa en praktisk guide i Perl-användande i stället för en
+slavisk genomgång av själva språket.
+
+Viss programmeringsvana kommer att förusättas, dels för att jag
+vill begränsa omfånget av texten, och dels för att en väldigt
+stor del av de potentiella Perl-användarna redan kan programmera
+i något språk. UNIX-vana är knappast nödvändigt, men hjälper
+onekligen till.
+
+Dokumentet är inte direkt avsett som referensmaterial; för sådant
+finns manualsidor och andra böcker, men jag har sammanställt
+några av de viktigaste funktionerna för att man enkelt ska hitta
+rätt funktion för en viss uppgift. För den som vill lära sig allt
+om Perl finns det också betydligt bättre alternativ.
+
+Perl är ett språk som är inriktat på hantering av text och
+automatering av uppgifter. Det lämpar sig därför särskilt väl
+till CGI-script för t.ex. dynamisk generering av websidor, men
+går utmärkt att använda även för många andra sysslor. Mycket av
+det som Perl kan även göras av separata program som
+\texttt{grep}, \texttt{sed} och \texttt{awk} om man sätter ihop
+dem, men det blir ibland både krångligare och mindre flexibelt.
+Naturligtvis skadar det inte att behärska alla verktyg, det är så
+man blir effektivast.
+
+Syntaxen är fri och Perl har ett utmärkt stöd för reguljära
+uttryck, d.v.s. mönstermatchning av text, vilket man ofta har
+väldigt stor nytta av. Den fria syntaxen gör tyvärr Perl-kod
+tämligen svårläst för en som inte är invigd. För den som har
+lyckan att vara det kan koden göras väldigt kompakt. I Perl finns
+det aldrig bara ett sätt att göra något.
+
+Perl lämpar sig dåligt för interaktiva program som kräver
+interaktion från användaren. Det finns t.ex. inga funktioner för
+att flytta runt markören på skärmen. För detta lämpar sig t.ex. C
+bättre, och det finns möjligheter att utnyttja Perl-funktioner i
+C-program.
+
+\signature{Med vänliga hälsningar,}{Fnaj Kvatt}{Sektionstomte}
+
+\end{document}

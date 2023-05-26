@@ -1,0 +1,522 @@
+%\iffalse
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage[swedish]{babel}
+\usepackage{dsekcommands}
+\usepackage{booktabs}
+\usepackage{fancyvrb}
+\usepackage{rcsinfo}
+\usepackage{ifpdf}
+
+\ifpdf
+  \RequirePackage[pdfpagemode=UseOutlines,
+                  bookmarks=true,
+                  bookmarksnumbered,
+                  bookmarksopen=true,
+                  pdfauthor={Magnus Bäck},
+                  pdftitle={Dokumentklassen dsekddu},
+                  colorlinks=true,
+                  linkcolor=black,
+                  urlcolor=black]{hyperref}[2001/04/13]
+\fi
+
+\rcsInfo $Id: dsekddu.dtx,v 1.5 2003/09/23 00:56:22 magnus Exp $
+\def\rcsIsoDateHelper#1/#2/#3{#1--#2--#3}
+\def\rcsIsoDate{\expandafter\rcsIsoDateHelper\rcsInfoDate}
+
+\EnableCrossrefs
+
+\newcommand{\orgname}{Datatekniksektionen inom TLTH}
+\newcommand{\TtH}{%
+  T\kern-.25em\raise-.4ex\hbox{\sc \uppercasesc t}\kern-.10emH\xspace}
+\newcommand{\pdfLaTeX}{pdf\LaTeX\xspace}
+\newcommand{\pdfTeX}{pdf\TeX\xspace}
+
+\VerbatimFootnotes
+
+\begin{document}
+  \DocInput{dsekddu.dtx}
+\end{document}
+%</driver>
+%\fi
+% \title{Dokumentklassen \textsf{dsekddu}}
+% \author{Magnus Bäck \texttt{<magnus@dsek.lth.se>}}
+% \date{\rcsIsoDate, v\rcsInfoRevision}
+%
+% \maketitle
+%
+% \tableofcontents
+%
+% \section{Introduktion}
+%
+%    Dokumentklassen \textsf{dsekddu} används för att producera
+%    D-sektionens nyhetsblad D'du.
+%
+%    Eftersom det här användningsområdet för \TeX{} är tämligen
+%    oortodoxt så krävs det en del trick som ligger utanför det här
+%    dokumentet för att beskriva resten av produktionen, men efter en
+%    genomläsning av det här bör åtminstone själva typsättningen vara
+%    klar för läsaren.
+%
+%    Det finns en hel del saker som hade kunnat göras bättre i den här
+%    dokumentklassen. Vissa märkliga saker finns dock mest av
+%    hysteriska skäl och fungerar tillräckligt bra för att det skulle
+%    vara onödigt jobb att göra om det på Rätt Sätt\texttrademark.
+%
+% \section{Användarhandledning}
+%
+%    \textsf{dsekddu} är inte ett paket utan en dokumentklass, vilket
+%    innebär att man laddar in det med \verb|\documentclass| högst upp
+%    i sin \texttt{.tex}-fil. Utöver detta behövs inget annat; paketen
+%    \textsf{babel}, \textsf{fontenc} och några andra vanliga som man
+%    alltid inkluderar annars behöver inte laddas.
+%
+%    \begin{verbatim}
+%\documentclass{dsekddu}
+%    \end{verbatim}
+%
+%    Allt som skiljer sig mellan olika nummer av D'du samt skiftar i
+%    takt med redaktörer och annat löst folk går att påverka via
+%    makron innan \verb|\begin{document}|. Tabell~\ref{tab:setup}
+%    sammanfattar dessa konfigureringsmakron och beskriver kortfattat
+%    hur de används. Makrona är listade i bokstavsordning och behöver
+%    inte anropas i någon speciell inbördes ordning.
+%
+%    \begin{table}
+%      \centering
+%      \begin{tabular}{lp{70mm}}
+%        \toprule \textit{makro} & \textit{uppgift} \\ \midrule
+%        \verb|\ddulogo{|\textit{filnamn}\verb|}| & Tala om sökvägen
+%        till den bild (EPS) som ska användas som logotyp. Om det här
+%        makrot utelämnas kommer D-sektionens sigill att användas i
+%        stället. \\
+%        \verb|\dduwww{|\textit{text}\verb|}| & Välj vilken
+%        påannonsering som ska ges till D'du på nätet. \textit{Text}
+%        kommer att föregå \mbox{URLen}. Om det här makrot utelämnas
+%        kommer texten ''WWW:'' att väljas som standard. \\
+%        \verb|\editor{|\textit{namn}\verb|}{|\textit{id}\verb|}| 
+%        & Tala om vad redaktören heter. Argumentet \textit{namn} är
+%        personens namn som det ska stå i dokumenthuvudet medan
+%        \textit{id} är dennes användarnamn på EFD. Detta behövs för
+%        att kunna skapa en länk till personakten vid
+%        konverteringen till HTML. \\
+%        \verb|\issue{|\textit{nummer}\verb|}| & Välj vilket nummer
+%        det aktuella numret är. Detta kommer att skrivas ut i
+%        dokumenthuvudet. \\
+%        \verb|\nextdeadline{|\textit{datum}\verb|}| & Tala om
+%        deadline för artiklar till nästa nummer, vilket kommer att
+%        införas i sidfoten. \textit{datum} kan lämpligen vara ett
+%        datum, men om det utelämnas kommer standardtexten ''nästa
+%        söndag'' att användas. \\
+%        \verb|\publisher{|\textit{namn}\verb|}{|\textit{id}\verb|}| 
+%        & Tala om vad ansvarig utgivare heter. Argumenten fungerar på
+%        samma sätt som till \verb|\editor|. \\
+%        \verb|\punchline{|\textit{text}\verb|}| & Ange en (lämpligen
+%        rolig) textsnutt att ha med längst ned på sista sidan. \\
+%        \bottomrule
+%      \end{tabular}
+%      \caption{Konfigureringsmakron i \textsf{dsekddu}.}
+%      \label{tab:setup}
+%    \end{table}
+%
+%    Att konfigurera räcker förstås inte långt, man måste ju få in
+%    texterna också! Tabell~\ref{tab:markup} beskriver de makron som
+%    används för att typsätta själva artiklarna.
+%
+%    Eftersom en ren kommandoreferens kan bli lite väl torr, beskriver
+%    jag även arbetsgången och nödvändiga makron för att lägga till
+%    artiklar. En artikel inleds med \verb|\section|\footnote{Eftersom
+%    räknaren \texttt{secnumdepth} har satts till noll kommer rubriken
+%    inte att numreras trots att man inte använder \verb|\section*|,
+%    men tycker man bättre om den senare formen så går det också bra
+%    att använda. Se källkodslistningen på
+%    sidan~\pageref{lab:secnumdepth}.} för att få en rubrik. Om en
+%    underrubrik skulle behövas används \verb|\subsection| precis som
+%    vanligt. Artikeltexten skrivs sedan in på vanligt manér med 
+%    blankrader för nya stycken.
+%
+%    När artikeln lider mot sitt slut finns det några olika
+%    alternativ. Det vanligaste är att den signeras på vanligt sätt,
+%    och för detta används \verb|\sign|. Makrot tar ett argument,
+%    nämligen text som ska användas i den högerjusterade signatuen. En
+%    signatur kan bestå av flera rader, i vilket fall de separeras med
+%    \verb|\\|. På grund av en dum bugg i programmet \texttt{ddu2maz}
+%    så får det dock inte vara någon som helst radbrytning inuti
+%    argumentet till \verb|\sign|. En flerradig signatur måste alltså
+%    se ut så här:
+%    \begin{verbatim}
+%\sign{Börje Börjesson \\ Gammal}
+%    \end{verbatim}
+%
+%    \begin{table}
+%      \centering
+%      \begin{tabular}{lp{70mm}}
+%        \toprule \textit{makro} & \textit{uppgift} \\ \midrule
+%        \verb|\sign{|\textit{namn}\verb|}| & Signera en artikel med
+%        texten \textit{namn}. \textit{namn} behöver inte inskränka
+%        sig till ett namn (eller en förening) utan kan även innefatta
+%        post och mailadress, men om texten ska delas upp på flera
+%        rader så måste man använda \verb|\\| utan att radbryta. Detta
+%        är av mycket hysteriska skäl, ty om man görs så kommer nämligen
+%        HTML-konverteringsverktyget \texttt{ddu2maz} att konvertera
+%        fel. \\
+%        \verb|\dduwww{|\textit{text}\verb|}| & Välj vilken
+%        påannonsering som ska ges till D'du på nätet. \textit{Text}
+%        kommer att föregå \mbox{URLen}. Om det här makrot utelämnas
+%        kommer texten ''WWW:'' att väljas som standard. \\
+%        \verb|\editor{|\textit{namn}\verb|}{|\textit{id}\verb|}| 
+%        & Tala om vad redaktören heter. Argumentet \textit{namn} är
+%        personens namn som det ska stå i dokumenthuvudet medan
+%        \textit{id} är dennes användarnamn på EFD. Detta behövs för
+%        att kunna skapa en länk till personakten vid
+%        konverteringen till HTML. \\
+%        \verb|\issue{|\textit{nummer}\verb|}| & Välj vilket nummer
+%        det aktuella numret är. Detta kommer att skrivas ut i
+%        dokumenthuvudet. \\
+%        \verb|\nextdeadline{|\textit{datum}\verb|}| & Tala om
+%        deadline för artiklar till nästa nummer, vilket kommer att
+%        införas i sidfoten. \textit{datum} kan lämpligen vara ett
+%        datum, men om det utelämnas kommer standardtexten ''nästa
+%        söndag'' att användas. \\
+%        \verb|\publisher{|\textit{namn}\verb|}{|\textit{id}\verb|}| 
+%        & Tala om vad ansvarig utgivare heter. Argumenten fungerar på
+%        samma sätt som till \verb|\editor|. \\
+%        \verb|\punchline{|\textit{text}\verb|}| & Ange en (lämpligen
+%        rolig) textsnutt att ha med längst ned på sista sidan. \\
+%        \bottomrule
+%      \end{tabular}
+%      \caption{Uppmärkningsmakron i \textsf{dsekddu}.}
+%      \label{tab:markup}
+%    \end{table}
+%
+% \subsection{Exempel}
+%
+%    Det här avsnittet har inte skrivits.
+%
+% \subsection{Gömma nollningsinformation}
+%
+%    Eftersom D-sektionen som bekant inte har någon nollning, vore det
+%    ju synd om en (blivande) nolla hittade en massa
+%    nollningsinformation bland gamla D'du-nummer. Därför finns makrot
+%    \DescribeMacro{\nollning}\verb|\nollning| som ser till att den
+%    text som ges som argument kommer att omges av \texttt{<nollning>}
+%    \ldots{} \texttt{</nollning>} i HTML-upplagan av D'du. Detta gör
+%    det möjligt att vid behov gömma all sådan text på hela
+%    www.dsek.lth.se genom en inställning i webservern. Så här kan det
+%    bli:
+%    \begin{verbatim}
+%\nollning{Proppmatteprovet är bara på låtsas, och D-sektionen har
+%  den fräckaste nollningen på hela teknis.}
+%    \end{verbatim}
+%
+% \subsection{Balansering av spalter}
+%
+%    I normalfallet ser \textsf{multicol} till att alla spalter fyller
+%    ut hela sidhöjden, och att alla spalter är lika höga. Detta gör
+%    att D'du ibland kan se väldigt fånigt ut. Det första problemet är
+%    löst av den här klassen (se avsnitt~\ref{sec:raggedcolumns}), men
+%    det andra kräver handpåläggning av användaren. I stället för att
+%    använda omgivningen |multicols|, så kan |multicols*|
+%    användas. Skriv alltså
+%\begin{verbatim}
+%\begin{multicols*}{2}
+%  ...
+%\end{multicols*}
+%\end{verbatim}
+%    och inte
+%\begin{verbatim}
+%\begin{multicols}{2}
+%  ...
+%\end{multicols}
+%\end{verbatim}
+%    för att slippa spaltbalanseringen.
+%
+% \appendix
+% \section{Komplett och kommenterad källkod}
+%
+% \subsection{Prolog}
+%
+%    Börja med att tala om att vi behöver \LaTeXe{} och eventuellt vilken
+%    version vi också behöver. Skriv också ut filnamnet och versionen när
+%    filer som använder \textsf{dsekddu} kompileras.
+%    \begin{macrocode}
+%<*class>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{dsekddu}
+\typeout{This is dsekddu.cls, version 2003-09-23}
+%    \end{macrocode}
+%    Eftersom \textsf{dsekddu} baserar sig på \textsf{article} så
+%    laddar vi den klassen först.
+%    \begin{macrocode}
+\LoadClass[a5paper,10pt]{article}
+%    \end{macrocode}
+%    Inkludera nu de paket som behövs; knappast några
+%    överraskningar. \textsf{calc} används för att lättare beräkna
+%    fram en del mått, \textsf{multicol} ger flera spalter,
+%    \textsf{ifthen} tillhandahåller \verb|\ifthenelse| som gör det
+%    trevligare att konstruera if-satser och \textsf{booktabs},
+%    slutligen, tillhandahåller några kommandon för snyggare linjer i
+%    tabeller som lämpligen används i stället för \verb|\hline|.
+%    \begin{macrocode}
+\RequirePackage{fancyhdr}
+\RequirePackage{calc}
+\RequirePackage{array}
+\RequirePackage{multicol}
+\RequirePackage{ifthen}
+\RequirePackage{booktabs}
+\RequirePackage{dsekcommon}
+%    \end{macrocode}
+%
+% \subsection{Marginaler}
+%
+%    Sätt dokumentets marginaler. Här hade det varit önskvärt att
+%    använda paketet \textsf{geometry} eftersom alla dessa längder är
+%    ett enda stort meck, men det här fungerar i alla fall hyfsat. If
+%    it ain't broke, don't fix it.
+%    \begin{macrocode}
+\setlength{\topmargin}{-19mm}
+\setlength{\headsep}{16pt}
+\setlength{\footskip}{6mm}
+\setlength{\textheight}{180mm}
+\setlength{\textwidth}{132mm}
+\setlength{\oddsidemargin}{-6mm}
+\setlength{\evensidemargin}{-6mm}
+\setlength{\marginparsep}{6pt}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{1.5em}
+%\setlength{\headrulewidth}{0pt}
+%\setlength{\footrulewidth}{0.5pt}
+%    \end{macrocode}
+%
+% \subsection{Diverse}
+% \label{sec:raggedcolumns}
+%
+%    Det är meningslöst att balansera kolumnerna i D'du. Det ser bara
+%    fånigt ut. |\raggedcolumns| definieras av \textsf{dsekddu}.
+%    \begin{macrocode}
+\raggedcolumns
+%    \end{macrocode}
+%
+% \subsection{Nya makron}
+%
+% \begin{macro}{\issue}
+%    Med \verb|\issue| väljer man med två argument vilket nummer av
+%    D'du det är (''4'') samt vilken termin (''VT 2001''). Detta
+%    lagras i \verb|\@issue| och \verb|\@semester|, som först
+%    definieras som tomma.
+%    \begin{macrocode}
+\newcommand{\nollning}[1]{#1}
+\newcommand{\@issue}{}
+\newcommand{\@semester}{}
+\newcommand{\issue}[2]{%
+  \renewcommand{\@issue}[1]{#1}
+  \renewcommand{\@semester}[1]{#2}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\publisher}
+%    \verb|\publisher| väljer vilket namn som ska stå som ansvarig
+%    utgivare samt vilken användaridentitet denne har.
+%    \begin{macrocode}
+\newcommand{\@publisher}{}
+\newcommand{\@publisheruserid}{}
+\newcommand{\publisher}[2]{%
+  \renewcommand{\@publisher}{#1}
+  \renewcommand{\@publisheruserid}{#2}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\editor}
+%    \verb|\editor| väljer vilket namn och användaridentitet för
+%    redaktören. Egentligen hade det varit trevligare att använda
+%    \verb|\author| för detta, men då måste man ha ett speciellt makro
+%    för att ange användaridentiteten. För att det ändå ska fungera
+%    med \verb|\author| så anropas detta även här, och om man använder
+%    \verb|\@author| i senare makron och inte behöver
+%    användaridentiteten så spelar det ingen roll om man använder det
+%    här makrot eller \verb|\author|.
+%    \begin{macrocode}
+\newcommand{\@editor}{}
+\newcommand{\@editoruserid}{}
+\newcommand{\editor}[2]{%
+  \renewcommand{\@editor}{#1}%
+  \renewcommand{\@editoruserid}{#2}%
+  \author{#1}}
+%    \end{macrocode}
+% \begin{macro}{\nextdeadline}
+%    Definera den text som ska anges som deadline för nästa nummer.
+%    \begin{macrocode}
+\newcommand{\@nextdeadline}{nästa söndag}
+\newcommand{\nextdeadline}[1]{%
+  \renewcommand{\@nextdeadline}{#1}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\ddulogo}
+%    Sökvägen till den fil som ska användas som logotyp (och därmed
+%    enligt gängse praxis bytas i takt med redaktörerna). Lägg om
+%    möjligt logotypen i en katalog som finns med i \TeX-sökvägen så
+%    att det inte behövs några absoluta sökvägar som kräver justering
+%    om man flyttar filen någonstans.
+%    \begin{macrocode}
+\newcommand{\@ddulogo}{}
+\newcommand{\ddulogo}[1]{%
+  \renewcommand{\@ddulogo}{#1}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\dduwww}
+%    Prefixet till den WWW-påannonsering som ska användas i sidfoten.
+%    \begin{macrocode}
+\newcommand{\@dduwww}{WWW:}
+\newcommand{\dduwww}[1]{%
+  \renewcommand{\@dduwww}{#1}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\punchline}
+%    En (valfri) fyndig kommentar.
+%    \begin{macrocode}
+\newcommand{\@punchline}{}
+\newcommand{\punchline}[1]{%
+  \renewcommand{\@punchline}{#1}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\makepunchline}
+%    Definierar en hook som körs i slutet av dokumentet och som lägger
+%    till den text man tidigare valt med \verb|\punchline| längst ned
+%    på sidan (om inte texten är tom).
+%    \begin{macrocode}
+\AtEndDocument{\makepunchline}
+\newcommand{\makepunchline}{%
+  \ifthenelse{\equal{\@punchline}{}}{}{%
+    \par\vfill
+    \begin{center}
+      \emph{\@punchline}
+    \end{center}}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\sign}
+%    Lägger till en signatur. För att undvika en spalt- eller
+%    sidbrytning precis innan signaturen läggs en rejäl extra penalty
+%    på.
+%    \begin{macrocode}
+\newcommand{\sign}[1]{%
+  \par
+  \penalty 6000
+  \begin{flushright}
+    \textit{#1}
+  \end{flushright}}
+%    \end{macrocode}
+% \end{macro}
+%    Här är vi inne och petar på \TeX-variablerna \verb|\clubpenalty|
+%    och \verb|\widowpenalty| för att tala om för \TeX{} att vi ogärna
+%    önskar änkor och horungar. De är fortfarande möjliga, men det ska
+%    ganska mycket till.
+%    \begin{macrocode}
+\clubpenalty=3000
+\widowpenalty=3000
+%    \end{macrocode}
+% \begin{macro}{\greeting}
+%    En extra hälsning som vanligen föregår signaturen som man anger
+%    med \verb|\sign|. I likhet med \verb|\sign| läggs en penalty till.
+% \end{macro}
+%    \begin{macrocode}
+\newcommand{\greeting}[2]{%
+  \par
+  \vspace{0.7\baselineskip}%
+  \penalty 6000
+  \noindent\parbox{\columnwidth}{%
+    \noindent
+    \textit{#1}
+    \begin{flushright}
+      \textit{\indent#2}
+    \end{flushright}}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\subsection}
+%    En omdefiniering av \verb|\subsection| som egentligen kanske inte
+%    är så listig, men den fungerar bra och lämnar inte en massa
+%    whitespace som en ''riktig'' section hade gjort.
+%    \begin{macrocode}
+\renewcommand{\subsection}[1]{%
+  \vspace{0.7\baselineskip}
+  \noindent{\sffamily\bfseries #1}\\*}
+%    \end{macrocode}
+% \end{macro}
+%    \label{lab:secnumdepth} För att användaren ska slippa använda
+%    \verb|\section*| för att slippa numrering av artiklarna sätts
+%    \texttt{secnumdepth} till 0.
+%    \begin{macrocode}
+\setcounter{secnumdepth}{0}
+%    \end{macrocode}
+%    Byt till ''fancy'' och sätt alla sidhuvud och sidfötter till
+%    tomma. Dessa kommer senare att befolkas av \verb|\setddufooter|,
+%    se nedan.
+%    \begin{macrocode}
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{}
+\cfoot{}
+\rfoot{}
+%    \end{macrocode}
+%    Gör sidhuvudet lika brett som texten och välj samma tjocklek för
+%    tjocka och tunna linjer i tabeller. De två sista längderna
+%    definieras i \textsf{booktabs}.
+%    \begin{macrocode}
+\setlength{\headwidth}{\textwidth}
+\setlength{\heavyrulewidth}{\lightrulewidth}
+%    \end{macrocode}
+% \begin{macro}{\setddufooter}
+%    Eftersom sidfoten påverkas av alla möjliga makron måste den
+%    sättas så sent som möjligt, vilket i det här fallet blev via en
+%    hook som körs i början av dokumentet (att ändra om output-rutinen
+%    hade säkert varit ännu bättre, men det kändes som overkill i det
+%    här fallet).
+%
+%    En rimlig förbättring som man kan göra är att när det här makrot
+%    körts omdefinera samtliga makron som påverkar sidfoten till att
+%    varna för att det är meningslöst att köra makrona på det stället.
+%    \begin{macrocode}
+\AtBeginDocument{\setddufooter}
+\newcommand{\setddufooter}{%
+  \lfoot{\scriptsize Bidrag sändes till ddu@dsek.lth.se senast \@nextdeadline}
+  \cfoot{}
+  \rfoot{\scriptsize \@dduwww: http://www.dsek.lth.se/ddu/}}
+% \end{macro}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\maketitle}
+%    \verb|\maketitle| omdefinieras till att placera ut
+%    D'du-logotypen, information om ansvarig utgivare, D'du-redaktör,
+%    nummer etc. Anropas lämpligen först av allt i dokumentet.
+%    \begin{macrocode}
+\renewcommand{\maketitle}{%
+  \tthdump{%
+    \begin{center}
+      \ifthenelse{\equal{\@ddulogo}{}}{\Dlogo[25mm]}{%
+        \includegraphics[height=25mm]{%
+          \@ddulogo}}%
+      \vspace{3mm}
+    \end{center}
+    {\scriptsize
+      \vspace{-10mm}
+      \newlength{\sidewidth}
+      \newlength{\centerwidth}
+      \setlength{\centerwidth}{55mm}
+      \setlength{\sidewidth}{(\textwidth-\centerwidth-4\columnsep)/2}
+      \begin{center}
+        \begin{tabular}{%
+            p{\sidewidth}>{\hfill}p{\centerwidth}>{\hfill}p{\sidewidth}}
+          \toprule
+          Nummer \@issue & Information och sånt för LTH:s D-sektion\hfill~
+          & Redaktör: \\
+          \@semester~ & Ansvarig utgivare: \@publisher~\hfill~ & \@author\\
+          \bottomrule
+        \end{tabular}
+      \end{center}}}}
+%    \end{macrocode}
+% \end{macro}
+%    \begin{macrocode}
+%</class>
+%    \end{macrocode}
+%
+% \Finale
