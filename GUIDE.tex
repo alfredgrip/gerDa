@@ -1,0 +1,50 @@
+\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
+
+\usepackage{dsekcommon}
+
+\usepackage{dsekdokument}
+\usepackage{tabularx}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[swedish]{babel}
+\usepackage{url}
+\usepackage[dvipsnames]{xcolor}
+
+\setheader{GUIDE}{Guide till \LaTeX }{\today}
+\title{Guide till \LaTeX }
+\author{Kaspian Jakobsson}
+\definecolor{datarosa}{HTML}{F280A1}
+
+\begin{document}
+\section*{Guide till \LaTeX }
+\subsection{Introduktion}
+Detta är ett overleaf projekt som har \LaTeX-mallarna i en mapp.
+\verb|./tex/| innehåller alla stilfiler, medan alla dokumentmallar finns i \verb|./mallar/| . 
+Klicka uppe i vänstra hörnet, på \verb Menu. Där kan du välja \verb|Copy project|, vilket kopierar hela projektet till ditt konto. 
+\subsection{Hur gör jag ett dokument?}
+För att skapa ett nytt dokument kopierar du innehållet i den mall du vill använda, till exempel \verb|dsekmotion.tex|, och sedan kopierar du in det i en ny fil som du döper till något, \verb|dokument.tex|. Därefter fyller du i alla kommandon som är deklarerade i headern och förhoppningsvis har du en vacker, egen ny pdf-fil där du har fått med dig allt du velat uttrycka. 
+
+\subsection{Hur gör jag en ny mall?}
+Kika på de andra mallarna och försök pussla ihop något som är funktionellt! \Dsymbol[3mm]-latexmallarna sköter all stil, och man kan med fördel dyka ned i stilmallarna för att förstå hur allt fungerar.
+
+\subsection{Hur fungerar latexmkrc?}
+Den innehåller alla sökvägar som en tex-distribution normalt sett skulle leta efter, t.ex. texinputs, texfontmaps etc. Det är den som gör så att vi kan använda alla DSek-mallar i en annan mapp, och dessutom kunna använda \verb|\lthsymb|, det vill säga:
+
+
+\textcolor{datarosa}{\Huge \tlth  \fsek \esek \msek \vsek \asek \ksek \dsek \wsek} 
+
+\subsection{Vidare läsning}
+\renewcommand\UrlFont{\color{datarosa}\rmfamily\small}
+\def\arraystretch{1.5}
+\begin{tabularx}{1.0\textwidth} { XlX }
+   \url{https://github.com/Dsek-LTH/stadgar}&---& D-Sektionens githubrepo för stadgarna  \\
+   \url{https://github.com/Dsek-LTH/reglemente}&---& D-Sektionens githubrepo för reglementet  \\
+   \url{https://www.dsek.se/aktiva/grafiskprofil/latex.php}&---& Den gamla \LaTeX-mallen, men sigillet är inte uppdaterat. Finns massvis med guider dock kring de olika dokumenten! \\
+\url{https://www.dsek.se/aktiva/grafiskprofil/latex/dsek-latex.zip}&---& Direktlänk till \LaTeX-filerna.  \\
+\url{https://www.dsek.se/aktiva/motion/dsek-tex.zip}&---& URL till \TeX-mallen som bl.a. innehåller motionmallen.  \\
+\url{https://www.dsek.se/arkiv/dokument.php}&---& Dokument och mötesprotokoll! Titta här för inspiration, finns massvis bland bilagorna \\
+\url{https://github.com/Dsek-LTH/dsek-latex}&---& D-Sektionens GitHub-repo för alla klasser och stilmallar. 
+
+\end{tabularx}
+
+\end{document}

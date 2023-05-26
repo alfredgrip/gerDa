@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload with Multer in Node.js</title>
+</head>
+<body>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" />
+
+        <select name="dropdown">
+            <option value="VTM">VTM</option>
+            <option value="VTM-extra">VTM-extra</option>
+            <option value="HTM1">HTM1</option>
+            <option value="HTM-val">HTM-val</option>
+            <option value="HTM2">HTM2</option>
+        </select>
+        Namn:
+        <input type="text" name="name" />
+
+        <input type="submit" value="Upload" />
+    
+    </form>
+    <a href="/output/output.pdf" download="output.pdf">
+        <button>Download File</button>
+      </a>
+
+      <textarea id="input" rows="10" cols="50"></textarea>
+  <div id="preview"></div>
+
+</body>
+</html>

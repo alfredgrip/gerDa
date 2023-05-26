@@ -1,0 +1,15 @@
+node_modules
+package-lock.json
+
+# Ignore all .log except all logs in the logs folder
+*.log
+!logs/*.log
+
+*.pdf
+!output/*.pdf
+!uploads/*.pdf
+
+*.aux
+*.fls
+*.fdb_latexmk
+*.synctex.gz

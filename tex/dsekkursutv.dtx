@@ -1,0 +1,246 @@
+%\iffalse
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage[swedish]{babel}
+\usepackage{dsekcommands}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{url}
+\usepackage{rcsinfo}
+\usepackage{ifpdf}
+
+\ifpdf
+  \RequirePackage[pdfpagemode=UseOutlines,
+                  bookmarks=true,
+                  bookmarksnumbered,
+                  bookmarksopen=true,
+                  pdfauthor={Magnus Bäck},
+                  pdftitle={Dokumentklassen dsekkursutv},
+                  colorlinks=true,
+                  linkcolor=black,
+                  urlcolor=black]{hyperref}[2001/04/13]
+\fi
+
+\def\UrlFont{\slshape}
+
+\rcsInfo $Id: dsekkursutv.dtx,v 1.2 2003/02/22 15:34:03 magnus Exp $
+\def\rcsIsoDateHelper#1/#2/#3{#1--#2--#3}
+\def\rcsIsoDate{\expandafter\rcsIsoDateHelper\rcsInfoDate}
+
+\EnableCrossrefs
+
+\newcommand{\orgname}{Datatekniksektionen inom TLTH}
+\newcommand{\TtH}{%
+  T\kern-.25em\raise-.4ex\hbox{\sc \uppercasesc t}\kern-.10emH\xspace}
+\newcommand{\pdfLaTeX}{pdf\LaTeX\xspace}
+\newcommand{\pdfTeX}{pdf\TeX\xspace}
+
+\begin{document}
+  \DocInput{dsekkursutv.dtx}
+\end{document}
+%</driver>
+%\fi
+% \title{Dokumentklassen \textsf{dsekkursutv}}
+% \author{Magnus Bäck \texttt{<magnus@dsek.lth.se>}}
+% \date{\rcsIsoDate, v\rcsInfoRevision}
+%
+% \maketitle
+%
+% \tableofcontents
+%
+% \section{Introduktion}
+%
+%    Dokumentklassen \textsf{dsekkursutv} används för att typsätta
+%    de sammanställningar av kursutvärderingar som Studierådet på
+%    D-sektionen gör. Mer information om sammanställningsförfarandet
+%    finns på
+%    \url{http://www.dsek.lth.se/sektionen/srd/kursutv/skriv_sammanstallning.html}.
+%
+% \section{Användarhandledning}
+%
+%    \textsf{dsekkursutv} är inte ett paket utan en dokumentklass, vilket
+%    innebär att man laddar in det med \verb|\documentclass| högst upp
+%    i sin \texttt{.tex}-fil. Utöver detta behövs inget annat; paketen
+%    \textsf{babel}, \textsf{fontenc} och några andra vanliga som man
+%    alltid inkluderar annars behöver inte laddas.
+%
+%    \begin{verbatim}
+%\documentclass{dsekkursutv}
+%    \end{verbatim}
+%
+%    Man behöver inte ange några optioner som man normalt gör när man
+%    laddar \textsf{article}-klassen (typiskt \texttt{11pt},
+%    \texttt{a4paper} och kanske \texttt{twoside}), ty det görs
+%    automatiskt. Detsamma gäller paket som \textsf{babel} och
+%    \textsf{fontenc}.
+%
+%    Utöver de vanliga makrona och omgivningarna finns det en handfull
+%    som är specifika för \textsf{dsekkursutv} eller har fått en ny
+%    innebörd. Dessa listas i tabell~\ref{tab:makron}.
+%
+%    \begin{table}
+%      \begin{tabularx}{\textwidth}{lX}
+%        \toprule
+%        \emph{makro}    & \emph{betydelse} \\ \midrule
+%        |\authoruserid| & Användaridentiteten på EFD-systemet för den
+%                          som gjort sammanställningen. Ange endast en
+%                          identitet även om flera personer varit
+%                          delaktiga; det du anger kommer att
+%                          bearbetas maskinellt. \\
+%        |\class|        & Anger vilken årskurs som läste kursen vars
+%                          utvärdering sammanställs, t.ex. d00 eller c02. \\ 
+%        |\maketitle|    & Skriver ut dokumentets titel samt den lilla
+%                          tabell som anger årskurs, författaren och
+%                          svarsfrekvensen. \\
+%        \bottomrule
+%      \end{tabularx}
+%      \caption{Nya eller modifierade makron i \textsf{dsekkursutv}.}
+%      \label{tab:makron}
+%    \end{table}
+% 
+% \subsection{Exempel}
+%
+%    Nedanstående är ett fullständigt exempel på hur en
+%    kursutvärderingssammanställning kan se ut.
+%    \begin{verbatim}
+%\documentclass{dsekkursutv}
+%
+%\title{Stokastiska processer (FMS~041)}
+%\class{d99}
+%\author{Magnus Bäck}
+%\authoruserid{d98mba}
+%\date{2002--09--14}
+%
+%\begin{document}
+%
+%\maketitle
+%
+%\subsection{Föreläsningar}
+%
+%Föreläsningarna var bra. Medelbetyg 3,7.
+%
+%\end{document}
+%    \end{verbatim}
+%
+% \appendix
+% \section{Komplett och kommenterad källkod}
+%
+% \subsection{Prolog}
+%
+%    Börja med att tala om att vi behöver \LaTeXe{} och eventuellt vilken
+%    version vi också behöver. Skriv också ut filnamnet och versionen när
+%    filer som använder \textsf{dsekkursutv} kompileras.
+%    \begin{macrocode}
+%<*class>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{dsekkursutv}
+\typeout{This is dsekkursutv.cls, version 2002-11-09}
+%    \end{macrocode}
+%    Eftersom \textsf{dsekkursutv} baserar sig på \textsf{article} så
+%    laddar vi den klassen först.
+%    \begin{macrocode}
+\LoadClass[a4paper,11pt]{article}
+%    \end{macrocode}
+%    Inkludera nu de paket som behövs; knappast några
+%    överraskningar. \textsf{array} används i |\maketitle| för att
+%    slippa det lilla extra horisontella utrymmet innan den första
+%    kolumnen, \textsf{lastpage} ger en referens till dokumentetssista
+%    sida och \textsf{tabularx} ger en extra kolumntyp |X| som
+%    automatiskt anpassar kolumnstorleken.
+%    \begin{macrocode}
+\RequirePackage{array}
+\RequirePackage{lastpage}
+\RequirePackage{tabularx}
+\RequirePackage[nopdfbookmarks]{dsekcommon}
+%    \end{macrocode}
+%    Se till att vi använder \textsf{fancyhdr} och sätt en lämplig
+%    sidfot.
+%    \begin{macrocode}
+\pagestyle{fancy}
+\lfoot{}
+\cfoot{\footnotesize{\thepage\ (\nohyperpageref{LastPage})}}
+\rfoot{}
+%    \end{macrocode}
+%    Den här sortens dokument behöver ingen numrering av avsnitt.
+%    \begin{macrocode}
+\setcounter{secnumdepth}{0}
+%    \end{macrocode}
+%    Eftersom vi är beroende av att användaren sätter rätt datum med
+%    |\date| så måste vi vänta med att sätta sidhuvudet med
+%    |\setheader|. Detta bruk av |\AtBeginDocument| gör således att
+%    |\date| måste användas innan |\begin{document}|.
+%    \begin{macrocode}
+\AtBeginDocument{%
+  \setheader{STUDIERÅDET}{Kursutvärdering}{\@date}}
+%    \end{macrocode}
+%
+% \subsection{Nya makron}
+%
+% \begin{macro}{\maketitle}
+%    Definiera om |\maketitle| så att den producerar rubriken
+%    (kursnamnet) och en tabell med uppgifter om författare, årskurs
+%    etc.
+%    \begin{macrocode}
+\renewcommand{\maketitle}{%
+  \section{\@title}
+
+  \begin{tabularx}{\textwidth}{@{}lX}
+    Årskurs:         & \@class \\
+    Svarsfrekvens:   & \the\@totalevaluees\ / \the\@totalstudents~~%
+    (\the\@evalpercentage\,\%) \\
+    Sammanställd av: & \@author\ <\@authoruserid @efd.lth.se> \\
+  \end{tabularx}
+  \par}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\class}
+%    |\class| sätter värdet av |\@class| som är tänkt att
+%    innehålla årskursen för de som läste kursen.
+%    \begin{macrocode}
+\newcommand{\@class}{}
+\newcommand{\class}[1]{%
+  \renewcommand{\@class}{#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\authoruserid}
+%    |\authoruserid| sätter värdet av |\@authoruserid| som är tänkt
+%    att användaridentiteten på EFD-systemet för den som sammanställde
+%    utvärderingen (personen vars namn anges med |\author|).
+%    \begin{macrocode}
+\newcommand{\@authoruserid}{}
+\newcommand{\authoruserid}[1]{%
+  \renewcommand{\@authoruserid}{#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\studentcount}
+%    Utifrån antalet studenter som valt att utvärdera (|#1|) och
+%    antalet som valt att inte utvärdera (|#2|) beräknas det totala
+%    antalet studenter, |@totalstudents|, och procentandelen som valt
+%    att utvärdera, |@evalpercentage|. Här används \TeX:s primitiver
+%    för räknare i stället för de makron som \LaTeX{} tillhandahåller
+%    eftersom \TtH av någon anledning klagar över syntaxfel. Å andra
+%    sida är nog \TeX-formen minst lika lättläst.
+%    \begin{macrocode}
+\newcount\@totalstudents
+\newcount\@totalevaluees
+\newcount\@evalpercentage
+\newcommand{\studentcount}[2]{%
+  \@totalevaluees=#1
+  \@totalstudents=#2
+  \advance\@totalstudents by \@totalevaluees
+  \@evalpercentage=\@totalevaluees
+  \multiply\@evalpercentage by 100
+  \divide\@evalpercentage by \@totalstudents
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+%</class>
+%    \end{macrocode}
+%
+% \Finale
