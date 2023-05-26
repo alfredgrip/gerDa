@@ -142,3 +142,6 @@ dist
 *.cb
 *.cb2
 .*.lb
+
+*.pdf
+!tex/*.pdf
