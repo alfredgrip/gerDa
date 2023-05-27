@@ -28,5 +28,34 @@
       <textarea id="input" rows="10" cols="50"></textarea>
   <div id="preview"></div>
 
+  <script>
+    const meeting = "VTM";
+    const title = "Min fina motion skrr pow"
+    const body = "Jag vill att vi ska göra så här"
+    const signMessage = "För att jag är bäst, dag som ovan"
+    const authors = [{
+        name: 'Ludvig Svedberg',
+        position: 'Sexmästare'
+    }, {
+        name: 'Alfred Grip'
+    }]
+    const clauses = [{
+        title: 'säga att Ludvig är bäst',
+        descritpion: 'för det är han'
+    }, {
+        title: 'säga att Alfred är bäst'
+    }]
+    const urlSearchParams = new URLSearchParams();
+    urlSearchParams.append('meeting', meeting);
+    urlSearchParams.append('title', title);
+    urlSearchParams.append('body', body);
+    urlSearchParams.append('signMessage', signMessage);
+    authors.forEach(author => urlSearchParams.append('authors', JSON.stringify(author)));
+    clauses.forEach(clause => urlSearchParams.append('clauses', JSON.stringify(clause)));
+    const params = urlSearchParams.toString();
+    const url = `http://localhost:3000/generate?${params}`;
+    window.location = url;
+  </script>
+
 </body>
 </html>

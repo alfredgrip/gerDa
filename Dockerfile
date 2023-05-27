@@ -10,16 +10,20 @@ RUN addgroup -S user && adduser -S user -G user
 RUN mkdir -p /home/user
 
 WORKDIR /home/user
-
 COPY . .
 
 RUN chown -R user:user /home/user
 
 USER user
 
+RUN mkdir -p input
+RUN mkdir -p output
+RUN mkdir -p logs
+
 EXPOSE 3000
 
-RUN npm install express
-RUN npm install multer
+RUN npm install
 
-CMD ["node", "index.js"]
+RUN npm run build
+
+CMD npm run start

@@ -1,5 +1,13 @@
 node_modules
-package-lock.json
+
+index.js
+
+README.md
+
+.git
+.gitignore
+Dockerfile
+alpine-pacakges/*
 
 # Ignore all .log except all logs in the logs folder
 *.log
