@@ -33,6 +33,7 @@
     const title = "Min fina motion skrr pow"
     const body = "Jag vill att vi ska göra så här"
     const signMessage = "För att jag är bäst, dag som ovan"
+    const type = "Proposition"
     const authors = [{
         name: 'Ludvig Svedberg',
         position: 'Sexmästare'
@@ -49,6 +50,7 @@
     urlSearchParams.append('meeting', meeting);
     urlSearchParams.append('title', title);
     urlSearchParams.append('body', body);
+    urlSearchParams.append('type', type);
     urlSearchParams.append('signMessage', signMessage);
     authors.forEach(author => urlSearchParams.append('authors', JSON.stringify(author)));
     clauses.forEach(clause => urlSearchParams.append('clauses', JSON.stringify(clause)));

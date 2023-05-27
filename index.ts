@@ -22,6 +22,7 @@ type QueryParameters = {
   body: string;
   clauses: Clause[];
   signMessage?: string;
+  type?: string;
 }
 type QueryParametersInput = Omit<QueryParameters, 'clauses' | 'authors'> & { 
   clauses: string[] | string, 
@@ -36,7 +37,8 @@ app.get('/generate', (req, res) => {
     || !queryParameters.authors
      || !queryParameters.meeting 
      || !queryParameters.body 
-     || !queryParameters.clauses) {
+     || !queryParameters.clauses
+     || !queryParameters.type) {
     return res.status(400).send('Missing query parameters.');
   }
   let clauses: Clause[];
@@ -58,7 +60,7 @@ app.get('/generate', (req, res) => {
     return res.status(400).send('Invalid JSON in authors.');
   }
   // Generate file with query parameters
-  const generatedTex = GENERATE_MOTION_TEX({ ...queryParameters, clauses, authors });
+  const generatedTex = GENERATE__TEX({ ...queryParameters, clauses, authors });
   const uniqueFileName = `${Date.now()}-${uuid.v4()}`;
   // Write file to disk
   fs.writeFileSync(`uploads/${uniqueFileName}.tex`, generatedTex, (err) => {
@@ -118,8 +120,6 @@ app.get('/', (req, res) => {
     }
 );
 
-
-
 const GENERATE_CLAUSES = (clauses: Clause[]) => clauses.map((clause) => 
 clause.description 
 ? `  \\ATTDESC{${clause.title}}{${clause.description}}\n` 
@@ -128,7 +128,7 @@ clause.description
 const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) => authors.map((author, index) => `  \\signature{${index === 0 ? (signMessage ?? 'För D-sektionen, dag som ovan') : ''}}{${author.name}}{${author.position ? `${author.position}` : ''}}
 `).join('');
 
-const GENERATE_MOTION_TEX = (parameters: QueryParameters) => `
+const GENERATE__TEX = (parameters: QueryParameters) => `
 \\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
 
 \\usepackage{dsekcommon}
@@ -138,18 +138,18 @@ const GENERATE_MOTION_TEX = (parameters: QueryParameters) => `
 
 \\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
 \\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
-\\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på motionen
-\\newcommand{\\PLACE}{Lund} % Fyll i plats där motionen skrevs, oftast bara "Lund"
-\\newcommand{\\TEXT}{${parameters.body}} % Fyll i motionens brödtext
+\\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
+\\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
+\\newcommand{\\TEXT}{${parameters.body}} % Fyll i handlingens brödtext
 \\newcommand{\\UNDER}{Undertecknad yrkar att mötet må besluta}
 \\newcommand{\\ATT}[1]{\\item #1}
 \\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
 
-\\setheader{Motion}{\\MOTE - \\YEAR}{\\PLACE, \\today}
-\\title{Motion: \\TITLE}
+\\setheader{${parameters.type ?? 'Motion'}}{\\MOTE - \\YEAR}{\\PLACE, \\today}
+\\title{${parameters.type ?? 'Motion'}: \\TITLE}
 
 \\begin{document}
-\\section*{Motion: \\TITLE}
+\\section*{${parameters.type ?? 'Motion'}: \\TITLE}
 
 
 \\TEXT
