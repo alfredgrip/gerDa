@@ -147,8 +147,15 @@ const GENERATE__TEX = (parameters: QueryParameters) => `
 
 \\usepackage{dsekcommon}
 \\usepackage{dsekdokument}
+\\usepackage{tabularx}
 \\usepackage[T1]{fontenc}
+\\usepackage[utf8]{inputenc}
 \\usepackage[swedish]{babel}
+\\usepackage{url}
+\\usepackage[dvipsnames]{xcolor}
+
+% this enables lth-symbols
+\\pdfgentounicode=0
 
 \\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
 \\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
