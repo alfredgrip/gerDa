@@ -12,7 +12,7 @@ RUN mkdir -p /home/user
 WORKDIR /home/user
 COPY . .
 
-RUN echo "0 6 * * * ~/cleanjob.sh " >> cleanjob
+RUN echo "0 6 * * * ~/cleanjob.sh && echo cleaned" >> cleanjob
 RUN crontab cleanjob
 RUN rm cleanjob
 
