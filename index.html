@@ -107,6 +107,23 @@
         #generateButton:focus {
             outline: none;
         }
+        
+        .removeClauseButton,
+        .removeAuthorButton {
+            padding: 5px 10px;
+            margin-top: 5px;
+            background-color: #ccc;
+            color: rgb(0, 0, 0);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .removeClauseButton:hover,
+        .removeAuthorButton:hover {
+            background-color: #d32727;
+        }
 
         #footer {
             margin-top: 20px;
@@ -156,11 +173,20 @@
             Funktionaliteten är i nuläget något begränsad, så bidra gärna med din kunskap på <a
                 href="https://github.com/alfredgrip/gerDa">GitHub</a>.
         </p>
-        <label for="type">Typ:</label>
-        <select name="type" id="type">
-            <option value="Motion">Motion</option>
-            <option value="Proposition">Proposition</option>
-        </select>
+        <div id="typeContainer">
+            <label for="type">Typ:
+                <div class="info-circle">?</div>
+                <div class="explanation">
+                    En motion är ett förslag från en medlem i sektionen.
+                    <br><br>
+                    En proposition är ett förslag från styrelsen.
+                </div>
+            </label>
+            <select name="type" id="type">
+                <option value="Motion">Motion</option>
+                <option value="Proposition">Proposition</option>
+            </select>
+        </div>
         <label for="title">Titel:</label>
         <input type="text" name="title" id="title" placeholder="Titel">
         <label for="meeting">Möte:</label>
