@@ -142,6 +142,9 @@ dist
 *.cb
 *.cb2
 .*.lb
+*.fdb_latexmk
 
 *.pdf
 !tex/*.pdf
+
+index.js
