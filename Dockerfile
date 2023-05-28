@@ -12,7 +12,6 @@ RUN mkdir -p /home/user
 WORKDIR /home/user
 COPY . .
 
-RUN chmod 
 RUN echo "0 6 * * * ~/cleanjob.sh " >> cleanjob
 RUN crontab cleanjob
 RUN rm cleanjob
