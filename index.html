@@ -25,12 +25,15 @@
             background-color: #f9f9f9;
             border: 1px solid #ccc;
             border-radius: 10px;
-            
+
         }
 
         label {
             display: block;
             margin-top: 10px;
+            margin-bottom: 5px;
+            position: relative;
+            font-weight: bold;
         }
 
 
@@ -43,6 +46,10 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+        }
+        
+        textarea {
+            resize: vertical;
         }
 
         #documentform {
@@ -59,7 +66,8 @@
 
 
         #clausesContainer,
-        #authorsContainer {
+        #authorsContainer,
+        #bodyContainer {
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ccc;
@@ -105,6 +113,33 @@
             text-align: center;
         }
 
+        .info-circle {
+            position: absolute;
+            top: 50%;
+            right: 5%;
+            transform: translate(50%, -50%);
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            padding: 5px;
+            border-radius: 50%;
+            border: 1px solid gray;
+            cursor: pointer;
+        }
+
+        .explanation {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            transform: translate(0, 10px);
+            width: 16rem;
+            background-color: gray;
+            color: white;
+            padding: 10px;
+            display: none;
+            font-weight: normal;
+            border-radius: 5px;
+        }
     </style>
     <meta charset="UTF-8">
     <title>gerDa</title>
@@ -130,12 +165,36 @@
         <input type="text" name="title" id="title" placeholder="Titel">
         <label for="meeting">Möte:</label>
         <input type="text" name="meeting" id="meeting" placeholder="t.ex. VTM, S05">
-        <label for="body" id="bodyLabel">Brödtext:</label>
-        <textarea name="body" id="body" cols="30" rows="10"
-            placeholder="Jag tycker att det sjungs för lite på..."></textarea>
+        <div id="bodyContainer">
+            <label for="body" id="bodyLabel">Brödtext:
+                <div class="info-circle">?</div>
+                <div class="explanation">
+                    Brödtexten är den inledande texten i motionen/propositionen.
+                    <br><br>
+                    Syftet med brödtexten är att förklara bakgrunden till att-satserna, samt att motivera dem.
+                    <br><br>
+                    Pro tip! Här kan du skriva ren LaTeX-kod om du vill!
+                </div>
+            </label>
+            <textarea name="body" id="body" cols="30" rows="10"
+                placeholder="Jag tycker att det sjungs för lite på..."></textarea>
+        </div>
 
         <div id="clausesContainer">
-            <label>Att-satser:</label>
+            <label>Att-satser:
+                <div class="info-circle">?</div>
+                <div class="explanation">
+                    Förändringar du tycker sektionen ska genomföra skrivs i form av att-satser.
+                    Ett exempel kan vara "Att sektionen ska sjunga mer på ...".
+                    <br><br>
+                    Observera att du inte behöver skriva "att" i början av din att-sats, detta läggs till automatiskt.
+                    <br><br>
+                    Om du vill kan du även lägga till en beskrivning av din att-sats.
+                    Ofta är det dock onödigt, eftersom att-satsen i sig bör vara tillräckligt tydlig, samt att den bör
+                    förklaras i brödtexten.
+                </div>
+
+            </label>
             <div class="clauseFields">
                 <label for="clause1">1</label>
                 <input type="text" name="clause" id="clause1" placeholder="Att-sats">
@@ -148,26 +207,49 @@
         <input type="text" name="signMessage" id="signMessage" placeholder="För D-sektionen,">
 
         <div id="authorsContainer">
-            <label>Författare:</label>
+            <label>Författare:
+                <div class="info-circle">?</div>
+                <div class="explanation">
+                    Vilka är det som skrivit motionen/propositionen? Lägg till det här!
+                    <br><br>
+                    Ibland vill man påtrycka att en motion/proposition är skriven av någon som innehar en viss post.
+                    Detta är inget måste, utan du kan lämna det blankt eller skriva t.ex. "Sektionsmedlem" också.
+                </div>
+            </label>
             <div class="authorFields">
                 <label for="author1">1</label>
                 <input type="text" name="name" id="name1" placeholder="Namn">
-                <input type="text" name="position" id="position1" placeholder="Position (frivillig)">
+                <input type="text" name="position" id="position1" placeholder="Post (frivillig)">
             </div>
         </div>
         <button type="button" id="addAuthorButton">Lägg till författare</button>
         <div><button type="submit" id="generateButton">Generera dokument!</button></div>
         <footer id="footer">
             <p>Skapad av: Alfred Grip och Ludvig Svedberg</p>
-          </footer> 
+        </footer>
     </form>
 
     <script>
+
+        const infoCircles = document.getElementsByClassName('info-circle');
+        for (let i = 0; i < infoCircles.length; i++) {
+            infoCircles[i].addEventListener('click', function () {
+                const explanation = this.nextElementSibling;
+                if (explanation.style.display === 'block') {
+                    explanation.style.display = 'none';
+                } else {
+                    explanation.style.display = 'block';
+                }
+            });
+        }
+
         const form = document.getElementById('documentform');
         const authorsContainer = document.getElementById('authorsContainer');
         const addAuthorButton = document.getElementById('addAuthorButton');
+        const removeAuthorButtons = document.getElementsByClassName('removeAuthorButton');
         const clausesContainer = document.getElementById('clausesContainer');
         const addClauseButton = document.getElementById('addClauseButton');
+        const removeClauseButtons = document.getElementsByClassName('removeClauseButton');
         let authorCount = 1;
         let authors = []; // Array to store authors
         let clauseCount = 1;
@@ -181,6 +263,7 @@
         <label for="author${authorCount}">${authorCount}</label>
         <input type="text" name="name" id="name${authorCount}" placeholder="Namn">
         <input type="text" name="position" id="position${authorCount}" placeholder="Position (frivillig)">
+        <button type="button" class="removeAuthorButton">Ta bort</button>
         `;
             authorsContainer.appendChild(authorFieldsDiv);
         });
@@ -193,9 +276,35 @@
         <label for="clause${clauseCount}">${clauseCount}</label>
         <input type="text" name="clause" id="clause${clauseCount}" placeholder="Att-sats">
         <input type="text" name="description" id="description${clauseCount}" placeholder="Beskrivning (frivillig)">
+        <button type="button" class="removeClauseButton">Ta bort</button>
         `;
             clausesContainer.appendChild(clauseFieldsDiv);
         });
+
+        form.addEventListener('click', function (event) {
+            if (event.target.classList.contains('removeClauseButton')) {
+                event.target.parentElement.remove();
+                clauseCount--;
+                const clauseFields = clausesContainer.getElementsByClassName('clauseFields');
+                for (let i = 0; i < clauseFields.length; i++) {
+                    clauseFields[i].querySelector('label').innerHTML = i + 1;
+                    clauseFields[i].querySelector('input[id^="clause"]').id = `clause${i + 1}`;
+                    clauseFields[i].querySelector('input[id^="description"]').id = `description${i + 1}`;
+                }
+            }
+            if (event.target.classList.contains('removeAuthorButton')) {
+                event.target.parentElement.remove();
+                authorCount--;
+                const authorFields = authorsContainer.getElementsByClassName('authorFields');
+                for (let i = 0; i < authorFields.length; i++) {
+                    authorFields[i].querySelector('label').innerHTML = i + 1;
+                    authorFields[i].querySelector('input[id^="name"]').id = `name${i + 1}`;
+                    authorFields[i].querySelector('input[id^="position"]').id = `position${i + 1}`;
+                }
+            }
+        });
+
+
 
 
 
@@ -255,10 +364,10 @@
                 alert('Typ är obligatoriskt');
                 return;
             }
-            if (document.getElementById('signMessage').value === '') {
-                alert('Signaturmeddelande är obligatoriskt');
-                return;
-            }
+            //if (document.getElementById('signMessage').value === '') {
+            //    alert('Signaturmeddelande är obligatoriskt');
+            //    return;
+            //}
             if (document.getElementById('body').value === '') {
                 alert('Brödtext är obligatoriskt');
                 return;
@@ -266,7 +375,7 @@
             const meeting = document.getElementById('meeting').value;
             const title = document.getElementById('title').value;
             const type = document.getElementById('type').value;
-            const signMessage = document.getElementById('signMessage').value;
+            const signMessage = document.getElementById('signMessage').value === '' ? 'För D-sektionen,' : document.getElementById('signMessage').value;
             const body = document.getElementById('body').value;
 
             const urlSearchParams = new URLSearchParams();
