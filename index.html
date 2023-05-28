@@ -1,63 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>File Upload with Multer in Node.js</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: linear-gradient(rgba(242,128,161), rgba(153,102,204));
+  }
+  
+  form {
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  label {
+    display: block;
+    margin-top: 10px;
+  }
+
+  
+  input[type="text"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  #clausesContainer,
+  #authorsContainer {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .addFieldsButton {
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .submitButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .addFieldsButton:hover,
+  .submitButton:hover {
+    background-color: #45a049;
+  }
+  
+  .addFieldsButton:focus,
+  .submitButton:focus {
+    outline: none;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 5px;
+  }
+    </style>
+  <meta charset="UTF-8">
+  <title>gerDa</title>
 </head>
 <body>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" />
-
-        <select name="dropdown">
-            <option value="VTM">VTM</option>
-            <option value="VTM-extra">VTM-extra</option>
-            <option value="HTM1">HTM1</option>
-            <option value="HTM-val">HTM-val</option>
-            <option value="HTM2">HTM2</option>
-        </select>
-        Namn:
-        <input type="text" name="name" />
-
-        <input type="submit" value="Upload" />
+  <form id="documentform">
+    <label for="type">Typ:</label>
+    <select name="type" id="type">
+        <option value="Motion">Motion</option>
+        <option value="Proposition">Proposition</option>
+    </select>
+    <label for="title">Titel:</label>
+    <input type="text" name="title" id="title" placeholder="Titel">
+    <label for="meeting">Möte:</label>
+    <input type="text" name="meeting" id="meeting" placeholder="t.ex. VTM, S05">
+    <label for="body" id="bodyLabel">Brödtext:</label>
+    <textarea name="body" id="body" cols="30" rows="10" placeholder="Jag tycker att det sjungs för lite på..."></textarea>
     
-    </form>
-    <a href="/output/output.pdf" download="output.pdf">
-        <button>Download File</button>
-      </a>
+    <div id="clausesContainer">
+        <label>Att-satser:</label>
+        <div class="clauseFields">
+          <label for="clause1">1</label>
+          <input type="text" name="clause" id="clause1" placeholder="Att-sats">
+          <input type="text" name="description" id="description1" placeholder="Beskrivning (frivillig)">
+        </div>
+      </div>
+      <button type="button" id="addClauseButton">Lägg till att-sats</button>
 
-      <textarea id="input" rows="10" cols="50"></textarea>
-  <div id="preview"></div>
+      <label for="signMessage">Signaturmeddelande:</label>
+      <input type="text" name="signMessage" id="signMessage" placeholder="För D-sektionen">
+
+      <div id="authorsContainer">
+        <label>Författare:</label>
+        <div class="authorFields">
+          <label for="author1">1</label>
+          <input type="text" name="name" id="name1" placeholder="Namn">
+          <input type="text" name="position" id="position1" placeholder="Position (frivillig)">
+        </div>
+      </div>
+    <button type="button" id="addAuthorButton">Lägg till författare</button>
+    <button type="submit">Submit</button>
+  </form>
 
   <script>
-    const meeting = "VTM";
-    const title = "Min fina motion skrr pow"
-    const body = "Jag vill att vi ska göra så här"
-    const signMessage = "För att jag är bäst, dag som ovan"
-    const type = "Proposition"
-    const authors = [{
-        name: 'Ludvig Svedberg',
-        position: 'Sexmästare'
-    }, {
-        name: 'Alfred Grip'
-    }]
-    const clauses = [{
-        title: 'säga att Ludvig är bäst',
-        descritpion: 'för det är han'
-    }, {
-        title: 'säga att Alfred är bäst'
-    }]
-    const urlSearchParams = new URLSearchParams();
-    urlSearchParams.append('meeting', meeting);
-    urlSearchParams.append('title', title);
-    urlSearchParams.append('body', body);
-    urlSearchParams.append('type', type);
-    urlSearchParams.append('signMessage', signMessage);
-    authors.forEach(author => urlSearchParams.append('authors', JSON.stringify(author)));
-    clauses.forEach(clause => urlSearchParams.append('clauses', JSON.stringify(clause)));
-    const params = urlSearchParams.toString();
-    const url = `http://localhost:3000/generate?${params}`;
-    window.location = url;
-  </script>
+    const form = document.getElementById('documentform');
+    const authorsContainer = document.getElementById('authorsContainer');
+    const addAuthorButton = document.getElementById('addAuthorButton');
+    const clausesContainer = document.getElementById('clausesContainer');
+    const addClauseButton = document.getElementById('addClauseButton');
+    let authorCount = 1;
+    let authors = []; // Array to store authors
+    let clauseCount = 1;
+    let clauses = []; // Array to store clauses
 
+    addAuthorButton.addEventListener('click', function() {
+        authorCount++;
+        const authorFieldsDiv = document.createElement('div');
+        authorFieldsDiv.classList.add('authorFields');
+        authorFieldsDiv.innerHTML = `
+        <label for="author${authorCount}">${authorCount}</label>
+        <input type="text" name="name" id="name${authorCount}" placeholder="Namn">
+        <input type="text" name="position" id="position${authorCount}" placeholder="Position (frivillig)">
+        `;
+        authorsContainer.appendChild(authorFieldsDiv);
+    });
+
+    addClauseButton.addEventListener('click', function() {
+        clauseCount++;
+        const clauseFieldsDiv = document.createElement('div');
+        clauseFieldsDiv.classList.add('clauseFields');
+        clauseFieldsDiv.innerHTML = `
+        <label for="clause${clauseCount}">${clauseCount}</label>
+        <input type="text" name="clause" id="clause${clauseCount}" placeholder="Att-sats">
+        <input type="text" name="description" id="description${clauseCount}" placeholder="Beskrivning (frivillig)">
+        `;
+        clausesContainer.appendChild(clauseFieldsDiv);
+    });
+
+
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Reset authors array and clauses array
+        authors = [];
+        clauses = [];
+
+        // Retrieve all author fields
+        const authorFields = authorsContainer.getElementsByClassName('authorFields');
+
+        // Loop through each author field and create author objects
+        for (let i = 0; i < authorFields.length; i++) {
+
+            // Name is required, position is optional
+            if (authorFields[i].querySelector(`input[id="name${i + 1}"]`) === null) {
+                alert('Author name is required');
+                return;
+            }
+            //if (authorFields[i].querySelector(`input[id="position${i + 1}"]`).value === '') {
+            //    authorFields[i].querySelector(`input[id="position${i + 1}"]`).value = ' ';
+            //}
+
+            const authorNameInput = authorFields[i].querySelector(`input[id="name${i + 1}"]`);
+            const authorPositionInput = authorFields[i].querySelector(`input[id="position${i + 1}"]`);
+            
+            const author = {
+                name: authorNameInput.value,
+                position: authorPositionInput.value
+            };
+            authors.push(author);
+        }
+
+        // Retrieve all clause fields
+        const clauseFields = clausesContainer.getElementsByClassName('clauseFields');
+
+        // Loop through each clause field and create clause objects
+        for (let i = 0; i < clauseFields.length; i++) {
+
+            // Clause is required, description is optional
+            if (clauseFields[i].querySelector(`input[id="clause${i + 1}"]`) === null) {
+                alert('Clause is required');
+                return;
+            }
+            //if (clauseFields[i].querySelector(`input[id="description${i + 1}"]`).value === '') {
+            //    clauseFields[i].querySelector(`input[id="description${i + 1}"]`).value = ' ';
+            //}
+
+            const clauseInput = clauseFields[i].querySelector(`input[id="clause${i + 1}"]`);
+            const clauseDescriptionInput = clauseFields[i].querySelector(`input[id="description${i + 1}"]`);
+            const clause = {
+                clause: clauseInput.value,
+                description: clauseDescriptionInput.value
+            };
+            clauses.push(clause);
+        }
+
+        // Log authors and clauses to the console
+        console.log(authors);
+        console.log(clauses);
+
+        // Handle form submission logic here
+        const meeting = document.getElementById('meeting').value;
+        const title = document.getElementById('title').value;
+        const type = document.getElementById('type').value;
+        const signMessage = document.getElementById('signMessage').value;
+        const body = document.getElementById('body').value;
+
+        const urlSearchParams = new URLSearchParams();
+        urlSearchParams.append('meeting', meeting);
+        urlSearchParams.append('title', title);
+        urlSearchParams.append('body', body);
+        urlSearchParams.append('type', type);
+        urlSearchParams.append('signMessage', signMessage);
+        authors.forEach(author => urlSearchParams.append('authors', JSON.stringify(author)));
+        clauses.forEach(clause => urlSearchParams.append('clauses', JSON.stringify(clause)));
+        const params = urlSearchParams.toString();
+        const url = `http://localhost:3000/generate?${params}`;
+        window.location = url;
+    });
+    </script>
 </body>
 </html>

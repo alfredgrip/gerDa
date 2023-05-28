@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 type Clause = {
-  title: string;
+  clause: string;
   description?: string;
 }
 type Author = {
@@ -33,18 +33,29 @@ app.get('/generate', (req, res) => {
   // get query parameters
   const queryParameters: QueryParametersInput = req.query;
 
-  if (!queryParameters.title 
-    || !queryParameters.authors
-     || !queryParameters.meeting 
-     || !queryParameters.body 
-     || !queryParameters.clauses
-     || !queryParameters.type) {
-    return res.status(400).send('Missing query parameters.');
+  if (!queryParameters.title) {
+    return res.status(400).send('Missing title.');
   }
+  if (!queryParameters.authors) {
+    return res.status(400).send('Missing authors.');
+  }
+  if (!queryParameters.meeting) {
+    return res.status(400).send('Missing meeting.');
+  }
+  if (!queryParameters.body) {
+    return res.status(400).send('Missing body.');
+  }
+  if (!queryParameters.clauses) {
+    return res.status(400).send('Missing clauses.');
+  }
+  if (!queryParameters.type) {
+    return res.status(400).send('Missing type.');
+  }
+  
   let clauses: Clause[];
   try {
     clauses = Array.isArray(queryParameters.clauses) ? queryParameters.clauses.map((clauseJSON) => JSON.parse(clauseJSON)) : [JSON.parse(queryParameters.clauses)];
-    if (clauses.some((clause) => !clause.title)) {
+    if (clauses.some((clause) => !clause.clause)) {
       return res.status(400).send('Missing title in clauses.');
     }
   } catch (e) {
@@ -69,6 +80,8 @@ app.get('/generate', (req, res) => {
     }
   });
   // Compile file
+  // Illegal solution: latexmk -f always signals error
+  // so we have to ignore it by using || true
   exec(`latexmk -f uploads/${uniqueFileName}.tex || true`, (err, stdout, stderr) => {
     if (err) {
       console.log(err);
@@ -81,7 +94,8 @@ app.get('/generate', (req, res) => {
         return res.status(500).send('Failed to move file.');
       }
       // Clean up
-      exec(`latexmk -c && rm uploads/${uniqueFileName}.tex`, (err) => {
+      
+      exec(`rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz uploads/${uniqueFileName}.tex`, (err) => {
         if (err) {
           console.log(err);
           return res.status(500).send('Failed to clean up.');
@@ -122,8 +136,8 @@ app.get('/', (req, res) => {
 
 const GENERATE_CLAUSES = (clauses: Clause[]) => clauses.map((clause) => 
 clause.description 
-? `  \\ATTDESC{${clause.title}}{${clause.description}}\n` 
-: `  \\ATT{${clause.title}}\n`)
+? `  \\ATTDESC{${clause.clause}}{${clause.description}}\n` 
+: `  \\ATT{${clause.clause}}\n`)
 .join('');
 const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) => authors.map((author, index) => `  \\signature{${index === 0 ? (signMessage ?? 'För D-sektionen, dag som ovan') : ''}}{${author.name}}{${author.position ? `${author.position}` : ''}}
 `).join('');
