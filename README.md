@@ -13,7 +13,10 @@ cd gerDa
 docker build . -t gerda
 docker run --name gerda -p 3000:3000 gerda:latest
 ```
-Programmet använder sig av port 3000 i vanliga fall, ändra i källkoden för att använda någon annan.
+Programmet använder sig av port 3000 i vanliga fall, vill du köra på någon annan port ändra det i `docker run`-kommandot enligt:
+```
+docker run --name gerda -p <host port>:3000 gerda:latest
+```
 
 ## Bra länkar
 https://en.wikibooks.org/wiki/LaTeX/Installing_Extra_Packages#Manual_installation
