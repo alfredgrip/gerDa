@@ -278,7 +278,8 @@
             authors.forEach(author => urlSearchParams.append('authors', JSON.stringify(author)));
             clauses.forEach(clause => urlSearchParams.append('clauses', JSON.stringify(clause)));
             const params = urlSearchParams.toString();
-            const url = `http://localhost:3000/generate?${params}`;
+            const url = window.location.href + 'generate?' + params;
+            //const url = `http://localhost:3000/generate?${params}`;
             window.location = url;
         });
     </script>
