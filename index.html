@@ -3,12 +3,24 @@
 
 <head>
     <style>
-        body {
-            @font-face {
-                font-family: 'Computer Modern';
-                src: url('css-font/cmunss.otf') format('opentype');
-            }
+        @font-face {
+            font-family: 'lth_sektionssymbolerregular';
+            src: url('lth-sektionssymboler-webfont.woff2') format('woff2'),
+                url('lth-sektionssymboler-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
 
+        @font-face {
+            font-family: 'cmu_sans_serifmedium';
+            src: url('cmunss-webfont.woff2') format('woff2'),
+                url('cmunss-webfont.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+
+        }
+
+        body {
             margin: 0;
             display: flex;
             justify-content: center;
@@ -25,7 +37,7 @@
             background-color: #f9f9f9;
             border: 1px solid #ccc;
             border-radius: 10px;
-
+            position: relative;
         }
 
         label {
@@ -47,7 +59,7 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
-        
+
         textarea {
             resize: vertical;
         }
@@ -107,7 +119,7 @@
         #generateButton:focus {
             outline: none;
         }
-        
+
         .removeClauseButton,
         .removeAuthorButton {
             padding: 5px 10px;
@@ -157,6 +169,24 @@
             font-weight: normal;
             border-radius: 5px;
         }
+
+        #site-title-container {
+            margin-top: -1.5em;
+            text-align: center;
+            font-size: 4em;
+        }
+
+        #site-title-main {
+            font-family: 'LTH Sektionssymboler';
+            margin: 0;
+        }
+
+        #site-title-complement {
+            font-size: 0.5em;
+            margin-top: -3em;
+            margin-bottom: 0em;
+            color: #5c5c5c;
+        }
     </style>
     <meta charset="UTF-8">
     <title>gerDa</title>
@@ -164,10 +194,13 @@
 
 <body>
     <form id="documentform">
-        <h1>gerDa</h1>
-        <p>
-            aka löpanDet 2.0
-        </p>
+        <div id="site-title-container">
+            <h1>Ger<span id="site-title-main"
+                    style=" margin-left: 2px; margin-right: -10px;">d</span>a</h1>
+            <p id="site-title-complement">
+                aka löpbanDet 2.0
+            </p>
+        </div>
         <p>
             Detta är ett verktyg för att skapa motioner och propositioner till D-sektionens möten.
             Funktionaliteten är i nuläget något begränsad, så bidra gärna med din kunskap på <a
@@ -252,6 +285,11 @@
         <div><button type="submit" id="generateButton">Generera dokument!</button></div>
         <footer id="footer">
             <p>Skapad av: Alfred Grip och Ludvig Svedberg</p>
+            <p>Tycker du det här verktyget är för simpelt? Saknas det något du behöver? Testa skapa dokument med <a
+                    href="https://github.com/Dsek-LTH/dsek-latex">D-sektionens LaTeX-mallar</a> på egen hand!</p>
+            <p>
+
+            </p>
         </footer>
     </form>
 
