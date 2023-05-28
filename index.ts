@@ -168,6 +168,8 @@ const GENERATE__TEX = (parameters: QueryParameters) => `
 
 \\TEXT
 
+\\medskip
+
 \\UNDER
 
 
