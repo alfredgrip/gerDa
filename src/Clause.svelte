@@ -1,43 +1,39 @@
 <script lang="ts">
-    export let id: number;
-    export let clauseText: string | null;
-    export let descriptionText: string | null;
-
-    function updateClauseText(event) {
-        clauseText = event.target.value;
-        console.log(clauseText);
-    }
-
-    function updateDescriptionText(event) {
-        descriptionText = event.target.value;
-    }
+    export let first: boolean;
+    export let nbr: number;
+    export let clauseText: string | undefined;
+    export let descriptionText: string | undefined;
 </script>
 
 <div class="clause">
-    <label for="clause-text">{id}</label>
+    <label for="clause-text">Att-sats {nbr}:</label>
     <div class="clause-text">
         <input
             type="text"
             id="clause-text"
-            value={clauseText}
-            on:change={updateClauseText}
-            placeholder="att-sats"
+            bind:value={clauseText}
+            placeholder="sjung mer på..."
         />
         <input
             type="text"
             id="description-text"
-            value={descriptionText}
-            on:change={updateDescriptionText}
+            bind:value={descriptionText}
             placeholder="Beskrivning (frivillig)"
         />
     </div>
+    {#if !first}
+        <button type="button" id="removeClauseButton" on:click>
+            Ta bort att-sats
+        </button>
+    {/if}
 </div>
 
 <style>
     .clause {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+        background: #eeeeee;
+        padding: 0.4rem;
+        border-radius: 0.4rem;
+        margin-bottom: 0.8rem;
     }
 
     .clause-text {

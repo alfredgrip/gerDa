@@ -6,63 +6,53 @@
     import Clause from "./Clause.svelte";
     import { writable } from "svelte/store";
 
-    let clauses = writable([
-        {
-            id: 1,
-            clauseText: "",
-            descriptionText: "",
-        },
-    ]);
+    const clauseTemplate = {
+        id: null,
+        clauseText: "",
+        descriptionText: "",
+    };
+
+    let clauses = writable([{ ...clauseTemplate, id: 1 }]);
 
     function numberOfClauses(): number {
         return $clauses.length;
     }
 
     function addClause() {
-        clauses.update((clauses) => [
-            ...clauses,
-            {
-                id: numberOfClauses() + 1,
-                clauseText: "",
-                descriptionText: "",
-            },
-        ]);
+        $clauses = [
+            ...$clauses,
+            { ...clauseTemplate, id: numberOfClauses() + 1 },
+        ];
     }
 
     function removeClause(id: number) {
-        clauses.update((clauses) =>
-            clauses.filter((clause) => clause.id !== id)
-        );
+        $clauses = $clauses.filter((clause) => clause.id !== id);
     }
 
-    let authors = writable([
-        {
-            id: 1,
-            name: "",
-            position: "",
-        },
-    ]);
+    const authorTemplate = {
+        id: null,
+        name: "",
+        position: "",
+    };
+
+    let authors = writable([{ ...authorTemplate, id: 1 }]);
 
     function numberOfAuthors(): number {
         return $authors.length;
     }
 
     function addAuthor() {
-        authors.update((authors) => [
-            ...authors,
-            {
-                id: numberOfAuthors() + 1,
-                name: "",
-                position: "",
-            },
-        ]);
+        $authors = [
+            ...$authors,
+            { ...authorTemplate, id: numberOfAuthors() + 1 },
+        ];
     }
 
     function removeAuthor(id: number) {
-        authors.update((authors) =>
-            authors.filter((author) => author.id !== id)
-        );
+        $authors = $authors.filter((author) => author.id !== id);
     }
+
+
 </script>
 
 <main>
@@ -106,18 +96,12 @@
                 <div class="clausesContainer">
                     {#each $clauses as clause, index (clause.id)}
                         <Clause
-                            id={index}
-                            clauseText={clause.clauseText}
-                            descriptionText={clause.descriptionText}
+                            first={index === 0}
+                            bind:nbr={clause.id}
+                            bind:clauseText={clause.clauseText}
+                            bind:descriptionText={clause.descriptionText}
+                            on:click="{() => removeClause(clause.id)}"
                         />
-                        <button
-                            type="button"
-                            id="removeClauseButton"
-                            on:click={() => removeClause(clause.id)}
-                            style={numberOfClauses() === 1
-                                ? "display: none;"
-                                : ""}>Ta bort att-sats {clause.id}</button
-                        >
                     {/each}
                 </div>
             </div>
@@ -136,24 +120,18 @@
             <div id="outer-author-container">
                 <h2>Författare</h2>
                 <div class="authorsContainer">
-                    {#each $authors as author}
+                    {#each $authors as author, index (author.id)}
                         <Author
-                            nbr={author.id}
-                            name={author.name}
-                            position={author.position}
-                        />
-                        <button
-                            type="button"
-                            id="removeAuthorButton"
+                            first={index === 0}
+                            bind:nbr={author.id}
+                            bind:name={author.name}
+                            bind:position={author.position}
                             on:click={() => removeAuthor(author.id)}
-                            style={numberOfAuthors() === 1
-                                ? "display: none;"
-                                : ""}>Ta bort författare {author.id}</button
-                        >
+                        />
                     {/each}
                 </div>
-                <button type="button" id="addAuthorButton" on:click={addAuthor}
-                    >Lägg till författare</button
+                <button type="button" id="addAuthorButton" on:click={addAuthor}>
+                    Lägg till författare</button
                 >
 
                 <div>

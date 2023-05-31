@@ -1,25 +1,35 @@
 <script lang="ts">
-    export let nbr: number
+    export let first: boolean;
+    export let nbr: number;
     export let name: string;
     // a position is optional
-    export let position: string | undefined
-
+    export let position: string | undefined;
 </script>
 
 <div class="author">
-    <label for="author-text">{nbr}</label>
     <div class="author-text">
-        <input type="text" id="name" bind:value={name} placeholder="Namn"/>
-        <input type="text" id="position" bind:value={position} placeholder="Post (frivillig)"/>
+        <input type="text" id="name" bind:value={name} placeholder="Namn" />
+        <input
+            type="text"
+            id="position"
+            bind:value={position}
+            placeholder="Post (frivillig)"
+        />
     </div>
+    {#if !first}
+        <button type="button" id="removeAuthorButton" on:click>
+            Ta bort författare
+        </button>
+    {/if}
 </div>
 
 <style>
-    .author {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+	.author {
+		background: #eeeeee;
+		padding: .4rem;
+		border-radius: .4rem;
+		margin-bottom: .8rem;
+	}
 
     .author-text {
         display: flex;
@@ -39,5 +49,4 @@
         text-align: left;
         font-weight: bold;
     }
-
 </style>
