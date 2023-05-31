@@ -12,19 +12,19 @@
     let signMessage = "";
 
     type Clause = {
-        uuid: string | null;
+        uuid: string | undefined;
         clauseText: string;
-        descriptionText: string | null;
+        descriptionText: string | undefined;
     };
 
     type Author = {
-        uuid: string | null;
+        uuid: string | undefined;
         name: string;
-        position: string | null;
+        position: string | undefined;
     };
 
     const clauseTemplate = {
-        uuid: null,
+        uuid: undefined,
         clauseText: "",
         descriptionText: "",
     };
@@ -44,7 +44,7 @@
         ];
     }
 
-    function removeClause(uuid: string) {
+    function removeClause(uuid: string | undefined) {
         $clauses = $clauses.filter((clause) => clause.uuid !== uuid);
     }
 
@@ -69,7 +69,7 @@
         ];
     }
 
-    function removeAuthor(uuid: string) {
+    function removeAuthor(uuid: string | undefined) {
         $authors = $authors.filter((author) => author.uuid !== uuid);
     }
 

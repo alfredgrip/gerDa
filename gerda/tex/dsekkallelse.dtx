@@ -1,0 +1,540 @@
+%\iffalse
+%<*driver>
+\documentclass[fleqn]{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage[swedish]{babel}
+\usepackage{dsekcommands}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{rcsinfo}
+\usepackage{ifpdf}
+\usepackage{amstext}
+\usepackage{tabularx}
+
+\ifpdf
+  \RequirePackage[pdfpagemode=UseOutlines,
+                  bookmarks=true,
+                  bookmarksnumbered,
+                  bookmarksopen=true,
+                  pdfauthor={Magnus Bäck},
+                  pdftitle={Dokumentklassen dsekkallelse},
+                  colorlinks=true,
+                  linkcolor=black,
+                  urlcolor=black]{hyperref}[2001/04/13]
+\fi
+
+\def\UrlFont{\slshape}
+
+\rcsInfo $Id: dsekkallelse.dtx,v 1.6 2003/02/25 02:12:01 magnus Exp $
+\def\rcsIsoDateHelper#1/#2/#3{#1--#2--#3}
+\def\rcsIsoDate{\expandafter\rcsIsoDateHelper\rcsInfoDate}
+
+\EnableCrossrefs
+
+\newcommand{\orgname}{Datatekniksektionen inom TLTH}
+\newcommand{\TtH}{%
+  T\kern-.25em\raise-.4ex\hbox{\sc \uppercasesc t}\kern-.10emH\xspace}
+\newcommand{\pdfLaTeX}{pdf\LaTeX\xspace}
+\newcommand{\pdfTeX}{pdf\TeX\xspace}
+
+\begin{document}
+  \DocInput{dsekkallelse.dtx}
+\end{document}
+%</driver>
+%\fi
+% \title{Dokumentklassen \textsf{dsekkallelse}}
+% \author{Magnus Bäck \texttt{<magnus@dsek.lth.se>}}
+% \date{\rcsIsoDate, v\rcsInfoRevision}
+%
+% \maketitle
+%
+% \tableofcontents
+%
+% \section{Introduktion}
+%
+%    Dokumentklassen \textsf{dsekkallelse} används för att producera
+%    möteskallelser till de olika möten som företas på D-sektionens.
+%
+% \section{Användarhandledning}
+%
+%    \textsf{dsekkallelse} är inte ett paket utan en dokumentklass, vilket
+%    innebär att man laddar in det med \verb|\documentclass| högst upp
+%    i sin \texttt{.tex}-fil. Utöver detta behövs inget annat; paketen
+%    \textsf{babel}, \textsf{fontenc} och några andra vanliga som man
+%    alltid inkluderar annars behöver inte laddas explicit.
+%
+%    \begin{verbatim}
+%\documentclass{dsekkallelse}
+%    \end{verbatim}
+%
+%    Man behöver inte ange några optioner som man normalt gör när man
+%    laddar \textsf{article}-klassen (typiskt \texttt{11pt} och
+%    \texttt{a4paper}), ty det görs automatiskt. Detsamma gäller paket som
+%    \textsf{babel} och \textsf{fontenc}.
+%
+% \subsection{Makron och omgivningar}
+%
+%    En lämplig inledning till dagordningen kan vara att specificera tid
+%    och plats för mötet. Detta görs med makrot
+%    \DescribeMacro{\tidochplats}|\tidochplats|. Makrot tar två argument
+%    för tid resp. plats och typsätter dem i en enkel tabell. Det kan verka
+%    fånigt att ha ett specialmakro för en sådan enkel sak, men en viktig
+%    poäng är att det underlättar när man ska konvertera dokumentet till
+%    andra format. Exempel:
+%\begin{verbatim}
+%\tidochplats{Torsdagen den 21 november 2002 kl. 17:15}{E:B}
+%\end{verbatim}
+%
+%    De viktigaste omgivningarna är annars de två som används för att
+%    beskriva föredragningslistor, |dagordning| och |dagordning*|. Den
+%    förstnämnda är äldre och ger inte speciellt många möjligheter att
+%    anpassa bredderna på kolumnerna i föredragningslistan. |dsekkallelse*|
+%    som introducerades i v1.5 av \textsf{dsekkallelse} ger fullständig
+%    frihet vad gäller detta. Eftersom de används på nästan exakt samma
+%    sätt börjar jag med en generell beskrivning.
+%
+%    Omgivningen inleds som vanligt med |\begin{dagordning}| (analogt
+%    gäller för |dagordning*|), vilket skapar en tabell med kolumner för
+%    paragraf, ärende, åtgärd och bilaga. Inuti den omgivningen fyller man
+%    själv på med ett eller flera |\punkt|, som skapar
+%    tabellraderna. Omgivningen bör inte innehålla något annat än
+%    |\punkt|.
+%
+%    \DescribeMacro{\punkt}|\punkt| skapar en tabellrad, och kräver tre
+%    obligatoriska argument. Det första är ärendets namn (t.ex. Tid och
+%    sätt), det andra är åtgärden (t.ex. Beslut eller Information) och det
+%    tredje och sista listar alla eventuella bilagor som hör till
+%    punkten. Notera att man inte behöver ange vilket nummer respektive
+%    punkt har~-- detta beräknas automatiskt. Om man behöver skjuta in med
+%    någon extra punkt (t.ex. \S2.5), så kan man ange ett valfritt argument
+%    innan de tre obligatoriska som talar om vilket nummer punkten ska
+%    ha. Om detta valfria argument anges så räknas inte det automatiska
+%    paragrafnumret upp, vilket gör att
+%\begin{verbatim}
+%\punkt{OFMA}{}{}
+%\punkt[1.5]{Tid och sätt}{Beslut}{}
+%\punkt{Val av justerare}{Beslut}{}
+%\end{verbatim}
+%    producerar en lista med \S1, \S1.5 och \S2.
+%
+%    Omgivningen \DescribeEnv{dagordning}|dagordning| accepterar ett
+%    valfritt argument i form av den totala bredden för tabellen. Om detta
+%    utelämnas kommer tabellen att ta över hela sidbredden, vilket kan se
+%    konstigt ut om ärendenamnen är korta eftersom det är ärendekolumnens
+%    bredd som anpassas och sträcks ut. Vill man att tabellen ska vara
+%    11\,cm bred kan man inleda dagordningen med
+%\begin{verbatim}
+%\begin{dagordning}[11cm]
+%\end{verbatim}
+%
+%    Ibland vill man kunna styra kolumnbredderna mer än vad |dagordning|
+%    tillåter, och då kan man använda
+%    \DescribeEnv{dagordning*}|dagordning*|. Skillnaden ligger i att det
+%    valfria argumentet byggs upp av en kommaseparerad lista med mått för
+%    respektive kolumn och kolumnen som helhet. Varje mått anges som
+%    \[ \text{\itshape nyckel} = \text{\itshape längd}, \]
+%    där nyckeln är någon av de listade i tabell~\ref{tab:nycklar}. I
+%    praktiken kan det se ut så här:
+%\begin{verbatim}
+%\begin{dagordning*}[total=10cm,
+%                    bilaga=2cm]
+%\end{verbatim}
+%    Detta innebär att hela tabellen kommer att vara 10\,cm bred, att
+%    bilagekolumnen sätts till 2\,cm, att paragrafkolumnen och
+%    åtgärdskolumnen får ta den plats de behöver samt att ärendekolumnen
+%    får det utrymme som råkar bli kvar. I exemplet har måttlistan
+%    radbrutits för att öka läsbarheten, men detta är inget krav.
+% 
+%    \begin{table}
+%      \begin{tabularx}{\textwidth}{lX}
+%        \toprule
+%        \emph{nyckel}     & \emph{betydelse} \\ \midrule
+%        \texttt{total}    & Total bredd på hela tabellen. Motsvarar det
+%                            valfria argumentet till den äldre
+%                            \texttt{dagordning}-omgivningen. Standardvärdet
+%                            är |\textwidth|, alltså sidbredd minus 
+%                            marginaler. \\
+%        \texttt{paragraf} & Bredden på paragrafkolumnen. Om utelämnad så
+%                            tillåts kolumnen breda ut sig så mycket den
+%                            vill. \\ 
+%        \texttt{arende}   & Bredden på ärendekolumnen. Om utelämnad så får
+%                            kolumnen breda ut sig så mycket den kan tills
+%                            totalbredden uppnåtts. \\
+%        \texttt{atgard}   & Bredden på åtgärdskolumnen. Om utelämnad så
+%                            tillåts kolumnen breda ut sig så mycket den
+%                            vill. \\ 
+%        \texttt{bilaga}   & Bredden på bilagekolumnen. Om utelämnad så
+%                            tillåts kolumnen breda ut sig så mycket den
+%                            vill. \\ \bottomrule
+%      \end{tabularx}
+%      \caption{Möjliga måttnycklar att använda med \texttt{dagordning*}.}
+%      \label{tab:nycklar}
+%    \end{table}
+%
+%    Rent allmänt vad gäller måtten som man anger så kan man välja vilken
+%    enhet som helst bland de som \TeX{} accepterar, bl.a. cm, in, pt eller
+%    mm. Det går även att ange befintliga längder såsom |\textwidth|
+%    (betydligt smartare än att lura ut hur mycket som får plats och
+%    hårdkoda en längd), men även ange relativa mått genom att multiplicera
+%    en längd med ett tal. Vill man ha en tabell som utnyttjar 90\,\% av
+%    sidbredden så anger man |0.9\textwidth|.
+%
+% \subsection{Exempel}
+%
+%    Nedanstående är ett fullständigt exempel på hur en kallelse med
+%    föredragningslista kan se ut. Se även
+%    \url{http://www.dsek.lth.se/dwww/profil/kallelse.tex}.
+%    \begin{verbatim}
+%\documentclass{dsekkallelse}
+%
+%\setheader{SEKTIONSSTYRELSEN}{Kallelse S10}{2001--12--01}
+%
+%\title{Kallelse till styrelsemöte 2001-12-01}
+%\author{Fredrik Salomonsson}
+%
+%\begin{document}
+%
+%\section{Kallelse till styrelsemöte 2001--12--01}
+%
+%\tidochplats{Tisdagen den 1 december 2001 kl. 12:05}{RåsenbaD, iDét}
+%
+%\begin{dagordning}[13cm]
+%  \punkt{OFMÖ}{}{}
+%  \punkt{Tid och sätt}{Beslut}{}
+%  \punkt[2.5]{Godkännande av dagordningen}{Beslut}{Testar\ldots}
+%  \punkt{Övrigt}{}{}
+%  \punkt{OFMA}{}{}
+%\end{dagordning}
+%
+%\signature{Lund, dag som ovan}{Fredrik Salomonsson}{Sektionsordförande}
+%
+%\end{document}
+%    \end{verbatim}
+%
+% \subsection{Konvertering till text}
+%
+%    Eftersom kallelser vanligen skickas ut via mail kan det vara praktiskt
+%    att kunna konvertera dem till text på ett enkelt sätt. Därför finns
+%    programmet \texttt{kallelse2text}. Programmet avhandlas i
+%    \textsl{Dokumentproduktion på D-sektionen}\footnote{%
+%    http://www.dsek.lth.se/sektionen/propm/dokument/dsekdokument.pdf},
+%    men endast manualsidan är helt uttömmande.
+%
+% \appendix
+% \section{Komplett och kommenterad källkod}
+%
+% \subsection{Prolog}
+%
+%    Börja med att tala om att vi behöver \LaTeXe{} och eventuellt vilken
+%    version vi också behöver. Skriv också ut filnamnet och versionen när
+%    filer som använder \textsf{dsekkallelse} kompileras.
+%    \begin{macrocode}
+%<*class>
+\NeedsTeXFormat{LaTeX2e} \ProvidesClass{dsekkallelse} \typeout{This is
+  dsekkallelse.cls, version 2002-11-23}
+%    \end{macrocode}
+%    Eftersom \textsf{dsekkallelse} baserar sig på \textsf{article} så
+%    laddar vi den klassen först.
+%    \begin{macrocode}
+\LoadClass[a4paper,11pt]{article}
+%    \end{macrocode}
+%    Inkludera nu de paket som behövs; knappast några
+%    överraskningar. \textsf{calc} används för att lättare beräkna
+%    fram en del mått, \textsf{lastpage} placerar en etikett sist i
+%    dokumentet, \textsf{ifthen} tillhandahåller \verb|\ifthenelse|
+%    som gör det trevligare att konstruera if-satser, \textsf{tabularx}
+%    tillhandahåller omgivningen med samma namn och kolumntypen |X|,
+%    \textsf{keyval} gör det lätt att parsa t.ex. argument på formen
+%    \begin{displaymath}
+%      \text{\emph{nyckel}}_1=\text{\emph{värde}}_1,\ 
+%      \text{\emph{nyckel}}_2=\text{\emph{värde}}_2,\ \ldots
+%    \end{displaymath}
+%    vilket används av omgivningen |dagordning*|, och \textsf{booktabs},
+%    slutligen, tillhandahåller några kommandon för snyggare linjer i
+%    tabeller som lämpligen används i stället för \verb|\hline|.
+%    \begin{macrocode}
+\RequirePackage{calc}
+\RequirePackage{lastpage}
+\RequirePackage{array}
+\RequirePackage{ifthen}
+\RequirePackage{tabularx}
+\RequirePackage{keyval}
+\RequirePackage{booktabs}
+\RequirePackage[nopdfbookmarks]{dsekcommon}
+%    \end{macrocode}
+%    Se till att vi använder \textsf{fancyhdr} och sätt en lämplig
+%    sidfot.
+%    \begin{macrocode}
+\pagestyle{fancy}
+\lfoot{}
+\cfoot{\footnotesize{\thepage\ (\nohyperpageref{LastPage})}}
+\rfoot{}
+%    \end{macrocode}
+%    Definiera räknaren \texttt{dagordning} som ska användas för
+%    numreringen av punkterna i omgivningen med samma namn.
+%    \begin{macrocode}
+\newcounter{dagordning}
+%    \end{macrocode}
+%    Den här sortens dokument behöver ingen numrering av avsnitt.
+%    \begin{macrocode}
+\setcounter{secnumdepth}{0}
+%    \end{macrocode}
+%
+% \subsection{Nya makron}
+%
+% \begin{macro}{\tidochplats}
+%    \verb|\tidochplats| implementeras som en vanlig tabell. De två
+%    argumenten används för tiden resp. platsen för mötet. Börja med
+%    lite vertikalt utrymme (hade kanske varit lite snyggare att
+%    använda en eller ett par \verb|\bigskip| i stället) och påbörja
+%    sedan en ny grupp för att den senare ändringen av
+%    \verb|\extrarowheight| inte ska påverka de eventuella
+%    efterföljande tabellerna i dokumentet.
+%    \begin{macrocode}
+\newcommand{\tidochplats}[2]{%
+  \tthdump{%
+    \vspace{5mm}%
+    \begingroup
+    \setlength{\extrarowheight}{2mm}%
+%    \end{macrocode}
+%    Skapa en vanlig |tabular|-baserad tabell. \verb|@{}| i
+%    början av kolumnspecifikationen tar bort det horisontella utrymme
+%    om \verb|\tabcolsep| som annars hade funnits före den första
+%    kolumnen.
+%    \begin{macrocode}
+    \begin{tabular}{@{}ll}
+      \textbf{Tid:}   & #1 \\
+      \textbf{Plats:} & #2 \\
+    \end{tabular}
+%    \end{macrocode}
+%    Avsluta den tidigare påbörjade gruppen.
+%    \begin{macrocode}
+  \endgroup}
+%    \end{macrocode}
+%    \TtH reder i stort sett ut att skapa en snygg tabell av
+%    |\tidochplats| utan hjälp, men eftersom vi vill ha med
+%    |border="0"|, |class="inpar"| och |valign="top"| så får det bli
+%    en specialare i alla fall.
+%    \begin{macrocode}
+%%tth:\special{html:<table border="0" class="inpar">}
+%%tth:\special{html:  <tr>}
+%%tth:\special{html:    <td valign="top"><b>Tid:</b></td>}
+%%tth:\special{html:    <td valign="top">}#1\special{html:</td>}
+%%tth:\special{html:  </tr>}
+%%tth:\special{html:  <tr>}
+%%tth:\special{html:    <td valign="top"><b>Plats:</b></td>}
+%%tth:\special{html:    <td valign="top">}#2\special{html:</td>}
+%%tth:\special{html:  </tr>}
+%%tth:\special{html:</table>}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\definepunkt}
+%    |\definepunkt| används av både |dagordning| och |dagordning*| för att
+%    definiera |\punkt|. Ej avsett för slutanvändaren.
+%    \begin{macrocode}
+\newcommand{\definepunkt}{%
+%    \end{macrocode}
+% \begin{macro}{\punkt}
+%    Makrot \verb|\punkt| används för varje punkt på dagordningen. Ett
+%    valfritt argument förutom de tre obligatoriska (ärende, åtgärd
+%    och bilaga) finns, och anger i så fall vilket nummer som punkten
+%    ska ha ifall den automatiska numreringen inte räcker till
+%    (t.ex. om man behöver \S 2.5).
+%    \begin{macrocode}
+    \newcommand{\punkt}[4][\arabic{dagordning}]{%
+%    \end{macrocode}
+%    Ifall det valfri argumentet används för att ändra numreringen så
+%    ska inte den vanliga räknaren ökas på.
+%    \begin{macrocode}
+      \ifthenelse{\equal{##1}{\arabic{dagordning}}}{%
+        \stepcounter{dagordning}}{}%
+%    \end{macrocode}
+%    Skriv en rad till tabellen med de i argumenten specificerade
+%    värdena. Den sista kolumnen innehåller en fuling som kan verka
+%    meningslös, men det fanns en anledning till att den infördes en
+%    gång i tiden (innan \textsf{docstrip} började användas för att
+%    kommentera koden). Har för mig att \TeX{} gnällde om ''no line
+%    to end'', men jag har inte lyckats reproducera felet.
+%    \begin{macrocode}
+      \S ##1 & \raggedright ##2 & ##3 & \ifthenelse{\equal{##4}{}}{}{##4} \\}}%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{environment}{dagordning}
+%    Omgivningen \texttt{dagordning} används för att skapa själva
+%    dagordningen. Den bestämmer kolumnbredderna i tabellen och
+%    startar en \texttt{tabular}-omgivning där själva punkteran kommer
+%    att finnas.
+%
+%    Ett valfritt argument accepteras. Det innehåller i så fall den
+%    totala tabellbredden. Standardvärdet är att hela sidans bredd
+%    används, men för de flesta användningsområden är detta alldeles
+%    för brett.
+%    \begin{macrocode}
+\newenvironment{dagordning}[1][\textwidth]{%
+%    \end{macrocode}
+%    För att alla ändringar av längder etc ska bli lokala öppnas en
+%    egen grupp för omgivningen.
+%    \begin{macrocode}
+  \begingroup
+%    \end{macrocode}
+%    Nollställ räknaren för punkterna varje gång omgivningen
+%    inleds. Det är knappast troligt att ett dokument kommer att
+%    innehålla flera dagordningar, men man vet aldrig.
+%    \begin{macrocode}
+  \setcounter{dagordning}{0}%
+%    \end{macrocode}
+%    Definiera ett antal nya längder och beräkna hur breda kolumnerna
+%    ska vara. Eventuellt är det bara dumt att definiera längderna här
+%    eftersom standard-\TeX{} ändå inte kan återta minnet som används
+%    av räknarna\footnote{Osäker; detta bör undersökas.}, men
+%    sannolikheten att man ska använda det här omgivningen fler än en
+%    gång i samma dokument är som sagt liten.
+%    \begin{macrocode}
+  \newlength{\@cwi}%
+  \newlength{\@cwii}%
+  \newlength{\@cwiii}%
+  \newlength{\@cwiv}%
+  \settowidth{\@cwi}{\S 18.8}%
+  \settowidth{\@cwiii}{Information}%
+  \setlength{\@cwiv}{2cm}%
+%    \end{macrocode}
+%    Just den här raden för beräkning av bredden av kolumn två kan
+%    kommenteras lite extra. Att detta alls kan göras så här enkelt
+%    beror på \textsf{calc}-paketet, men det intressanta ligger i den
+%    sista termen~-- eftersom varje tabellkolumn upptar
+%    \verb|\tabcolsep| på var sida om sig måste sju \verb|\tabcolsep|
+%    räknas bort för att inte kolumnen ska bli för bred.
+%    \begin{macrocode}
+  \setlength{\@cwii}{#1 - \@cwi - \@cwiii - \@cwiv - 7\tabcolsep}%
+%    \end{macrocode}
+%    Låt |\definepunkt| definera |\punkt| åt oss.
+%    \begin{macrocode}
+  \definepunkt
+%    \end{macrocode}
+%    Nu återgår vi till koden som körs efter varje
+%    \verb|\begin{dagordning}|. Inled med lite vertikalt utrymme och
+%    se med \verb|\noindent| till att det inte blir något oönskat
+%    indrag.
+%    \begin{macrocode}
+  \vspace{10mm}%
+  \noindent
+%    \end{macrocode}
+%    Inled \texttt{tabular}-omgivningen. Den består av fyra p-kolumner
+%    med de bredder som beräknades tidigare. Därefter infogas den
+%    första raden, som innehåller kolumnrubrikerna. Slutligen används
+%    \verb|\midrule| från \textsf{booktabs} för att ge en snygg
+%    horisontell linje.
+%    \begin{macrocode}
+  \begin{tabular}{@{}p{\@cwi}p{\@cwii}p{\@cwiii}p{\@cwiv}}
+    & \small Ärende & \small Åtgärd & \small Bilaga \\ \midrule}
+%    \end{macrocode}
+%    Avsluta tabellen, infoga vertikalt utrymme motsvarande en rad
+%    samt avsluta gruppen som påbörjades i början av omgivningen.
+%    \begin{macrocode}
+  {\end{tabular}
+   \vspace{\baselineskip}
+   \endgroup}
+%    \end{macrocode}
+% \end{environment}
+% \begin{environment}{dagordning*}
+%    Eftersom vanliga |dagordning| är ganska inflexibel och inte tillåter
+%    några justeringar av kolumnbredderna utan bara av hela tabellens
+%    storlek så finns |dagordning*|. Varje kolumns bredd kan specificeras
+%    som ett valfritt argument, vars innehåll tolkas av \textsf{keyval}.
+%
+%    Börja med att tala om för \textsf{keyval} att vi vill att den ska
+%    kunna tolka ett antal nycklar (det andra argumentet) i namnrymden
+%    ''dagordning''. Det sista argumentet anger vad som ska hända när den
+%    angivna nyckeln påträffas.
+%    \begin{macrocode}
+\define@key{dagordning}{total}{\def\@doctot{#1}}
+\define@key{dagordning}{paragraf}{\def\@doci{p{#1}}}
+\define@key{dagordning}{arende}{\def\@docii{p{#1}}}
+\define@key{dagordning}{atgard}{\def\@dociii{p{#1}}}
+\define@key{dagordning}{bilaga}{\def\@dociv{p{#1}}}
+%    \end{macrocode}
+%    Definiera omgivningen med ett valfritt argument, vars standardvärde är
+%    tomt.
+%    \begin{macrocode}
+\newenvironment{dagordning*}[1][]{%
+%    \end{macrocode}
+%    Definera standardvärdena för de makron som omdefinieras enligt ovan
+%    när man använder \textsf{keyval}.
+%    \begin{macrocode}
+  \def\@doctot{\textwidth}
+  \def\@doci{l}
+  \def\@docii{X}
+  \def\@dociii{l}
+  \def\@dociv{l}
+%    \end{macrocode}
+%    Låt \textsf{keyval} tolka det argument vi fått och utföra vad som
+%    anges i |\define@key|-deklarationerna ovan.
+%    \begin{macrocode}
+  \setkeys{dagordning}{#1}%
+%    \end{macrocode}
+%    Nollställ räknaren för paragrafnumrena.
+%    \begin{macrocode}
+  \setcounter{dagordning}{0}%
+%    \end{macrocode}
+%    Låt |\definepunkt| definera |\punkt| åt oss.
+%    \begin{macrocode}
+  \definepunkt
+%    \end{macrocode}
+%    Skapa ett vertikalt utrymme innan listan och se till att det inte blir
+%    något indrag.
+%    \begin{macrocode}
+  \vspace{10mm}%
+  \noindent
+%    \end{macrocode}
+%    Sätt |\@coldef| till den kolumnspecifikation som vi ska ge vidare till
+%    |\tabularx|. Eftersom |\tabularx| inte själv expanderar sitt andra
+%    argument måste vi se till att allt är färdigexpanderat först, varför
+%    |\edef| används i stället för vanliga |\def| eller
+%    |\newcommand|\footnote{Se s.~215 i \textsl{The \TeX book}.}. Notera
+%    den extra grupperingen inuti ersättningstexten så att |\tabularx| inte
+%    bara plockar åt sig det första tecken i kolumnspecifikationen. 
+%    Lösningen med |\edef| gör att man inte kan peta in vad som helst~--
+%    även andra makron kommer ju att expanderas, vilket kan leda till fel.
+%    \begin{macrocode}
+  \edef\@coldef{{@{}\@doci\@docii\@dociii\@dociv}}
+%    \end{macrocode}
+%    Till att börja med måste vi använda |\tabularx| i stället för
+%    |\begin{tabularx}| eftersom omgivningen explicit letar efter
+%    |\endtabularx| som avslutning på tabellen, vilket leder till att vi
+%    inte kan använda |\end{tabularx}|. Samma sak gäller för
+%    |verbatim|-omgivningen.
+%
+%    Som jag skrev tidigare expanderar inte |\tabularx| sitt andra
+%    argument, så om vi försöker med 
+%\begin{verbatim}
+%\tabularx\@doctot\@coldef
+%\end{verbatim}
+%    så kommer den gnälla över att ''\textbackslash@coldef'' inte är en giltig
+%    kolumnspecification. Lösningen är att använda |\expandafter|, som
+%    läser in två tokens $t_1$ och $t_2$, expanderar $t_2$ och 
+%    därefter $t_1$. Här blir det lite extra knepigt eftersom vi egentligen
+%    hade velat expandera $t_3$ först av allt, men detta kan vi gå runt
+%    genom att använda |\expandafter| två gånger. Den första expanderar den
+%    andra, som i sin tur expanderar |\@coldef|.
+%    \begin{macrocode}
+  \expandafter\tabularx\expandafter\@doctot\@coldef
+%    \end{macrocode}
+%    Skapa raden med kolumnrubriker.
+%    \begin{macrocode}
+    & \small Ärende & \small Åtgärd & \small Bilaga \\ \midrule}
+%    \end{macrocode}
+%    Avslutningen för omgivningen. 
+%    \begin{macrocode}
+  {\endtabularx
+   \vspace{\baselineskip}}
+%    \end{macrocode}
+% \end{environment}
+%    \begin{macrocode}
+%</class>
+%    \end{macrocode}
+%
+% \Finale

@@ -1,0 +1,377 @@
+%\iffalse
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[T1]{fontenc}
+\usepackage[swedish]{babel}
+\usepackage[T1]{url}
+\usepackage{dsekcommands}
+\usepackage{rcsinfo}
+\usepackage{ifpdf}
+
+\ifpdf
+  \RequirePackage[pdfpagemode=UseOutlines,
+                  bookmarks=true,
+                  bookmarksnumbered,
+                  bookmarksopen=true,
+                  pdfauthor={Magnus Bäck},
+                  pdftitle={Dokumentklassen dsekgather},
+                  colorlinks=true,
+                  linkcolor=black,
+                  urlcolor=black]{hyperref}[2001/04/13]
+\fi
+
+\rcsInfo $Id: dsekgather.dtx,v 1.4 2002/08/17 00:33:32 magnus Exp $
+\def\rcsIsoDateHelper#1/#2/#3{#1--#2--#3}
+\def\rcsIsoDate{\expandafter\rcsIsoDateHelper\rcsInfoDate}
+
+\EnableCrossrefs
+
+\def\UrlFont{\sl}
+
+\newcommand{\orgname}{Datatekniksektionen inom TLTH\xspace}
+\newcommand{\TtH}{%
+  T\kern-.25em\raise-.4ex\hbox{\sc\uppercasesc t}\kern-.10emH\xspace}
+\newcommand{\pdfLaTeX}{pdf\LaTeX\xspace}
+\newcommand{\pdfTeX}{pdf\TeX\xspace}
+
+\begin{document}
+  \DocInput{dsekgather.dtx}
+\end{document}
+%</driver>
+%\fi
+% \title{Dokumentklassen \textsf{dsekgather}}
+% \author{Magnus Bäck \texttt{<magnus@dsek.lth.se>}}
+% \date{\rcsIsoDate, v\rcsInfoRevision}
+%
+% \maketitle
+%
+% \tableofcontents
+%
+% \section{Introduktion}
+%
+%    Dokumentklassen \textsf{dsekgather} används tillsammans med
+%    kommandot \texttt{gather} för att slå ihop ett eller flera
+%    PDF-dokument till ett enda dokument. Primärt användningsområde
+%    för detta är möteshandlingar, men det är användbart i alla fall
+%    där man skapa dokument som består av andra deldokument.
+%
+%    Funktionaliteten är helt avhängig av paketen \textsf{pdfpages}
+%    och \textsf{eso-pic}. Det förstnämnda kan på ett enkelt sätt
+%    inkludera hela eller delar av PDF-dokument, vilket ju är precis
+%    vad vi vill göra med \textsf{dsekgather}. \textsf{eso-pic} är ett
+%    användbart paket som ändrar om outputrutinen så att man precis
+%    före en sida skickas iväg kan lägga till valfri text/grafik på
+%    valfri plats på sidan via en picture-omgivning. Detta används för
+%    att placera ut sidnumreringen. Det hade gått att använda en
+%    vanlig sidfot för detta, men detta insågs först när lösningen
+%    baserad på \textsf{eso-pic} redan var färdigimplementerad.
+%
+%    Bruket av \textsf{pdfpages} gör att klassen enbart är användbar
+%    för produktion av PDF-dokument med \pdfLaTeX, och försök att
+%    använda vanliga \LaTeX{} (eller ens \pdfLaTeX i DVI-läge) är
+%    futila.
+%
+% \section{Användarhandledning}
+%
+%    I normala fall använder man knappast \textsf{dsekgather} själv
+%    utan kompilerar bara de dokument som genereras av
+%    \texttt{gather}\footnote{Se
+%    \url{http://www.dsek.lth.se/dwww/program/gather.html}.}, men det
+%    finns saker som kan vara värda att nämna i alla fall.
+%
+%    Det klart viktigaste makrot är
+%    \DescribeMacro{\addpdffile}\verb|\addpdffile| som inkluderar 
+%    ett PDF-dokument. Makrot tar fem argument:
+%    \begin{enumerate}
+%    \item Namnet på filen som ska inkluderas. Filtillägget
+%    \texttt{.pdf} kan utelämnas.
+%    \item Titeln på dokumentet. Detta kommer att stå i
+%    innehållsförteckningen och bokmärkeslistan.
+%    \item Namnet på personen som ska stå som författare för det
+%    deldokumentet. För närvarande används inte författarnamnet till
+%    något.
+%    \item Namnet på filen som ska inkluderas, så som det bör listas i
+%    dokumentet. Kan t.ex. användas för att inkludera eller exkludera
+%    dokumentsökvägen (eller tvärtom).
+%    \item Eventuella extra argument till \verb|\includepdf|. Detta är
+%    i princip bara användbart i ett fall, nämligen för dokument som
+%    innehåller flera sidor. Anger man ingenting här kommer nämligen
+%    bara den första sidan att inkluderas, men med
+%    t.ex. \texttt{pages=\{1-3\}} inkluderas sidorna 1~--~3. Läs
+%    dokumentationen för \textsf{pdfpages} för exakt information om
+%    hur \texttt{pages} fungerar samt alla andra optioner som kan
+%    användas här.
+%    \item Vilken nivå det här dokumentet har. För toppnivådokument är
+%    detta typiskt \texttt{section}, men även \texttt{subsection} och
+%    \texttt{subsubsection} går fint. Värdet här påverkar hur
+%    deldokumentet ser ut i innehållsförteckningen och i bokmärkena.
+%    \end{enumerate}
+%
+%    För dokument som innehåller deldokument med olika nivåer som man
+%    vill åskådliggöra finns det ett par olika alternativ. Om det
+%    finns ett dokument som tjänar som en inledning för deldokumenten
+%    med en lägre nivå är det bara att sänka nivån (femte argumentet
+%    till \verb|\addpdffile|), men i annat fall vill man förmodligen
+%    bara ha en rubrik i innehållsförteckningen. För att göra detta en
+%    aning enklare finns makrot
+%    \DescribeMacro{\addtocentry}\verb|\addtocentry| som tar två
+%    argument; önskad nivå på avsnittet (\texttt{section},
+%    \texttt{subsection}, \ldots) samt titeln på avsnittet. Därefter
+%    gör man på samma sätt som i det första fallet.
+%
+% \subsection{Exempel}
+%
+%    Nedan följer ett komplett exempel på hur \textsf{dsekgather} kan
+%    användas.
+%    \begin{verbatim}
+%\documentclass{dsekgather}
+%
+%\title{Möteshandlingar HT-1}
+%
+%\begin{document}
+%
+%\maketitle
+%\tableofcontents
+%
+%\addpdffile{kallelse_HT1-2001.pdf}{%
+%  Kallelse till sektionsmöte HT-1}{Fredrik Salomonsson}{%
+%  kallelse\_HT1-2001.pdf}{}{section}
+%
+%\addpdffile{foredlista_HT1-2001.pdf}{%
+%  Föredragningslista HT1}{}{%
+%  foredlista\_HT1-2001.pdf}{}{section}
+%
+%\addtocentry{section}{Bilagor}
+%
+%\addpdffile{bilaga_HT1-2001-1.pdf}{%
+%  Beslutsförslag}{}{%
+%  bilaga\_HT1-2001-1.pdf}{}{subsection}
+%
+%\addpdffile{bilaga_HT1-2001-2.pdf}{%
+%  Beslutsuppföljning}{}{%
+%  bilaga\_HT1-2001-2.pdf}{}{subsection}
+%
+%\addpdffile{protokoll_HT1-2001.pdf}{%
+%  Protokoll sektionsmöte HT1 2001--09--27}{Christian Berling}{%
+%  protokoll\_HT1-2001.pdf}{pages={1-3}}{section}
+%
+%\end{document}
+%    \end{verbatim}
+%
+% \appendix
+% \section{Komplett och kommenterad källkod}
+%
+% \subsection{Prolog}
+%
+%    Börja med att tala om att vi behöver \LaTeXe{} och eventuellt vilken
+%    version vi också behöver. Skriv också ut filnamnet och versionen när
+%    filer som använder \textsf{dsekgather} kompileras.
+%    \begin{macrocode}
+%<*class>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{dsekgather}
+\typeout{This is dsekgather.cls, version 2001-11-18}
+%    \end{macrocode}
+%    Se till att optionen \texttt{twoside} propageras till
+%    \textsf{article}-klassen när den laddas nedan.
+%    \begin{macrocode}
+\DeclareOption{twoside}{%
+  \PassOptionsToClass{twoside}{article}}
+\ProcessOptions\relax
+%    \end{macrocode}
+%    Eftersom \textsf{dsekgather} baserar sig på \textsf{article} så
+%    laddar vi den klassen först.
+%    \begin{macrocode}
+\LoadClass[a4paper,11pt]{article}
+%    \end{macrocode}
+%    Ladda de paket som behövs. De centrala paketen är förstås
+%    \textsf{eso-pic} och \textsf{pdfpages}, utan vars hjälp den här
+%    klassen aldrig hade existerat.
+%    \begin{macrocode}
+\RequirePackage{eso-pic}
+\RequirePackage{pdfpages}
+\RequirePackage{lastpage}
+\RequirePackage{dsekcommon}
+\RequirePackage{booktabs}
+\RequirePackage{tabularx}
+%    \end{macrocode}
+%    Detta kan tyckas vara lite onödigt, men av någon anledning blir
+%    marginalerna som \textsf{dsekcommon} lämnar efter sig
+%    jättekonstiga. Kanske beror på avsaknaden av sidhuvud?
+%    \textsf{geometry} ser i alla fall till att skåpet står där det
+%    ska.
+%    \begin{macrocode}
+\RequirePackage[top=10mm,nohead]{geometry}
+%    \end{macrocode}
+%
+%    \subsection{Nya och omdefinierade makron och omgivningar}
+%    \label{sec:macros}
+% 
+% \begin{macro}{\setshipoutpicture}
+%    Definiera makrot \verb|\setshipoutpicture| för att placera dit
+%    sidnumreringen med hjälp av picture-omgivningen som skapas av
+%    \textsf{eso-pic}.
+%    \begin{macrocode}
+\newcommand{\setshipoutpicture}{%
+  \AddToShipoutPicture{%
+%    \end{macrocode}
+%    Säkerställ att picture-omgivningen mappar en logisk punkt till
+%    1\,mm.
+%    \begin{macrocode}
+    \setlength{\unitlength}{1mm}%
+%    \end{macrocode}
+%    Vid utplaceringen av sidnumret används \verb|\page@alignment| i
+%    början på raden. Genom att sätta den till antingen \verb|\relax|
+%    eller \verb|\hfill| kan texten enkelt höger- eller
+%    vänsterjusteras beroende på om dokumentet är enkel- eller
+%    dubbelsidigt och om det är en höger- eller vänstersida.
+%    \begin{macrocode}
+    \if@twoside
+      \ifodd\c@page
+        \let\page@alignment\hfill
+      \else
+        \let\page@alignment\relax
+      \fi
+    \else
+      \let\page@alignment\hfill
+    \fi
+%    \end{macrocode}
+%    Skapa en 200\,mm bred \verb|\parbox| för sidnumret och låt det
+%    sydvästra hörnet ligga i sidkoordinaten (5\,mm,~7\,mm).
+%    \begin{macrocode}
+    \put(5,7){\parbox{200mm}{%
+      \normalfont\page@alignment
+      $\Sigma$ \thepage\ (\nohyperpageref{LastPage})}}}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\threadinfodict}
+%    \textsf{hyperref} fixar att skapa artiklar/trådar, vilket hade
+%    varit trevligt att utnyttja för deldokumenten. Det blir
+%    visserligen hopplöst att använda finessen fullt ut, men man
+%    skulle åtminstone kunna se vem som var författare till
+%    originaldokumenten samt vilket originaldokumentet hade för
+%    filnamn. Tyvärr verkar detta kräva mycket av \TeX:s strängpool,
+%    åtminstone om man som i det här fallet inte har konstanta
+%    värden. Empiriska tester har visat att minnet tar slut efter
+%    ca~15~dokument med en standardinstallation av te\TeX. Problemet
+%    kan delvis lösas genom att ställa upp strängpoolens storlek, men
+%    eftersom det enbart skulle höja ribban en liten bit känns det
+%    vettigare att slå av den här finessen tills bättre vetande
+%    erhålls.
+%    \begin{macrocode}
+%\renewcommand{\threadinfodict}{%
+%  /I << 
+%  /Title (\pdf@title)
+%  /Author (\pdf@author)
+%  /Keywords (\pdf@keywords)
+%  >>}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\tableofcontents}
+%    Definiera om \verb|\tableofcontents| genom att först spara undan
+%    den gamla definitionen i \verb|\org@tableofcontents|. Förekomsten
+%    av \verb|\setshipoutpicture| kommer sig av att vi vill ha
+%    (global) sidnumrering även på innehållssidan. Raden med
+%    \verb|\pdfbookmark| är bortkommenterad eftersom den av någon
+%    anledning inte fungerar.
+%    \begin{macrocode}
+\let\org@tableofcontents=\tableofcontents
+\renewcommand{\tableofcontents}{%
+%  \pdfbookmark{\contentsname}{foobar}%
+  \setshipoutpicture
+  \org@tableofcontents}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\addtocentry}
+%    \verb|\addpdffile| är det viktigaste makrot och det enda egna
+%    makrot som används utanför den här filen. Först läggs ett avsnitt
+%    till i innehållsförteckningen, varefter filen inkluderas med
+%    \verb|\includepdf|. Raderna med \verb|\pdfstringdef| är
+%    bortkommenterade eftersom \verb|\threadinfodict| inte fungerar
+%    riktigt bra enligt tidigare beskrivning. Därför har också
+%    skapandet av artiklarna stängts av med \texttt{thread=false}.
+%    \begin{macrocode}
+\newcommand{\addpdffile}[6]{%
+  \addtocentry{#6}{#2}%
+%  \pdfstringdef{\pdf@title}{#2}%
+%  \pdfstringdef{\pdf@author}{#3}%
+%  \pdfstringdef{\pdf@keywords}{#4}%
+  \ifx\@todfile\undefined\else
+    \write\@todfile{\string\docline}
+    \write\@todfile{  {#2}{#3}{#4}}
+  \fi
+  \includepdf[thread=false,#5]{#1}}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}{\addtocentry}
+%    Litet hjälpmakro för att lägga till avsnitt i
+%    innehållsförteckningen (och därmed också bland bokmärkena).
+%    \begin{macrocode}
+\newcommand{\addtocentry}[2]{%
+  \clearpage
+  \phantomsection
+  \addcontentsline{toc}{#1}{#2}}
+%    \end{macrocode}
+% \end{macro}
+%    \begin{macrocode}
+\newcommand{\tod@h@document}{dokument}
+\newcommand{\tod@h@author}{författare}
+\newcommand{\tod@h@filename}{filnamn}
+\newcommand{\tod@h@font}{\itshape}
+%    \end{macrocode}
+% \begin{macro}{\tableofdocuments}
+%    \begin{macrocode}
+\newcommand{\tableofdocuments}{%
+  \begingroup
+  \newcommand{\docline}[3]{%
+    ##1 & ##2 & \path{##3} \\}
+  \IfFileExists{\jobname.tod}{%
+    \begin{tabularx}{\textwidth}{Xll}
+      \toprule
+      {\tod@h@font\tod@h@document} & {\tod@h@font\tod@h@author} &
+      {\tod@h@font\tod@h@filename} \\
+      \midrule
+      \input{\jobname.tod}
+      \bottomrule
+    \end{tabularx}}{}
+  \newwrite\@todfile
+  \openout\@todfile=\jobname.tod
+  \endgroup}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \subsection{Diverse}
+%    \label{sec:misc}
+% 
+%    För att slippa använda optionen \texttt{pagecommand} vid varje
+%    användning av \verb|\includepdf| används \verb|\includepdfset|.
+%    Det verkar som om \textsf{pdfpages} utnyttjar samma trick som
+%    \textsf{eso-pic} för att placera ut sidbilderna, vilket gör att
+%    vi måste använda \verb|\setshipoutpicture| en gång för varje sida.
+%    \begin{macrocode}
+\includepdfset{pagecommand={\setshipoutpicture}}
+%    \end{macrocode}
+%    Eftersom \textsf{babel} används räcker det inte med att ändra
+%    \verb|\contentsname| på vanligt sätt, ty \textsf{babel} sätter om
+%    samtliga sådana makron med hjälp av \verb|\AtBeginDocument|.
+%    Se även \url{http://www.tex.ac.uk/cgi-bin/texfaq2html?label=latexwords}.
+%    \begin{macrocode}
+\addto\captionsswedish{%
+  \renewcommand{\contentsname}{Innehållsförteckning}}
+%    \end{macrocode}
+%    Då vi använder ett eget trick för sidnumreringen vill vi
+%    förstås inte ha någon annan form av sidhuvud eller sidfot.
+%    \begin{macrocode}
+\pagestyle{empty}
+%    \end{macrocode}
+%    Se till att innehållsförteckningen och bokmärkena åtminstone
+%    fungerar ned till tredje nivån, dvs. \verb|\subsubsection|.
+%    \begin{macrocode}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+%    \end{macrocode}
+%    \begin{macrocode}
+%</class>
+%    \end{macrocode}
+%
+% \Finale

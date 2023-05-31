@@ -7,6 +7,9 @@ import livereload from 'rollup-plugin-livereload';
 import css from 'rollup-plugin-css-only';
 import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
+import json from '@rollup/plugin-json';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
+ 
 
 
 const production = !process.env.ROLLUP_WATCH;
@@ -38,7 +41,24 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'public/build/bundle.js'
+		file: 'public/build/bundle.js',
+		globals: {
+			'fs': 'fs',
+			'path': 'path',
+			'child_process': 'child_process',
+			'os': 'os',
+			'crypto': 'crypto',
+			'events': 'events',
+			'net': 'net',
+			'buffer': 'buffer',
+			'assert': 'assert',
+			'constants': 'constants',
+			'zlib': 'zlib',
+			'querystring': 'querystring',
+			'stream': 'stream',
+			'http': 'http',
+			
+		}
 	},
 	plugins: [
 		svelte({
@@ -67,6 +87,9 @@ export default {
 			sourceMap: !production,
 			inlineSources: !production
 		}),
+		json(),
+		nodePolyfills(),
+
 
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated
