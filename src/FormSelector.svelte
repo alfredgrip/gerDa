@@ -3,42 +3,39 @@
     import MotionForm from "./MotionForm.svelte";
     import PropositionForm from "./PropositionForm.svelte";
 
-    const forms =[
-		{id: 1, label: "Motion", component: "MotionForm.svelte"},
-		{id: 2, label: "Proposition", component: "PropositionForm.svelte"},
-		{id: 3, label: "Handling", component: "HandlingForm.svelte"}
-	]
+    const forms = [
+        { id: 1, label: "Motion", component: MotionForm },
+        { id: 2, label: "Proposition", component: PropositionForm },
+        { id: 3, label: "Handling", component: HandlingForm },
+    ];
 
     export let activeForm: number = 1;
-
-    function selectForm(id: number) {
-        activeForm = id;
-    }
-
 </script>
 
 <h2>Jag vill skapa en ...</h2>
 
 <div class="button-group">
-    {#each forms as form}
+    {#each forms as form, i}
         <button
             class:selected={activeForm === form.id}
             on:click={() => {
-                selectForm(form.id);
-            }}
-        >{form.label}</button>
+                activeForm = form.id;
+                console.log(activeForm);
+            }}>{form.label}</button
+        >
     {/each}
 </div>
 
-<div class="form-container {activeForm === 1 ? 'active' : 'hidden'}">
+<div class="form-container {[activeForm === 1 ? 'active' : 'hidden']}">
     <MotionForm />
 </div>
-<div class="form-container {activeForm === 2 ? 'active' : 'hidden'}">
+<div class="form-container {[activeForm === 2 ? 'active' : 'hidden']}">
     <PropositionForm />
 </div>
-<div class="form-container {activeForm === 3 ? 'active' : 'hidden'}">
+<div class="form-container {[activeForm === 3 ? 'active' : 'hidden']}">
     <HandlingForm />
 </div>
+
 <style>
     div {
         background-color: rgb(248, 248, 248);
@@ -61,5 +58,4 @@
     .hidden {
         display: none;
     }
-
 </style>

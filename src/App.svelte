@@ -3,8 +3,9 @@
 	import FormSelector from "./FormSelector.svelte";
 	import { onMount } from "svelte";
 
-	import activeForm from "./FormSelector.svelte";
-	
+	async function generateDocument() {
+	}
+
 </script>
 
 <main>
@@ -28,9 +29,6 @@
 	</div>
 	<hr />
 	<FormSelector />
-	<button class="generate-button" on:click={() => {}}
-		>Generera dokument!</button
-	>
 	<footer id="footer">
 		<p>Skapad av: Alfred Grip och Ludvig Svedberg</p>
 		<p>

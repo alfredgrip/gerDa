@@ -119,11 +119,6 @@
                 <button type="button" id="addAuthorButton"
                     >Lägg till författare</button
                 >
-                <div>
-                    <button type="submit" id="generateButton"
-                        >Generera dokument!</button
-                    >
-                </div>
             </form>
         </body>
     </main>

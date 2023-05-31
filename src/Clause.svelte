@@ -1,12 +1,10 @@
 <script lang="ts">
     export let first: boolean;
-    export let nbr: number;
     export let clauseText: string | undefined;
     export let descriptionText: string | undefined;
 </script>
 
 <div class="clause">
-    <label for="clause-text">Att-sats {nbr}:</label>
     <div class="clause-text">
         <input
             type="text"
@@ -22,7 +20,7 @@
         />
     </div>
     {#if !first}
-        <button type="button" id="removeClauseButton" on:click>
+        <button type="button" id="removeClauseButton" on:click style:hover="background-color: #f44336;">
             Ta bort att-sats
         </button>
     {/if}
@@ -34,6 +32,7 @@
         padding: 0.4rem;
         border-radius: 0.4rem;
         margin-bottom: 0.8rem;
+        border: 1px solid #ccc;
     }
 
     .clause-text {
@@ -50,8 +49,8 @@
         box-sizing: border-box;
     }
 
-    label {
-        text-align: left;
-        font-weight: bold;
+    #removeClauseButton:hover {
+        background-color: #f44336;
     }
+
 </style>

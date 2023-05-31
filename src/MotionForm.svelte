@@ -4,15 +4,32 @@
 
     import Author from "./Author.svelte";
     import Clause from "./Clause.svelte";
-    import { writable } from "svelte/store";
+    import { writable, type Writable } from "svelte/store";
+    
+    let title = "";
+    let meeting = "";
+    let body = "";
+    let signMessage = "";
+
+    type Clause = {
+        uuid: string | null;
+        clauseText: string;
+        descriptionText: string | null;
+    };
+
+    type Author = {
+        uuid: string | null;
+        name: string;
+        position: string | null;
+    };
 
     const clauseTemplate = {
-        id: null,
+        uuid: null,
         clauseText: "",
         descriptionText: "",
     };
 
-    let clauses = writable([{ ...clauseTemplate, id: 1 }]);
+    const clauses: Writable<Clause[]> = writable([{ ...clauseTemplate, uuid: crypto.randomUUID() }]);
 
     function numberOfClauses(): number {
         return $clauses.length;
@@ -21,21 +38,21 @@
     function addClause() {
         $clauses = [
             ...$clauses,
-            { ...clauseTemplate, id: numberOfClauses() + 1 },
+            { ...clauseTemplate, uuid: crypto.randomUUID() },
         ];
     }
 
-    function removeClause(id: number) {
-        $clauses = $clauses.filter((clause) => clause.id !== id);
+    function removeClause(uuid: string) {
+        $clauses = $clauses.filter((clause) => clause.uuid !== uuid);
     }
 
     const authorTemplate = {
-        id: null,
+        uuid: null,
         name: "",
         position: "",
     };
 
-    let authors = writable([{ ...authorTemplate, id: 1 }]);
+    const authors: Writable<Author[]> = writable([{ ...authorTemplate, uuid: crypto.randomUUID() }]);
 
     function numberOfAuthors(): number {
         return $authors.length;
@@ -44,14 +61,29 @@
     function addAuthor() {
         $authors = [
             ...$authors,
-            { ...authorTemplate, id: numberOfAuthors() + 1 },
+            { ...authorTemplate, uuid: crypto.randomUUID() },
         ];
     }
 
-    function removeAuthor(id: number) {
-        $authors = $authors.filter((author) => author.id !== id);
+    function removeAuthor(uuid: string) {
+        $authors = $authors.filter((author) => author.uuid !== uuid);
     }
 
+    export function getFormData() {
+        return {
+            title,
+            meeting,
+            body,
+            clauses: $clauses,
+            signMessage,
+            authors: $authors,
+        };
+    }
+
+    function generateDocument() {
+        const formData = getFormData();
+        console.log(JSON.stringify(formData));
+    }
 
 </script>
 
@@ -60,13 +92,14 @@
         <h1>Motion</h1>
         <form id="documentform">
             <label for="title">Titel:</label>
-            <input type="text" name="title" id="title" placeholder="Titel" />
+            <input type="text" name="title" id="title" placeholder="Titel" bind:value={title}/>
             <label for="meeting">Möte:</label>
             <input
                 type="text"
                 name="meeting"
                 id="meeting"
                 placeholder="t.ex. VTM, S05"
+                bind:value={meeting}
             />
             <div id="bodyContainer">
                 <label for="body" id="bodyLabel"
@@ -88,26 +121,27 @@
                     cols="30"
                     rows="10"
                     placeholder="Jag tycker att det sjungs för lite på..."
+                    bind:value={body}
                 />
             </div>
 
             <div id="outer-clause-container">
                 <h2>Att-satser</h2>
-                <div class="clausesContainer">
-                    {#each $clauses as clause, index (clause.id)}
+                <div class="clause-container">
+                    {#each $clauses as clause, index (clause.uuid)}
+                    <p>{index + 1}</p>
                         <Clause
                             first={index === 0}
-                            bind:nbr={clause.id}
                             bind:clauseText={clause.clauseText}
                             bind:descriptionText={clause.descriptionText}
-                            on:click="{() => removeClause(clause.id)}"
+                            on:click={() => removeClause(clause.uuid)}
                         />
                     {/each}
                 </div>
-            </div>
-            <button type="button" id="addClauseButton" on:click={addClause}
+                <button type="button" id="addClauseButton" on:click={addClause}
                 >Lägg till att-sats</button
             >
+            </div>
 
             <label for="signMessage">Signaturmeddelande:</label>
             <input
@@ -115,32 +149,29 @@
                 name="signMessage"
                 id="signMessage"
                 placeholder="För D-sektionen,"
+                bind:value={signMessage}
             />
 
             <div id="outer-author-container">
                 <h2>Författare</h2>
                 <div class="authorsContainer">
-                    {#each $authors as author, index (author.id)}
+                    {#each $authors as author, index (author.uuid)}
                         <Author
                             first={index === 0}
-                            bind:nbr={author.id}
                             bind:name={author.name}
                             bind:position={author.position}
-                            on:click={() => removeAuthor(author.id)}
+                            on:click={() => removeAuthor(author.uuid)}
                         />
                     {/each}
                 </div>
                 <button type="button" id="addAuthorButton" on:click={addAuthor}>
                     Lägg till författare</button
                 >
-
-                <div>
-                    <button type="submit" id="generateButton"
-                        >Generera dokument!</button
-                    >
-                </div>
             </div>
         </form>
+        <button class="generateButton" on:click={() => generateDocument()}
+            >Generera motion!</button
+        >
     </body>
 </main>
 
@@ -173,14 +204,6 @@
 
     input[type="text"],
     textarea,
-    select {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
 
     textarea {
         resize: vertical;
@@ -191,13 +214,6 @@
         flex-direction: column;
     }
 
-    #documentform button[type="submit"] {
-        font-size: 1.2em;
-        padding: 10px 20px;
-        text-align: center;
-        margin-top: 20px;
-    }
-
     #outer-clause-container,
     #outer-author-container,
     #bodyContainer {
@@ -205,6 +221,13 @@
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
+    }
+
+    .clause-container {
+        background: #eeeeee;
+        padding: 0.4rem;
+        border-radius: 0.4rem;
+        margin-bottom: 0.8rem;
     }
 
     #addClauseButton,
@@ -219,7 +242,7 @@
         text-align: left;
     }
 
-    #generateButton {
+    .generateButton {
         margin-top: 20px;
         padding: 10px 20px;
         background-color: #4caf50;
@@ -235,28 +258,6 @@
         background-color: #45a049;
     }
 
-    #addClauseButton:focus,
-    #addAuthorButton:focus,
-    #generateButton:focus {
-        outline: none;
-    }
-
-    #removeClauseButton,
-    #removeAuthorButton {
-        padding: 5px 10px;
-        margin-top: 5px;
-        background-color: #ccc;
-        color: rgb(0, 0, 0);
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        cursor: pointer;
-        text-align: left;
-    }
-
-    .removeClauseButton:hover,
-    .removeAuthorButton:hover {
-        background-color: #d32727;
-    }
 
     .info-circle {
         position: absolute;

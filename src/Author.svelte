@@ -1,6 +1,5 @@
 <script lang="ts">
     export let first: boolean;
-    export let nbr: number;
     export let name: string;
     // a position is optional
     export let position: string | undefined;
@@ -17,7 +16,7 @@
         />
     </div>
     {#if !first}
-        <button type="button" id="removeAuthorButton" on:click>
+        <button type="button" id="removeAuthorButton" on:click style:hover="background-color: #f44336;">
             Ta bort författare
         </button>
     {/if}
@@ -45,8 +44,8 @@
         box-sizing: border-box;
     }
 
-    label {
-        text-align: left;
-        font-weight: bold;
+    #removeAuthorButton:hover {
+        background-color: #f44336;
+        color: white;
     }
 </style>
