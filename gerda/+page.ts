@@ -1,7 +1,4 @@
-console.log("hej från +page.ts")
 import compileMotion from './compileMotion'
-import type { PageLoad } from './$types';
-// get port
 
 type Clause = {
     clause: string;
@@ -23,7 +20,6 @@ type MotionParams = {
 
 /** @type {import('./$types').PageLoad} */
 export function load({url}) {
-    //console.log("hej från load")
     const params = url.searchParams
     console.log(params)
     const title: string = params.get("title") ?? "no title"

@@ -1,57 +1,46 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-    import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 
-	// let searchParams = $page.url.searchParams;
-	// console.log('searchParams', searchParams.toString());
+	let isLoading = true;
+	let searchParams = $page.url.searchParams;
+	let error: string | undefined;
+	let fileurl: string;
+	const ALLOWED_TYPES = ['motion', 'proposition', 'handling'];
 
-	// async function generate() {
-	// 	try {
-	// 		console.log(`/api/generate?${searchParams}`);
-	// 		const response = await fetch(`/api/compile-motion?${searchParams.toString()}`, {
-	// 			method: 'GET'
-	// 		});
-	// 		const data = await response.text();
-	// 		console.log('data', data);
-	// 		console.log('does this get printed?');
-	// 	} catch (error) {
-	// 		console.log('error', error);
-	// 	}
-	// }
-
-    let responseData;
-    let searchParams = $page.url.searchParams;
-
-    /** @type {import('./$types').PageData} */
-    //export let data;
-    onMount(() => {
-        //console.log('data onMount', data);
-        generate();
-        
-    });
-    //console.log('data', data);
-
-    async function generate() {
-        try {
-            const response = await fetch(`/api/compile-motion?${searchParams.toString()}`, {
-                method: 'GET'
-            });
-            const data = await response.text();
-            console.log('data from generate', data);
-            responseData = data;
-        } catch (error) {
-            console.log('error', error);
-        }
-    }
-
+	/** @type {import('./$types').PageData} */
+	onMount(async () => {
+		const type = searchParams.get('type');
+		if (!type || !ALLOWED_TYPES.includes(type)) {
+			//return
+		}
+		const res = await fetch(`/api/compile?${searchParams.toString()}`, {
+			method: 'GET'
+		});
+		const body = await res.json();
+		if (!res.ok) {
+			error = body.message;
+		}
+		isLoading = false;
+		const fileName = body.fileName;
+		if (!fileName) {
+			return;
+		}
+		console.log('filename', fileName);
+		fileurl = fileName;
+		goto(fileurl);
+	});
 </script>
 
-{#await responseData}
-    <p>Generating...</p>
-{:then responseData}
-<button>Generate</button>
-<h2>Generated motion</h2>
-<pre>{responseData}</pre>
-{:catch error}
-<p style="color: red;">{error.message}</p>
-{/await}
+{#if isLoading}
+	<h1>Genererar ditt dokument...</h1>
+{:else}
+	<h1>{error ? `Error: ${error}` : fileurl}</h1>
+{/if}
+
+<style>
+	h1 {
+		text-align: center;
+	}
+</style>
