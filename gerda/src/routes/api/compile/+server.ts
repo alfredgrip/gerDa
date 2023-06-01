@@ -1,49 +1,50 @@
+type QueryParameters = {
+    type: string;
+    title: string;
+    meeting: string;
+    body: string;
+    clauses?: Clause[];
+    signMessage: string;
+    authors: Author[];
+}
+
 import { error } from '@sveltejs/kit';
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ url }: { url: URL }) {
-    const params = url.searchParams
-    console.log(params)
-    const title: string = params.get("title") ?? "no title"
-    const authors: string = params.get("authors") ?? "no authors"
-    const meeting: string = params.get("meeting") ?? "no meeting"
-    const body: string = params.get("body") ?? "no body"
-    const clauses: string = params.get("clauses") ?? "no clauses"
-    const type: string = params.get("type") ?? "no type"
-    const signMessage: string = params.get("signMessage") ?? "no signMessage"
+    console.log("url", url.searchParams.toString())
 
-    //checkValid(title, authors, meeting, body, clauses, type, signMessage)
-    const authorsArray = authors?.split(",").map((author) => {
-        const authorArray = author.split(":")
-        return {
-            name: authorArray[0],
-            position: authorArray[1]
-        }
-    })
-    const clausesArray = clauses?.split(",").map((clause) => {
-        const clauseArray = clause.split(":")
-        return {
-            clause: clauseArray[0],
-            description: clauseArray[1]
-        }
-    })
+    const params: URLSearchParams = url.searchParams
+    const parsedParams: QueryParameters = JSON.parse(JSON.stringify(Object.fromEntries(params)))
+    console.log("parsedParams", parsedParams)
+    // Type '{ [key: string]: string; }' is missing the following properties from type 'QueryParameters': type, title, meeting, body, and 2 more.
+    const title = parsedParams.title
+    const authors = parsedParams.authors
+    console.log("authors", authors)
+    const meeting = parsedParams.meeting
+    const body = parsedParams.body
+    const clauses = parsedParams.clauses
+    const type = parsedParams.type
+    console.log("type", type)
+    const signMessage = parsedParams.signMessage
+
     let finalParams: AcceptedParams;
     const baseParams: BaseParams = {
         title,
-        authors: authorsArray,
+        authors,
         meeting,
         body,
         signMessage
     }
-    if (type === 'motion') {
+    if (type === 'motion' && clauses) {
         finalParams = {
             ...baseParams,
-            clauses: clausesArray,
+            clauses: clauses,
             type: 'motion'
         }
-    } else if (type === 'proposition') {
+    } else if (type === 'proposition' && clauses) {
         finalParams = {
             ...baseParams,
-            clauses: clausesArray,
+            clauses: clauses,
             type: 'proposition'
         }
     } else {
@@ -52,6 +53,7 @@ export async function GET({ url }: { url: URL }) {
         })
     }
     try {
+        console.log("finalParams", finalParams)
         const { fileName } = await compile(finalParams)
         console.log("filename from +server.ts" + fileName)
         console.log("jsonstring", JSON.stringify({ fileName: fileName }))
@@ -105,7 +107,9 @@ function compile<T extends AcceptedParams>(params: T): Promise<ResponseType> {
         let generatedTex = "";
         switch (params.type) {
             case 'motion':
+                console.log("generating motion")
                 generatedTex = GENERATE_MOTION(params);
+                console.log("generated motionn, ", generatedTex)
                 break;
             case 'proposition':
                 generatedTex = GENERATE_PROPOSITION(params);
@@ -115,6 +119,7 @@ function compile<T extends AcceptedParams>(params: T): Promise<ResponseType> {
                 break;
         }
         const uniqueFileName = `${title.replace(/\s/g, '_')}_${Date.now()}.tex`
+        console.log("uniqueFileName", uniqueFileName)
         fs.writeFileSync(uniqueFileName, generatedTex)
 
         exec(`latexmk -f ${uniqueFileName} || true`, (err, _stdout, _stderr) => {
@@ -154,8 +159,10 @@ const GENERATE_CLAUSES = (clauses: Clause[]) => clauses.map((clause) =>
         ? `  \\ATTDESC{${clause.clause}}{${clause.description}}\n`
         : `  \\ATT{${clause.clause}}\n`)
     .join('');
-const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) => authors.map((author, index) => `  \\signature{${index === 0 ? (signMessage ?? 'För D-sektionen, dag som ovan') : ''}}{${author.name}}{${author.position ? `${author.position}` : ''}}
-`).join('');
+const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) =>
+    authors.map((author, index) =>
+        `  \\signature{${index === 0 ? (signMessage ?? 'För D-sektionen, dag som ovan') : ''}}{${author.name}}{${author.position ?? ''}}
+        `).join('');
 
 const GENERATE_MOTION = (params: MotionParams) => `
 \\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
