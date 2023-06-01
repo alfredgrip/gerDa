@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+    import { page } from '$app/stores';
 
 	// let searchParams = $page.url.searchParams;
 	// console.log('searchParams', searchParams.toString());
@@ -17,20 +18,27 @@
 	// 		console.log('error', error);
 	// 	}
 	// }
+
+    let responseData;
+    let searchParams = $page.url.searchParams;
+
     /** @type {import('./$types').PageData} */
-    export let data;
+    //export let data;
     onMount(() => {
-        console.log('data', data);
+        //console.log('data onMount', data);
+        generate();
+        
     });
-    console.log('data', data);
+    //console.log('data', data);
 
     async function generate() {
         try {
-            const response = await fetch(`/api/compile-motion?${data}`, {
+            const response = await fetch(`/api/compile-motion?${searchParams.toString()}`, {
                 method: 'GET'
             });
             const data = await response.text();
-            console.log('data', data);
+            console.log('data from generate', data);
+            responseData = data;
         } catch (error) {
             console.log('error', error);
         }
@@ -38,12 +46,12 @@
 
 </script>
 
-{#await data}
+{#await responseData}
     <p>Generating...</p>
-{:then data}
-<button on:click={generate}>Generate</button>
+{:then responseData}
+<button>Generate</button>
 <h2>Generated motion</h2>
-<pre>{data}</pre>
+<pre>{responseData}</pre>
 {:catch error}
 <p style="color: red;">{error.message}</p>
 {/await}

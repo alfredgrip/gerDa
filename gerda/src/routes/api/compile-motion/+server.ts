@@ -88,20 +88,20 @@ async function compileMotion(params: MotionParams): Promise<{ fileName: string }
     exec(`latexmk -f ${uniqueFileName} || true`, (err, _stdout, _stderr) => {
         if (err) {
             console.log("failed to compile")
-            console.log(err)
+            //console.log(err)
             return { fileName: uniqueFileName }
         }
         exec(`latexmk -c ${uniqueFileName} || true`, (err, stdout, _stderr) => {
             if (err) {
                 console.log("failed to clean up")
-                console.log(err)
+                //console.log(err)
                 return { fileName: uniqueFileName }
             }
             console.log(stdout)
             exec(`mv ${uniqueFileName.replace(".tex", ".pdf")} static/ || true`, (err, _stdout, _stderr) => {
                 if (err) {
                     console.log("failed to move pdf")
-                    console.log(err)
+                    //console.log(err)
                     return { fileName: uniqueFileName }
                 }
                 const pdfFileName = uniqueFileName.replace(".tex", ".pdf")
@@ -111,7 +111,7 @@ async function compileMotion(params: MotionParams): Promise<{ fileName: string }
             }
             )
         })
-        console.log("this is the file name from server.ts " + uniqueFileName)
+        console.log("this is the file name from server.ts inside motion " + uniqueFileName)
         return { fileName: uniqueFileName }
     }
     )
