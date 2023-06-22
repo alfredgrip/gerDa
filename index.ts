@@ -1,189 +1,191 @@
-const express = require('express');
-const path = require('path');
-const uuid = require('node-uuid');
-const { exec } = require('child_process');
-const fs = require('fs');
+import express, { Request, Response } from 'express'
+import path from 'path'
+import { exec } from 'child_process'
+import fs from 'fs'
 
-const app = express();
-const port = 3000;
+const app = express()
+const port = 3000
 
-type Clause = {
-  clause: string;
-  description?: string;
-}
-type Author = {
-  name: string;
-  position?: string;
-}
-type QueryParameters = {
-  title: string;
-  authors: Author[];
-  meeting: string;
-  body: string;
-  clauses: Clause[];
-  signMessage?: string;
-  type?: string;
-}
-type QueryParametersInput = Omit<QueryParameters, 'clauses' | 'authors'> & { 
-  clauses: string[] | string, 
-  authors: string[] | string 
-};
+import { GENERATE_MOTION, GENERATE_PROPOSITION } from './templates'
+import { QueryParametersInput, Clause, Author } from './types'
+
 // Takes in query parameters
-app.get('/generate', (req, res) => {
+app.get('/generate', (req: Request, res: Response) => {
   // get query parameters
-  const queryParameters: QueryParametersInput = req.query;
+  const queryParameters: QueryParametersInput =
+    req.query as QueryParametersInput
 
-  if (!queryParameters.title) {
-    return res.status(400).send('Missing title.');
-  }
-  if (!queryParameters.authors) {
-    return res.status(400).send('Missing authors.');
-  }
-  if (!queryParameters.meeting) {
-    return res.status(400).send('Missing meeting.');
-  }
-  if (!queryParameters.body) {
-    return res.status(400).send('Missing body.');
-  }
-  if (!queryParameters.clauses) {
-    return res.status(400).send('Missing clauses.');
-  }
-  if (!queryParameters.type) {
-    return res.status(400).send('Missing type.');
-  }
-  
-  let clauses: Clause[];
-  try {
-    clauses = Array.isArray(queryParameters.clauses) ? queryParameters.clauses.map((clauseJSON) => JSON.parse(clauseJSON)) : [JSON.parse(queryParameters.clauses)];
-    if (clauses.some((clause) => !clause.clause)) {
-      return res.status(400).send('Missing title in clauses.');
-    }
-  } catch (e) {
-    return res.status(400).send('Invalid JSON in clauses.');
-  }
-  let authors: Author[];
-  try {
-    authors = Array.isArray(queryParameters.authors) ? queryParameters.authors.map((authorJSON) => JSON.parse(authorJSON)) : [JSON.parse(queryParameters.authors)];
-    if (authors.some((author) => !author.name)) {
-      return res.status(400).send('Missing name in authors.');
-    }
-  } catch (e) {
-    return res.status(400).send('Invalid JSON in authors.');
-  }
-  // Generate file with query parameters
-  const generatedTex = GENERATE__TEX({ ...queryParameters, clauses, authors });
-  const uniqueFileName = `${Date.now()}-${uuid.v4()}`;
-  // Write file to disk
-  fs.writeFileSync(`uploads/${uniqueFileName}.tex`, generatedTex, (err) => {
-    if (err) {
-      return res.status(500).send('Failed to write file to disk.');
-    }
-  });
-  // Compile file
-  // Illegal solution: latexmk -f always signals error
-  // so we have to ignore it by using || true
-  exec(`latexmk -f uploads/${uniqueFileName}.tex || true`, (err, stdout, stderr) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).send('Failed to compile file.');
-    }
-    // Move file to output folder
-    exec('mv *.pdf output/ && mv *.log logs/', (err) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).send('Failed to move file.');
-      }
-      // Clean up
-      
-      exec(`rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz uploads/${uniqueFileName}.tex`, (err) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).send('Failed to clean up.');
+  let validationResponse: { clauses: Clause[]; authors: Author[] } | undefined =
+    undefined
+
+  switch (queryParameters.type?.toLowerCase()) {
+    case 'motion': // same parameters as proposition
+    case 'proposition':
+      validationResponse = validateMotionParams(queryParameters, res)
+      if (validationResponse === undefined) {
+        return
+      } else {
+        const { clauses, authors } = validationResponse
+        let generatedTex = ''
+        if (queryParameters.type?.toLowerCase() === 'motion') {
+          generatedTex = GENERATE_MOTION({
+            ...queryParameters,
+            clauses,
+            authors
+          })
+        } else {
+          generatedTex = GENERATE_PROPOSITION({
+            ...queryParameters,
+            clauses,
+            authors
+          })
         }
-        // Send file to client
-        const filename = `${uniqueFileName}.pdf`;
-        const filePath = path.join(__dirname, 'output', filename);
-        // show pdf in browser
-        res.sendFile(filePath);
-      });
-    });
-  });
-});
-
+        const uniqueFileName = `${queryParameters.title}-${Date.now()}.tex`
+        if (!writeTexFile(generatedTex, uniqueFileName, res)) {
+          return res.status(500).send('Failed to write file to disk.')
+        }
+      }
+      break
+    default:
+      return res
+        .status(400)
+        .send(
+          `Invalid or missing type. Must be either 'Motion' or 'Proposition'.`
+        )
+  }
+})
 
 // Set up a route to handle file downloads
 app.get('/output/:filename', (req, res) => {
-    const filename = req.params.filename;
-    const filePath = path.join(__dirname, 'output', filename);
-    res.download(filePath, (err) => {
-      if (err) {
-        console.error('Error downloading file:', err);
-        res.status(404).send('File not found.');
-      }
-    });
-  });
+  const filename = req.params.filename
+  const filePath = path.join(__dirname, 'output', filename)
+  res.download(filePath, err => {
+    if (err) {
+      console.error('Error downloading file:', err)
+      res.status(404).send('File not found.')
+    }
+  })
+})
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+  console.log(`Server listening on port ${port}`)
+})
 
 // Path: index.html
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'))
+})
+
+function validateMotionParams (
+  params: QueryParametersInput,
+  res: Response
+): { clauses: Clause[]; authors: Author[] } | undefined {
+  let clauses: Clause[]
+  let authors: Author[]
+  if (!params.title) {
+    res.status(400).send('Missing title.')
+    return undefined
+  }
+  if (!params.authors) {
+    res.status(400).send('Missing authors.')
+    return undefined
+  }
+  if (!params.meeting) {
+    res.status(400).send('Missing meeting.')
+    return undefined
+  }
+  if (!params.body) {
+    res.status(400).send('Missing body.')
+    return undefined
+  }
+  if (!params.clauses) {
+    res.status(400).send('Missing clauses.')
+    return undefined
+  }
+  if (!params.type) {
+    res.status(400).send('Missing type.')
+    return undefined
+  }
+
+  try {
+    clauses = Array.isArray(params.clauses)
+      ? params.clauses.map(clauseJSON => JSON.parse(clauseJSON))
+      : [JSON.parse(params.clauses)]
+    if (clauses.some(clause => !clause.clause)) {
+      res.status(400).send('Missing title in clauses.')
+      return undefined
     }
-);
+  } catch (e) {
+    res.status(400).send('Invalid JSON in clauses.')
+    return undefined
+  }
+  try {
+    authors = Array.isArray(params.authors)
+      ? params.authors.map(authorJSON => JSON.parse(authorJSON))
+      : [JSON.parse(params.authors)]
+    if (authors.some(author => !author.name)) {
+      res.status(400).send('Missing name in authors.')
+      return undefined
+    }
+  } catch (e) {
+    res.status(400).send('Invalid JSON in authors.')
+    return undefined
+  }
+  return { clauses, authors }
+}
 
-const GENERATE_CLAUSES = (clauses: Clause[]) => clauses.map((clause) => 
-clause.description 
-? `  \\ATTDESC{${clause.clause}}{${clause.description}}\n` 
-: `  \\ATT{${clause.clause}}\n`)
-.join('');
-const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) => authors.map((author, index) => `  \\signature{${index === 0 ? (signMessage ?? 'För D-sektionen, dag som ovan') : ''}}{${author.name}}{${author.position ? `${author.position}` : ''}}
-`).join('');
+// function validatePropositionParams (
+//   params: QueryParametersInput,
+//   res: Response
+// ): { clauses: Clause[]; authors: Author[] } | undefined {
+//   return validateMotionParams(params, res)
+// }
 
-const GENERATE__TEX = (parameters: QueryParameters) => `
-\\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
+function writeTexFile (
+  tex: string,
+  uniqueFileName: string,
+  res: Response
+): boolean {
+  try {
+    fs.writeFileSync(`uploads/${uniqueFileName}.tex`, tex)
+    compileCleanAndMove(uniqueFileName, res)
+    return true
+  } catch (e) {
+    return false
+  }
+}
 
-\\usepackage{dsekcommon}
-\\usepackage{dsekdokument}
-\\usepackage{tabularx}
-\\usepackage[T1]{fontenc}
-\\usepackage[utf8]{inputenc}
-\\usepackage[swedish]{babel}
-\\usepackage{url}
-\\usepackage[dvipsnames]{xcolor}
+function compileCleanAndMove (uniqueFileName: string, res: Response) {
+  exec(
+    `latexmk -f uploads/${uniqueFileName}.tex || true`,
+    (err, stdout, stderr) => {
+      if (err) {
+        console.log(err)
+        return res.status(500).send('Failed to compile file.')
+      }
+      // Move file to output folder
+      exec('mv *.pdf output/ && mv *.log logs/', err => {
+        if (err) {
+          console.log(err)
+          return res.status(500).send('Failed to move file.')
+        }
+        // Clean up
+        exec(
+          `rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz uploads/${uniqueFileName}.tex`,
+          err => {
+            if (err) {
+              console.log(err)
+              return res.status(500).send('Failed to clean up.')
+            }
 
-% this enables lth-symbols
-\\pdfgentounicode=0
-
-\\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
-\\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
-\\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
-\\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
-\\newcommand{\\TEXT}{${parameters.body}} % Fyll i handlingens brödtext
-\\newcommand{\\UNDER}{Undertecknad yrkar att mötet må besluta}
-\\newcommand{\\ATT}[1]{\\item #1}
-\\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
-
-\\setheader{${parameters.type ?? 'Motion'}}{\\MOTE - \\YEAR}{\\PLACE, \\today}
-\\title{${parameters.type ?? 'Motion'}: \\TITLE}
-
-\\begin{document}
-\\section*{${parameters.type ?? 'Motion'}: \\TITLE}
-
-
-\\TEXT
-
-\\medskip
-
-\\UNDER
-
-
-\\begin{attlista}
-	${GENERATE_CLAUSES(parameters.clauses)}
-\\end{attlista}
-
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
-\\end{document}
-`
+            const filename = `${uniqueFileName}.pdf`
+            const filePath = path.join(__dirname, 'output', filename)
+            // show pdf in browser
+            res.sendFile(filePath)
+          }
+        )
+      })
+    }
+  )
+}
