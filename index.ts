@@ -148,6 +148,7 @@ function writeTexFile (
   res: Response
 ): boolean {
   try {
+    fs.mkdirSync('uploads', { recursive: true })
     fs.writeFileSync(`uploads/${uniqueFileName}.tex`, tex)
     compileCleanAndMove(uniqueFileName, res)
     return true
@@ -165,6 +166,8 @@ function compileCleanAndMove (uniqueFileName: string, res: Response) {
         return res.status(500).send('Failed to compile file.')
       }
       // Move file to output folder
+      fs.mkdirSync('output', { recursive: true })
+      fs.mkdirSync('logs', { recursive: true })
       exec('mv *.pdf output/ && mv *.log logs/', err => {
         if (err) {
           console.log(err)
