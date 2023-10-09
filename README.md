@@ -20,6 +20,7 @@ docker run --name gerda -p <host port>:3000 gerda:latest
 
 ## Bra länkar
 https://en.wikibooks.org/wiki/LaTeX/Installing_Extra_Packages#Manual_installation
+https://github.com/sveltejs/kit/discussions/10162
 
 ## Cred
 99% av alla LaTeX-filer och grafik är inte gjorda av mig, utan lånade från följande repo: https://github.com/Dsek-LTH/dsek-latex.
