@@ -3,6 +3,7 @@ node_modules
 index.js
 
 README.md
+build/
 
 .git
 .gitignore

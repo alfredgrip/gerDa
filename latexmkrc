@@ -1,5 +1,6 @@
 $pdf_mode = 1;
 $pdflatex = 'pdflatex -interaction=nonstopmode';
+$max_repeat = 10;
 
 ensure_path( 'TEXINPUTS', './tex//' );
 ensure_path( 'BSTINPUTS', './bst//' );
