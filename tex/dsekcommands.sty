@@ -150,18 +150,15 @@
     \PackageWarning{dsekcommands}{%
       The command `ddu' is obsolete and should not\MessageBreak
       be used. Write the text "D'du" directly instead.}}}
-      \usepackage{enumitem}
-
-      \newenvironment{fetlista}[1]{%
-        \begin{list}{\textbf{#1 }}{%
-            \setlength{\labelsep}{0pt}}}{%
-        \end{list}}
-      
-        \newenvironment{attlista}{%
-        \begin{fetlista}{att}
-        \begin{enumerate}[label={\small(\arabic*)} \hspace{4} \textbf{att} \hspace{2}]}{%
-        \end{enumerate}
-        \end{fetlista}}
+\newenvironment{fetlista}[1]{%
+  \begin{list}{\textbf{#1 }}{%
+      \setlength{\labelsep}{0pt}}}{%
+  \end{list}}
+\newenvironment{attlista}{%
+  \newcounter{rownumbers}
+  \newcommand\rownumber{\stepcounter{rownumbers}\arabic{rownumbers}}
+  \begin{fetlista}{\textnormal{(\rownumber)} \quad att}}{%
+  \end{fetlista}}
 \pdfmapfile{+lthsymb.map}
 \DeclareFontFamily{OT1}{lthsymb}{}
 \DeclareFontShape{OT1}{lthsymb}{m}{n}{ <-> lthsymb}{}

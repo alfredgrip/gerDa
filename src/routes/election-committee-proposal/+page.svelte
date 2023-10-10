@@ -52,6 +52,10 @@
 			<textarea name="body" cols="60" />
 		</label>
 		<label>
+			Signaturmeddelande
+			<input name="signMessage" placeholder="För D-sektionen, dag som ovan" />
+		</label>
+		<label>
 			Författare
 			{#each $authors as author, i (author.uuid)}
 				<label>

@@ -19,7 +19,8 @@ export const actions = {
 					'_'
 				)}-${Date.now()}`;
 				const filePath = await compileTex(tex, uniqueFileName);
-				throw redirect(303, filePath);
+				// const filePath = compileCleanAndMove(tex, uniqueFileName);
+				throw redirect(303, filePath as string);
 			}
 			case 'proposition': {
 				const tex = generatePropositionTex(formData);
@@ -89,7 +90,6 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	fs.mkdirSync('uploads', { recursive: true });
 	fs.mkdirSync('output', { recursive: true });
 	fs.mkdirSync('logs', { recursive: true });
-	// Bun.spawnSync(['mkdir', '-p', 'uploads', 'output', 'logs']);
 	// if there are more than 10 pdfs in the output folder, delete the oldest one
 	const files = fs.readdirSync('output');
 	if (files.length >= 10) {
@@ -102,13 +102,17 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	}
 	fs.writeFileSync(`uploads/${fileName}.tex`, tex);
 	// Compile tex
-	await execShellCommand(`latexmk -f uploads/${fileName}.tex || true`);
+	await execShellCommand(`latexmk -f uploads/${fileName}.tex || true`).then(async (output) => {
+		console.log(output);
+		await execShellCommand('mv *.pdf output/ && mv *.log logs/').then(async () => {
+			await execShellCommand(
+				`rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz uploads/${fileName}.tex`
+			);
+		});
+	});
 	// Move file to output folder
-	await execShellCommand('mv *.pdf output/ && mv *.log logs/');
+
 	// Clean up
-	await execShellCommand(
-		`rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz uploads/${fileName}.tex`
-	);
 	return `output/${fileName}.pdf`;
 }
 
@@ -182,7 +186,7 @@ function execShellCommand(cmd: string) {
 			if (error) {
 				console.warn(error);
 			}
-			resolve(stdout ? stdout : stderr);
+			resolve(stdout || stderr);
 		});
 	});
 }
