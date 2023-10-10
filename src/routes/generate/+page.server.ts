@@ -34,7 +34,7 @@ export const actions = {
 			case 'electionCommitteeProposal': {
 				const tex = generateElectionCommitteeProposalTex(formData);
 				const uniqueFileName = `electionCommitteeProposal-${(
-					formData.get('title') as string
+					formData.get('meeting') as string
 				).replace(RegExp(' ', 'g'), '_')}-${Date.now()}`;
 				const filePath = await compileTex(tex, uniqueFileName);
 				throw redirect(303, filePath);
@@ -81,13 +81,12 @@ function generateElectionCommitteeProposalTex(formData: FormData): string {
 	const statistics = extractStatistics(formData);
 	return GENERATE_ELECTION_COMMITTEE_PROPOSAL({
 		meeting: formData.get('meeting') as string,
-		title: formData.get('title') as string,
 		body: formData.get('body') as string,
 		authors: authors,
 		whatToWho: whatToWho,
 		statistics: statistics,
 		signMessage: (formData.get('signMessage')?.toString().length === 0
-			? 'För D-sektionen, dag som ovan'
+			? 'För Valberedningen'
 			: formData.get('signMessage')) as string
 	});
 }
@@ -159,9 +158,9 @@ function extractWhatToWho(formData: FormData): WhatToWho[] {
 	let i = 0;
 	while (i < 100) {
 		const what = formData.get(`what-to-who-${i.toString()}-what`) as string;
-		const who = (formData.get(`what-to-who-${i.toString()}-who`) as string).split('\n');
+		const who = formData.get(`what-to-who-${i.toString()}-who`) as string;
 		if (what && who) {
-			whatToWho.push({ what, who });
+			whatToWho.push({ what, who: who.split('\n') });
 		} else {
 			break;
 		}
@@ -174,7 +173,7 @@ function extractStatistics(formData: FormData): Statistics[] {
 	const statistics: Statistics[] = [];
 	let i = 0;
 	while (i < 100) {
-		const what = formData.get(`statistics-${i.toString()}-what`) as string;
+		const what = formData.get(`what-to-who-${i.toString()}-what`) as string;
 		const interval = formData.get(`statistics-${i.toString()}-interval`) as string;
 		if (what && interval) {
 			statistics.push({ what, interval });

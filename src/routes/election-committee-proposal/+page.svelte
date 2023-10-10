@@ -9,6 +9,14 @@
 		}>
 	> = writable([{ name: '', position: '', uuid: Math.random().toString() }]);
 
+	let whatToWho: Writable<
+		Array<{
+			what: string;
+			who: string;
+			uuid: string;
+		}>
+	> = writable([{ what: '', who: '', uuid: Math.random().toString() }]);
+
 	function addAuthor() {
 		authors.update((authors) => [
 			...authors,
@@ -19,6 +27,18 @@
 	function removeAuthor(uuid: string) {
 		authors.update((authors) => authors.filter((author) => author.uuid !== uuid));
 	}
+
+	function addWhatToWho() {
+		whatToWho.update((whatToWho) => [
+			...whatToWho,
+			{ what: '', who: '', uuid: Math.random().toString() }
+		]);
+	}
+
+	function removeWhatToWho(uuid: string) {
+		whatToWho.update((whatToWho) => whatToWho.filter((whatToWho) => whatToWho.uuid !== uuid));
+	}
+
 	function onUnload(event: BeforeUnloadEvent) {
 		const body = document.getElementById('body') as HTMLInputElement;
 		if (body?.value?.length > 20) {
@@ -39,10 +59,6 @@
 		<input type="hidden" name="documentType" value="electionCommitteeProposal" />
 		<div id="title-meeting">
 			<label>
-				Titel
-				<input name="title" required />
-			</label>
-			<label>
 				Möte
 				<input name="meeting" required />
 			</label>
@@ -52,8 +68,30 @@
 			<textarea name="body" cols="60" />
 		</label>
 		<label>
+			Förslag
+			{#each $whatToWho as whatToWho, i (whatToWho.uuid)}
+				<label>
+					<input name={`what-to-who-${i.toString()}-what`} placeholder="Vad" required />
+				</label>
+				<label>
+					<input name={`what-to-who-${i.toString()}-who`} placeholder="Vem" required />
+				</label>
+				<label>
+					<input
+						name={`statistics-${i.toString()}-interval`}
+						placeholder="Intervall (ex. 5-10)"
+						required
+					/>
+				</label>
+				{#if i !== 0}
+					<button type="button" on:click={() => removeWhatToWho(whatToWho.uuid)}>Ta bort</button>
+				{/if}
+			{/each}
+			<button type="button" on:click={() => addWhatToWho()}>Lägg till</button>
+		</label>
+		<label>
 			Signaturmeddelande
-			<input name="signMessage" placeholder="För D-sektionen, dag som ovan" />
+			<input name="signMessage" placeholder="För Valberedningen" />
 		</label>
 		<label>
 			Författare

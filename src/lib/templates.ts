@@ -116,7 +116,6 @@ ${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
 
 export const GENERATE_ELECTION_COMMITTEE_PROPOSAL = (parameters: {
 	meeting: string;
-	title: string;
 	body: string;
 	authors: Author[];
 	whatToWho: WhatToWho[];
@@ -133,8 +132,8 @@ export const GENERATE_ELECTION_COMMITTEE_PROPOSAL = (parameters: {
 \\usepackage{multicol}
 
 
-\\newcommand{\\MOTE}{HTM-val} % Fyll i vilket möte det gäller
-\\newcommand{\\YEAR}{2023} % Fyll i år
+\\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
+\\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
 \\newcommand{\\TITLE}{Valberedningens förslag inför \\MOTE} % Fyll i titel på motionen
 \\newcommand{\\PLACE}{Lund} % Fyll i plats där motionen skrevs, oftast bara "Lund"
 \\newcommand{\\WHATWHO}[2]{\\subsubsection*{#1}#2}
@@ -153,7 +152,11 @@ ${GENERATE_WHAT_TO_WHO(parameters.whatToWho)}
 
 \\end{multicols}
 
+\\medskip
+
 {Valstatistik presenteras på nästkommande sida.\\newline}
+
+\\medskip
 
 ${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
 
