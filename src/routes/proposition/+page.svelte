@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { meetingRegex } from '$lib/formRegex';
 	import { writable, type Writable } from 'svelte/store';
 
 	let clauses: Writable<
@@ -51,6 +50,7 @@
 		onUnload(event);
 	}}
 />
+<button on:click={() => (window.location.href = '/')}> &larr; Gå tillbaks </button>
 
 <section>
 	<form method="POST" action="/generate" target="_blank">

@@ -12,12 +12,9 @@ export const GENERATE_MOTION = (parameters: {
 
 \\usepackage{dsekcommon}
 \\usepackage{dsekdokument}
-%\\usepackage{tabularx}
 \\usepackage[T1]{fontenc}
 %\\usepackage[utf8]{inputenc}
 \\usepackage[swedish]{babel}
-%\\usepackage{url}
-%\\usepackage[dvipsnames]{xcolor}
 
 % this enables lth-symbols
 %\\pdfgentounicode=0
@@ -27,7 +24,14 @@ export const GENERATE_MOTION = (parameters: {
 \\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
 \\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
 \\newcommand{\\TEXT}{${parameters.body}} % Fyll i handlingens brödtext
-\\newcommand{\\UNDER}{Undertecknad yrkar att mötet må besluta}
+\\newcommand{\\UNDER}{${
+	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
+		? 'Undertecknad yrkar att sektionsmötet må besluta'
+		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
+		? 'Undertecknad yrkar att styrelsemötet må besluta'
+		: 'Undertecknad yrkar att mötet må besluta'
+}}
+}}
 \\newcommand{\\ATT}[1]{\\item #1}
 \\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
 
@@ -65,12 +69,9 @@ export const GENERATE_PROPOSITION = (parameters: {
 
 \\usepackage{dsekcommon}
 \\usepackage{dsekdokument}
-\\usepackage{tabularx}
 \\usepackage[T1]{fontenc}
-\\usepackage[utf8]{inputenc}
+%\\usepackage[utf8]{inputenc}
 \\usepackage[swedish]{babel}
-\\usepackage{url}
-\\usepackage[dvipsnames]{xcolor}
 
 % this enables lth-symbols
 \\pdfgentounicode=0
@@ -80,7 +81,14 @@ export const GENERATE_PROPOSITION = (parameters: {
 \\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
 \\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
 \\newcommand{\\TEXT}{${parameters.body}} % Fyll i handlingens brödtext
-\\newcommand{\\UNDER}{Undertecknad yrkar att mötet må besluta}
+\\newcommand{\\UNDER}{${
+	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
+		? 'Undertecknad yrkar att sektionsmötet må besluta'
+		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
+		? 'Undertecknad yrkar att styrelsemötet må besluta'
+		: 'Undertecknad yrkar att mötet må besluta'
+}}
+}}
 \\newcommand{\\ATT}[1]{\\item #1}
 \\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
 
@@ -129,7 +137,6 @@ export const GENERATE_ELECTION_COMMITTEE_PROPOSAL = (parameters: {
 \\newcommand{\\YEAR}{2023} % Fyll i år
 \\newcommand{\\TITLE}{Valberedningens förslag inför \\MOTE} % Fyll i titel på motionen
 \\newcommand{\\PLACE}{Lund} % Fyll i plats där motionen skrevs, oftast bara "Lund"
-\\newcommand{\\UNDER}{För Valberedningen}
 \\newcommand{\\WHATWHO}[2]{\\subsubsection*{#1}#2}
 \\newcommand{\\WHATCOUNT}[2]{\\subsubsection*{#1}#2 st}
 

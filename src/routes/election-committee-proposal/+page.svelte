@@ -32,7 +32,7 @@
 		onUnload(event);
 	}}
 />
-
+<button on:click={() => (window.location.href = '/')}> &larr; Gå tillbaks </button>
 <section>
 	<form method="POST" action="/generate" target="_blank">
 		<h1>Valberedningsförslag</h1>

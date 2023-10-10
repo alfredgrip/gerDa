@@ -5,7 +5,7 @@ import {
 	GENERATE_PROPOSITION
 } from '$lib/templates';
 import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
-import { exec } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 
 export const actions = {
@@ -54,7 +54,9 @@ function generateMotionTex(formData: FormData): string {
 		body: formData.get('body') as string,
 		clauses: clauses,
 		authors: authors,
-		signMessage: (formData.get('signMessage') ?? undefined) as string | undefined
+		signMessage: (formData.get('signMessage')?.toString().length === 0
+			? 'För D-sektionen, dag som ovan'
+			: formData.get('signMessage')) as string
 	});
 }
 
@@ -67,7 +69,9 @@ function generatePropositionTex(formData: FormData): string {
 		body: formData.get('body') as string,
 		clauses: clauses,
 		authors: authors,
-		signMessage: (formData.get('signMessage') ?? undefined) as string | undefined
+		signMessage: (formData.get('signMessage')?.toString().length === 0
+			? 'För D-sektionen, dag som ovan'
+			: formData.get('signMessage')) as string
 	});
 }
 
@@ -82,7 +86,9 @@ function generateElectionCommitteeProposalTex(formData: FormData): string {
 		authors: authors,
 		whatToWho: whatToWho,
 		statistics: statistics,
-		signMessage: (formData.get('signMessage') ?? undefined) as string | undefined
+		signMessage: (formData.get('signMessage')?.toString().length === 0
+			? 'För D-sektionen, dag som ovan'
+			: formData.get('signMessage')) as string
 	});
 }
 
@@ -101,18 +107,18 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 		fs.unlinkSync(`output/${oldestFile}`);
 	}
 	fs.writeFileSync(`uploads/${fileName}.tex`, tex);
-	// Compile tex
-	await execShellCommand(`latexmk -f uploads/${fileName}.tex || true`).then(async (output) => {
-		console.log(output);
-		await execShellCommand('mv *.pdf output/ && mv *.log logs/').then(async () => {
-			await execShellCommand(
-				`rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz uploads/${fileName}.tex`
-			);
-		});
-	});
-	// Move file to output folder
 
+	// Compile tex, multiple times to make sure all references are correct, e.g. page numbers
+	spawnSync(`latexmk -g -f uploads/${fileName}.tex || true`, { shell: true });
+	spawnSync(`latexmk -g -f uploads/${fileName}.tex || true`, { shell: true });
+	spawnSync(`latexmk -g -f uploads/${fileName}.tex || true`, { shell: true });
+
+	// Move files to output folder
+	spawnSync('mv *.pdf output/ && mv *.log logs/', { shell: true });
 	// Clean up
+	spawnSync(`rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz uploads/${fileName}.tex`, {
+		shell: true
+	});
 	return `output/${fileName}.pdf`;
 }
 
@@ -180,13 +186,14 @@ function extractStatistics(formData: FormData): Statistics[] {
 	return statistics;
 }
 
-function execShellCommand(cmd: string) {
-	return new Promise((resolve) => {
-		exec(cmd, (error, stdout, stderr) => {
-			if (error) {
-				console.warn(error);
-			}
-			resolve(stdout || stderr);
-		});
-	});
-}
+// function execShellCommand(cmd: string) {
+// 	spawnSync(cmd, { shell: true });
+// 	// return new Promise((resolve) => {
+// 	// 	spawnSync(cmd, (error, stdout, stderr) => {
+// 	// 		if (error) {
+// 	// 			console.warn(error);
+// 	// 		}
+// 	// 		resolve(stdout || stderr);
+// 	// 	});
+// 	// });
+// }
