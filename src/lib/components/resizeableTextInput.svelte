@@ -1,0 +1,55 @@
+<script lang="ts">
+	import { error } from '@sveltejs/kit';
+	import { onMount } from 'svelte';
+
+	export let labelName: string;
+	export let idName: string;
+	export let required: 'true' | 'false' = 'false';
+	export let placeholder: string = '';
+	export let numRows: string = '1';
+	// either normal text input or textArea
+
+	onMount(() => {
+		const input = document.getElementById(idName) as HTMLInputElement;
+		// console.log('input' + input);
+		if (input == null) throw error(500);
+		input.addEventListener('input', () => {
+			input.style.height = 'auto';
+			input.style.height = `calc(${input.scrollHeight}px - 1rem)`;
+		});
+		input.dispatchEvent(new Event('input'));
+	});
+</script>
+
+<label>
+	{labelName}
+	{#if required === 'true'}
+		<textarea
+			{...$$restProps}
+			name={idName}
+			required
+			{placeholder}
+			id={idName}
+			rows={parseInt(numRows)}
+		/>
+	{:else}
+		<textarea {...$$restProps} name={idName} {placeholder} id={idName} rows={parseInt(numRows)} />
+	{/if}
+</label>
+
+<style>
+	label {
+		display: flex;
+		flex-direction: column;
+	}
+
+	textarea {
+		width: 100%;
+		/* min-height: 50px; */
+		height: auto;
+		resize: none;
+		border: 1px solid rgb(209, 209, 209);
+		border-radius: 0.5rem;
+		padding: 0.5rem;
+	}
+</style>

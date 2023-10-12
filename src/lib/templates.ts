@@ -7,6 +7,8 @@ export const GENERATE_MOTION = (parameters: {
 	clauses: Clause[];
 	authors: Author[];
 	signMessage?: string;
+	late: boolean;
+	markdown: boolean;
 }) => `
 \\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
 
@@ -15,6 +17,9 @@ export const GENERATE_MOTION = (parameters: {
 \\usepackage[T1]{fontenc}
 %\\usepackage[utf8]{inputenc}
 \\usepackage[swedish]{babel}
+\\usepackage{markdown}
+\\usepackage{csquotes}
+
 
 % this enables lth-symbols
 %\\pdfgentounicode=0
@@ -23,7 +28,6 @@ export const GENERATE_MOTION = (parameters: {
 \\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
 \\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
 \\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
-\\newcommand{\\TEXT}{${parameters.body}} % Fyll i handlingens brödtext
 \\newcommand{\\UNDER}{${
 	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
 		? 'Undertecknad yrkar att sektionsmötet må besluta'
@@ -35,14 +39,13 @@ export const GENERATE_MOTION = (parameters: {
 \\newcommand{\\ATT}[1]{\\item #1}
 \\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
 
-\\setheader{${'Motion'}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
-\\title{${'Motion'}: \\TITLE}
+\\setheader{${parameters.late ? 'Sen motion' : 'Motion'}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
+\\title{${parameters.late ? 'Sen motion' : 'Motion'}: \\TITLE}
 
 \\begin{document}
 \\section*{${'Motion'}: \\TITLE}
 
-
-\\TEXT
+${GENERATE_BODY(parameters.body, parameters.markdown)}
 
 \\medskip
 
@@ -64,6 +67,8 @@ export const GENERATE_PROPOSITION = (parameters: {
 	clauses: Clause[];
 	authors: Author[];
 	signMessage?: string;
+	late: boolean;
+	markdown: boolean;
 }) => `
 \\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
 
@@ -72,6 +77,8 @@ export const GENERATE_PROPOSITION = (parameters: {
 \\usepackage[T1]{fontenc}
 %\\usepackage[utf8]{inputenc}
 \\usepackage[swedish]{babel}
+\\usepackage{markdown}
+\\usepackage{csquotes}
 
 % this enables lth-symbols
 \\pdfgentounicode=0
@@ -80,7 +87,6 @@ export const GENERATE_PROPOSITION = (parameters: {
 \\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
 \\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
 \\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
-\\newcommand{\\TEXT}{${parameters.body}} % Fyll i handlingens brödtext
 \\newcommand{\\UNDER}{${
 	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
 		? 'Undertecknad yrkar att sektionsmötet må besluta'
@@ -89,17 +95,19 @@ export const GENERATE_PROPOSITION = (parameters: {
 		: 'Undertecknad yrkar att mötet må besluta'
 }}
 }}
-\\newcommand{\\ATT}[1]{\\item #1}
+\\newcommand{\\ATT}[1]{\\begin{markdown}\\item #1\\end{markdown}}
 \\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
 
-\\setheader{${'Proposition'}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
-\\title{${'Proposition'}: \\TITLE}
+\\setheader{${
+	parameters.late ? 'Sen proposition' : 'Proposition'
+}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
+\\title{${parameters.late ? 'Sen proposition' : 'Proposition'}: \\TITLE}
 
 \\begin{document}
 \\section*{${'Proposition'}: \\TITLE}
 
 
-\\TEXT
+${GENERATE_BODY(parameters.body, parameters.markdown)}
 
 \\medskip
 
@@ -121,6 +129,8 @@ export const GENERATE_ELECTION_COMMITTEE_PROPOSAL = (parameters: {
 	whatToWho: WhatToWho[];
 	statistics: Statistics[];
 	signMessage?: string;
+	late: boolean;
+	markdown: boolean;
 }) => `
 \\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
 
@@ -130,6 +140,8 @@ export const GENERATE_ELECTION_COMMITTEE_PROPOSAL = (parameters: {
 %\\usepackage[utf8]{inputenc}
 \\usepackage[swedish]{babel}
 \\usepackage{multicol}
+\\usepackage{markdown}
+\\usepackage{csquotes}
 
 
 \\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
@@ -139,18 +151,20 @@ export const GENERATE_ELECTION_COMMITTEE_PROPOSAL = (parameters: {
 \\newcommand{\\WHATWHO}[2]{\\subsubsection*{#1}#2}
 \\newcommand{\\WHATCOUNT}[2]{\\subsubsection*{#1}#2 st}
 
-\\setheader{Handling}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
-\\title{Handling: \\TITLE}
+\\setheader{${parameters.late ? 'Sen handling' : 'Handling'}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
+\\title{${parameters.late ? 'Sen handling' : 'Handling'}: \\TITLE}
 
 \\begin{document}
 \\section*{Valberedningens förslag inför \\MOTE}
 
+${GENERATE_BODY(parameters.body, parameters.markdown)}
+
 Valberedningens förslag inför \\MOTE \\ är följande:
-\\begin{multicols}{2}  
+\\begin{multicols*}{2}  
 
 ${GENERATE_WHAT_TO_WHO(parameters.whatToWho)}
 
-\\end{multicols}
+\\end{multicols*}
 
 \\medskip
 
@@ -173,12 +187,28 @@ ${GENERATE_STATISTICS(parameters.statistics)}
 \\end{document}
 `;
 
+const GENERATE_BODY = (body: string, markdown: boolean) => {
+	if (markdown) {
+		return `
+\\begin{markdown}
+${body}
+\\end{markdown}`;
+	}
+	return body;
+};
+
 const GENERATE_CLAUSES = (clauses: Clause[]) =>
 	clauses
 		.map((clause) =>
 			clause.description
-				? `  \\ATTDESC{${clause.toClause}}{${clause.description}}\n`
-				: `  \\ATT{${clause.toClause}}\n`
+				? `  \\ATTDESC{${clause.toClause
+						.replaceAll(RegExp(/"([^"]*)"/g), '\\enquote{$1}')
+						.replaceAll('\n', '\\\\')}}{${clause.description
+						.replaceAll(RegExp(/"([^"]*)"/g), '\\enquote{$1}')
+						.replaceAll('\n', '\\\\')}}\n`
+				: `  \\ATT{${clause.toClause
+						.replaceAll(RegExp(/"([^"]*)"/g), '\\enquote{$1}')
+						.replaceAll('\n', '\\\\')}}\n`
 		)
 		.join('');
 const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) =>
@@ -193,8 +223,15 @@ const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) =>
 
 const GENERATE_WHAT_TO_WHO = (whatToWho: WhatToWho[]) =>
 	whatToWho
-		.map((whatToWho) => `  \\WHATWHO{${whatToWho.what}}{${whatToWho.who.join('\\newline')}}\n`)
+		.map((whatToWho) => `  \\WHATWHO{${whatToWho.what}}{${whatToWho.who.join('\\\\')}}\\\\`)
 		.join('');
+
+// .map(
+// 	(whatToWho) => `  \\WHATWHO{${whatToWho.what}}{
+// 	\\begin{itemize}
+// 	${whatToWho.who.map((who) => `\\item ${who}`).join('\n')}
+// \\end{itemize}}\n`
+// )
 
 const GENERATE_STATISTICS = (statistics: Statistics[]) =>
 	statistics
