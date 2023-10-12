@@ -7,26 +7,23 @@
 		<div>
 			<button on:click={() => (window.location.href = '/create/motion')}> Motion </button>
 			<button on:click={() => (window.location.href = '/create/proposition')}> Proposition </button>
-			<button on:click={() => (window.location.href = '/create/election-committee-proposal')}>
+			<button on:click={() => (window.location.href = '/create/proposal')}>
 				"Valberedningens förslag"-handling
 			</button>
 		</div>
 		<div id="help">
 			<h2>Hjälp! Vad är vad?</h2>
-			<div id="help-list">
-				<ul>
-					<li>
-						En <i>motion</i> är ett förslag som kommer från en sektionsmedlem. Antingen representerar
-						sektionsmedlemmen ett utskott, eller bara sig själv.
-					</li>
-					<li>En <i>proposition</i> är ett förslag som kommer från styrelsen.</li>
-					<li>
-						En <i>"Valberedningens förslag"-handling</i> är det dokument som Valberedningen skickar in
-						till ett möte för att presentera vem eller vilka de anser vara den bästa kandidaten till
-						ett visst val.
-					</li>
-				</ul>
-			</div>
+			<ul>
+				<li>
+					En <i>motion</i> är ett förslag som kommer från en sektionsmedlem eller ett utskott.
+				</li>
+				<li>En <i>proposition</i> är ett förslag som kommer från styrelsen.</li>
+				<li>
+					En <i>"Valberedningens förslag"-handling</i> är det dokument som Valberedningen skickar in
+					till ett möte för att presentera vem eller vilka de anser vara den bästa kandidaten till ett
+					visst val.
+				</li>
+			</ul>
 		</div>
 	</div>
 </section>

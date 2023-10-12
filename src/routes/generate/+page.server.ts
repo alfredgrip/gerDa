@@ -32,9 +32,10 @@ export const actions = {
 			}
 			case 'electionCommitteeProposal': {
 				const tex = generateElectionCommitteeProposalTex(formData);
-				const uniqueFileName = `electionCommitteeProposal-${(
-					formData.get('meeting') as string
-				).replace(/ /g, '_')}-${Date.now()}`;
+				const uniqueFileName = `proposal-${(formData.get('meeting') as string).replace(
+					/ /g,
+					'_'
+				)}-${Date.now()}`;
 				const filePath = await compileTex(tex, uniqueFileName);
 				throw redirect(303, encodeURIComponent(filePath.replace('output/', '')));
 			}
