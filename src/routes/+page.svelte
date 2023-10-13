@@ -7,8 +7,9 @@
 		<div>
 			<button on:click={() => (window.location.href = '/create/motion')}> Motion </button>
 			<button on:click={() => (window.location.href = '/create/proposition')}> Proposition </button>
-			<button on:click={() => (window.location.href = '/create/proposal')}>
+			<button on:click={() => (window.location.href = '/create/election-proposal')}>
 				"Valberedningens förslag"-handling
+				<p>(Beta-funktion)</p>
 			</button>
 		</div>
 		<div id="help">
@@ -53,13 +54,6 @@
 
 	#help {
 		margin-top: 5rem;
-	}
-
-	#help-list {
-		/* place all elements side by side */
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
 	}
 
 	li {

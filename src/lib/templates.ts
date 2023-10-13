@@ -122,7 +122,7 @@ ${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
 \\end{document}
 `;
 
-export const GENERATE_ELECTION_COMMITTEE_PROPOSAL = (parameters: {
+export const GENERATE_ELECTION_PROPOSAL = (parameters: {
 	meeting: string;
 	body: string;
 	authors: Author[];
@@ -215,9 +215,9 @@ const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) =>
 	authors
 		.map(
 			(author, index) =>
-				`  \\signature{${index === 0 ? signMessage ?? 'För D-sektionen, dag som ovan' : ''}}{${
-					author.name
-				}}{${author.position ? `${author.position}` : ''}}`
+				`  \\signature{${
+					index === 0 ? signMessage ?? 'För D-sektionen, dag som ovan' : '\\phantom{}'
+				}}{${author.name}}{${author.position ? `${author.position}` : ''}}`
 		)
 		.join('');
 
@@ -237,3 +237,114 @@ const GENERATE_STATISTICS = (statistics: Statistics[]) =>
 	statistics
 		.map((statistics) => `  \\WHATCOUNT{${statistics.what}}{${statistics.interval}}\n`)
 		.join('');
+
+export const NEW_GENERATE_MOTION = (parameters: {
+	meeting: string;
+	title: string;
+	body: string;
+	clauses: Clause[];
+	authors: Author[];
+	signMessage?: string;
+	late: boolean;
+}) => `
+\\documentclass{dsekdoc}
+\\usepackage{dsek}
+\\usepackage{array}
+\\usepackage{fontspec}
+\\usepackage{polyglossia}
+\\usepackage{calc}
+\\usepackage{geometry}
+\\usepackage{titlesec}
+\\usepackage{hyperref}
+\\usepackage{lastpage}
+
+
+\\begin{document}
+\\settitle{${parameters.title}}
+\\setauthor{${parameters.authors[0].name}}
+\\setdate{\\today}
+\\setshorttitle{${parameters.late ? 'Sen motion' : 'Motion'}}
+\\setmeeting{${parameters.meeting}}
+
+\\newcommand{\\ATT}[1]{\\item #1}
+\\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
+
+\\section*{${parameters.late ? 'Sen motion' : 'Motion'}: \\usetitle}
+${parameters.body}
+
+\\medskip
+
+${
+	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
+		? 'Undertecknad yrkar att sektionsmötet må besluta'
+		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
+		? 'Undertecknad yrkar att styrelsemötet må besluta'
+		: 'Undertecknad yrkar att mötet må besluta'
+}
+
+\\begin{attlist}
+${GENERATE_CLAUSES(parameters.clauses)}
+\\end{attlist}
+
+\\medskip
+
+${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
+
+\\end{document}
+`;
+
+export const NEW_GENERATE_PROPOSITION = (parameters: {
+	meeting: string;
+	title: string;
+	body: string;
+	clauses: Clause[];
+	authors: Author[];
+	signMessage?: string;
+	late: boolean;
+	markdown: boolean;
+}) => `
+\\documentclass{dsekdoc}
+\\usepackage{dsek}
+\\usepackage{array}
+\\usepackage{fontspec}
+\\usepackage{polyglossia}
+\\usepackage{calc}
+\\usepackage{geometry}
+\\usepackage{titlesec}
+\\usepackage{hyperref}
+\\usepackage{lastpage}
+
+
+\\begin{document}
+\\settitle{${parameters.title}}
+\\setauthor{${parameters.authors[0].name}}
+\\setdate{\\today}
+\\setshorttitle{${parameters.late ? 'Sen proposition' : 'Proposition'}}
+\\setmeeting{${parameters.meeting}}
+
+\\newcommand{\\ATT}[1]{\\item #1}
+\\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
+
+\\section*{${parameters.late ? 'Sen proposition' : 'Proposition'}: \\usetitle}
+${parameters.body}
+
+\\medskip
+
+${
+	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
+		? 'Undertecknad yrkar att sektionsmötet må besluta'
+		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
+		? 'Undertecknad yrkar att styrelsemötet må besluta'
+		: 'Undertecknad yrkar att mötet må besluta'
+}
+
+\\begin{attlist}
+${GENERATE_CLAUSES(parameters.clauses)}
+\\end{attlist}
+
+\\medskip
+
+${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
+
+\\end{document}
+`;

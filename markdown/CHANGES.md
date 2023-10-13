@@ -172,8 +172,8 @@ Refactoring:
 
 Documentation:
 
-- Add article [*High-Level Languages for
-  TeX*](https://www.doi.org/10.5300/2022-1-4/35) (in Czech) from
+- Add article [_High-Level Languages for
+  TeX_](https://www.doi.org/10.5300/2022-1-4/35) (in Czech) from
   CSTUG Bulletin 1–4/2022 to `README.md`. (authored by @witiko, a2bbdea)
 
 Continuous Integration:
@@ -184,8 +184,8 @@ Continuous Integration:
 
 Development:
 
-- Accept snake\_case variants of options in addition to camelCase variants in
-  `\markdownSetup` and Lua CLI. Accept snake\_case and caseless variants of
+- Accept snake_case variants of options in addition to camelCase variants in
+  `\markdownSetup` and Lua CLI. Accept snake_case and caseless variants of
   options in `\setupmarkdown`. (#193, #194, #195, #196, #197, #198)
 - Rename renderers, renderer prototypes and options based on the semantics of
   elements: (#187, #201)
@@ -582,7 +582,7 @@ Documentation:
 - Document that the `hybrid` option is `false` by default. (955d7c1)
 - Show how
   [`tugboat.bib`](http://mirrors.ctan.org/info/digests/tugboat/biblio/tugboat.bib)
-  can be used to cite the Markdown package.  (7e20eee)
+  can be used to cite the Markdown package. (7e20eee)
 
 Continuous Integration and Distribution:
 
@@ -650,7 +650,7 @@ Documentation:
 - Fix a typo in the user manual. (13f056)
 - Fix code style in the user manual. (416c24e)
 - Update out-of-date-documentation. (713ec92)
-- Add *Making Markdown into a Microwave Meal* article into the README.
+- Add _Making Markdown into a Microwave Meal_ article into the README.
   (4698224)
 - Add a link to @witiko's PV212 talk to the README. (e5e8708)
 - Fix overlong lines in the documentation. (34e9f4f)
@@ -776,7 +776,7 @@ Development:
   [Omedym](https://www.omedym.com) for sponsoring the development of table
   support.
 - Added the `shiftHeadings` Lua option for shifting section levels, which
-  extends the *content slicing* capabilities of the Markdown package. Thanks to
+  extends the _content slicing_ capabilities of the Markdown package. Thanks to
   [David Vins](https://github.com/dvins) and [Omedym](https://www.omedym.com)
   for sponsoring the development of content slicing.
 
@@ -795,7 +795,7 @@ Fixes:
 Development:
 
 - Added Natbib citation renderer to LaTeX.
-- Added the `slice` Lua option for *content slicing* – typesetting only certain
+- Added the `slice` Lua option for _content slicing_ – typesetting only certain
   parts of a markdown document.
   Thanks to [David Vins](https://github.com/dvins) and
   [Omedym](https://www.omedym.com) for sponsoring the development of
@@ -826,10 +826,10 @@ Miscellaneous:
 
 ## 2.6.0 (2018-04-09)
 
-*Except for some minor changes in the README document, this version is
+_Except for some minor changes in the README document, this version is
 identical to version 2.5.6. The author realized that they had forgotten to
 increase the minor version number despite adding a significant amount of new
-functionality.*
+functionality._
 
 ## 2.5.6 (2018-04-08)
 
@@ -1062,7 +1062,7 @@ Fixes:
   if the input of the conversion function ends with `\n\n`, `\n`, or nothing.
 - LaTeX interface `rendererPrototypes` keys for the `pipe`, `link`, and `image`
   renderers no longer incorrectly set the `\markdownRenderers<Renderer>` macros
-  rather than the  `\markdownRenderers<Renderer>Prototype` macros.
+  rather than the `\markdownRenderers<Renderer>Prototype` macros.
 
 ## 2.0.2 (2016-08-17)
 

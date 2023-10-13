@@ -1,5 +1,5 @@
 $pdf_mode = 1;
-$pdflatex = 'pdflatex -interaction=nonstopmode';
+$pdflatex = 'lualatex -interaction=nonstopmode';
 
 ensure_path( 'TEXINPUTS', './tex//' );
 ensure_path( 'BSTINPUTS', './bst//' );

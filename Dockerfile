@@ -32,7 +32,7 @@
 # CMD ORIGIN=http://localhost:3000 node fileServer.js
 
 FROM node:18-alpine
-RUN apk update && apk upgrade && apk add texlive-full
+RUN apk update && apk upgrade && apk add texlive-full pandoc
 ENV TZ=Etc/UTC
 WORKDIR /app
 COPY . .

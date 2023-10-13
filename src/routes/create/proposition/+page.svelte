@@ -1,5 +1,6 @@
 <script lang="ts">
 	import AddButton from '$lib/components/addButton.svelte';
+	import DocumentTypeInput from '$lib/components/documentTypeInput.svelte';
 	import GenerateButton from '$lib/components/generateButton.svelte';
 	import MdLatexRadio from '$lib/components/mdLatexRadio.svelte';
 	import RemoveButton from '$lib/components/removeButton.svelte';
@@ -66,7 +67,7 @@
 	}}
 />
 <h1>Du skapar en proposition</h1>
-<input type="hidden" name="documentType" value="proposition" />
+<DocumentTypeInput documentType="proposition" />
 <MdLatexRadio />
 <ResizeableTextInput
 	required="true"

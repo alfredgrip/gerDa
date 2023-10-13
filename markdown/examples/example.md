@@ -12,17 +12,17 @@
 
 This is a text paragraph containing an ellipsis ... and followed by a thematic break.
 
-***
+---
 
-This is inline `code`. This is a [link](http://google.cz "Google").  _This is an *emphasized* span of text_. __This is a **strongly emphasized** span of text__.
+This is inline `code`. This is a [link](http://google.cz 'Google'). _This is an *emphasized* span of text_. **This is a **strongly emphasized** span of text**.
 
-  ![example image](example-image.png "An example image from Martin Scharrer's mwe package")
+![example image](example-image.png "An example image from Martin Scharrer's mwe package")
 
-  /scientists.csv (The great minds of the 19th century rendered via a content block)
+/scientists.csv (The great minds of the 19th century rendered via a content block)
 
 This is a fenced code block:
 
-``` latex
+```latex
 \documentclass{article}
 \begin{document}
   Hello world!
@@ -32,28 +32,28 @@ This is a fenced code block:
 This is a table:
 
 | Right | Left | Default | Center |
-|------:|:-----|---------|:------:|
+| ----: | :--- | ------- | :----: |
 |    12 | 12   | 12      |   12   |
-|   123 | 123  | 123     |   123  |
-|     1 | 1    | 1       |    1   |
+|   123 | 123  | 123     |  123   |
+|     1 | 1    | 1       |   1    |
 
-  : Demonstration of pipe table syntax.
+: Demonstration of pipe table syntax.
 
 This is a bullet list:
 
-* The first item of a bullet list
+- The first item of a bullet list
 
   that spans several paragraphs,
 
-* the second item of a bullet list,
+- the second item of a bullet list,
 
-* the third item of a bullet list.
+- the third item of a bullet list.
 
 This is a compact bullet list:
 
-* The first item of a bullet list,
-* the second item of a bullet list,
-* the third item of a bullet list.
+- The first item of a bullet list,
+- the second item of a bullet list,
+- the third item of a bullet list.
 
 This is an ordered list:
 
@@ -69,7 +69,7 @@ This is a fancy ordered list:
 
 e) The first item of an ordered list
 
-   that spans several paragraphs,
+that spans several paragraphs,
 
 f) the second item of an ordered list,
 
@@ -79,7 +79,7 @@ This is an ordered list using hash enumerators:
 
 #. The first item of an ordered list
 
-   that spans several paragraphs,
+that spans several paragraphs,
 
 #. the second item of an ordered list,
 
@@ -105,38 +105,38 @@ This is a compact fancy ordered list using hash enumerators:
 
 This is a task list:
 
-* [ ] Some unfinished task
-* [/] Some half-finished task
-* [X] Some finished task
-* An item of an unordered list
-    #. [ ] Some unfinished subtask
-    #. [.] Some half-finished subtask
-    #. [x] Some finished subtask
-    #. An item of an ordered list
+- [ ] Some unfinished task
+- [/] Some half-finished task
+- [x] Some finished task
+- An item of an unordered list
+  #. [ ] Some unfinished subtask
+  #. [.] Some half-finished subtask
+  #. [x] Some finished subtask
+  #. An item of an ordered list
 
 This is a definition list:
 
 Term 1
 
-:   Definition 1 with some ~~removed text~~
+: Definition 1 with some ~~removed text~~
 
 Term 2
 
-:   Definition 2
+: Definition 2
 
         Some code, part of Definition 2
 
     Third paragraph of Definition 2.
 
-:   Definition 3
+: Definition 3
 
 This is a compact definition list:
 
 Term 1
-:   Definition 1
+: Definition 1
 Term 2
-:   Definition 2
-:   Definition 3
+: Definition 2
+: Definition 3
 
 This is a ^superscript^ and a ~subscript~.
 
@@ -154,28 +154,27 @@ write, since you don't have to pick an identifier and
 move down to type the note.]
 
 [^1]: Here is the note.
-
 [^longnote]: Here's one with multiple blocks.
 
     Subsequent paragraphs are indented to show that they
-belong to the previous note.
+    belong to the previous note.
 
         Some code
 
     The whole paragraph can be indented, or just the first
-    line.  In this way, multi-paragraph notes work like
+    line. In this way, multi-paragraph notes work like
     multi-paragraph list items.
 
 This is raw `\TeX`{=tex} code:
 
-``` {=tex}
+```{=tex}
 $$ x^n + y^n = z^n $$
 ```
 
 | this is a line block that
 | spans multiple
 | even
-  discontinuous
+discontinuous
 | lines
 
 This is inline and display TeX math created using dollars signs:

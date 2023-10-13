@@ -1,8 +1,8 @@
 import { error, type Actions, redirect } from '@sveltejs/kit';
 import {
-	GENERATE_ELECTION_COMMITTEE_PROPOSAL,
-	GENERATE_MOTION,
-	GENERATE_PROPOSITION
+	GENERATE_ELECTION_PROPOSAL,
+	NEW_GENERATE_MOTION,
+	NEW_GENERATE_PROPOSITION
 } from '$lib/templates';
 import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 import { spawnSync } from 'node:child_process';
@@ -11,6 +11,20 @@ import fs from 'node:fs';
 export const actions = {
 	default: async ({ request }) => {
 		const formData = await request.formData();
+		const params: Record<string, string> = {};
+		if (formData.get('markdown') === 'markdown') {
+			const keys = Array.from(formData.keys());
+			keys.forEach((key) => {
+				const value = formData.get(key);
+				if (typeof value === 'string' && key !== 'title') {
+					params[key] = markdownToLatex(value);
+				}
+			});
+			Object.keys(params).forEach((key) => {
+				console.log('setting' + key + 'to' + params[key]);
+				formData.set(key, params[key]);
+			});
+		}
 		switch (formData.get('documentType')) {
 			case 'motion': {
 				const tex = generateMotionTex(formData);
@@ -30,8 +44,8 @@ export const actions = {
 				const filePath = await compileTex(tex, uniqueFileName);
 				throw redirect(303, encodeURIComponent(filePath.replace('output/', '')));
 			}
-			case 'electionCommitteeProposal': {
-				const tex = generateElectionCommitteeProposalTex(formData);
+			case 'electionProposal': {
+				const tex = generateElectionProposalTex(formData);
 				const uniqueFileName = `proposal-${(formData.get('meeting') as string).replace(
 					/ /g,
 					'_'
@@ -48,7 +62,8 @@ export const actions = {
 function generateMotionTex(formData: FormData): string {
 	const clauses = extractClauses(formData);
 	const authors = extractAuthors(formData);
-	return GENERATE_MOTION({
+	return NEW_GENERATE_MOTION({
+		// return GENERATE_MOTION({
 		meeting: formData.get('meeting') as string,
 		title: formData.get('title') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
@@ -57,15 +72,15 @@ function generateMotionTex(formData: FormData): string {
 		signMessage: (formData.get('signMessage')?.toString().length === 0
 			? 'För D-sektionen, dag som ovan'
 			: formData.get('signMessage')) as string,
-		late: formData.get('late') === 'on',
-		markdown: formData.get('markdown') === 'markdown'
+		late: formData.get('late') === 'on'
 	});
 }
 
 function generatePropositionTex(formData: FormData): string {
 	const clauses = extractClauses(formData);
 	const authors = extractAuthors(formData);
-	return GENERATE_PROPOSITION({
+	return NEW_GENERATE_PROPOSITION({
+		// return GENERATE_PROPOSITION({
 		meeting: formData.get('meeting') as string,
 		title: formData.get('title') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
@@ -79,11 +94,11 @@ function generatePropositionTex(formData: FormData): string {
 	});
 }
 
-function generateElectionCommitteeProposalTex(formData: FormData): string {
+function generateElectionProposalTex(formData: FormData): string {
 	const authors = extractAuthors(formData);
 	const whatToWho = extractWhatToWho(formData);
 	const statistics = extractStatistics(formData);
-	return GENERATE_ELECTION_COMMITTEE_PROPOSAL({
+	return GENERATE_ELECTION_PROPOSAL({
 		meeting: formData.get('meeting') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		authors: authors,
@@ -102,32 +117,19 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	fs.mkdirSync('output', { recursive: true });
 	fs.mkdirSync('logs', { recursive: true });
 	// if there are more than 10 pdfs in the output folder, delete the oldest one
-	const outputFiles = fs.readdirSync('output');
-	if (outputFiles.length >= 10) {
-		const oldestFile = outputFiles.reduce((oldest, file) => {
-			const oldestTime = fs.statSync(`output/${oldest}`).mtimeMs;
-			const fileTime = fs.statSync(`output/${file}`).mtimeMs;
-			return oldestTime < fileTime ? oldest : file;
-		});
-		fs.unlinkSync(`output/${oldestFile}`);
-	}
-	const logFiles = fs.readdirSync('logs');
-	if (logFiles.length >= 10) {
-		const oldestFile = logFiles.reduce((oldest, file) => {
-			const oldestTime = fs.statSync(`logs/${oldest}`).mtimeMs;
-			const fileTime = fs.statSync(`logs/${file}`).mtimeMs;
-			return oldestTime < fileTime ? oldest : file;
-		});
-		fs.unlinkSync(`logs/${oldestFile}`);
-	}
+	deleteOldestFile('output');
+	// if there are more than 10 logs in the logs folder, delete the oldest one
+	deleteOldestFile('logs');
+
 	fs.writeFileSync(`uploads/${fileName}.tex`, tex);
 
 	// Compile tex, multiple times to make sure all references are correct, e.g. page numbers
 	// spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
 	// spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
 	// spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
-	spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
-	spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
+	spawnSync(`latexmk -g uploads/${fileName}.tex || true`, { shell: true });
+	spawnSync(`latexmk -g -f uploads/${fileName}.tex || true`, { shell: true });
+	// spawnSync(`latexmk -g uploads/${fileName}.tex || true`, { shell: true });
 	// spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
 
 	// Move files to output folder
@@ -205,4 +207,30 @@ function extractStatistics(formData: FormData): Statistics[] {
 		i++;
 	}
 	return statistics;
+}
+
+function markdownToLatex(md: string): string {
+	const uniqueFileName = `markdown-tmp-${Date.now()}`;
+	// create a temporary file
+	fs.mkdirSync('uploads', { recursive: true });
+	fs.writeFileSync(`uploads/${uniqueFileName}.md`, md);
+	// convert markdown to tex
+	const tex = spawnSync(`pandoc uploads/${uniqueFileName}.md -t latex`, {
+		shell: true
+	}).stdout.toString();
+	// remove temporary file
+	spawnSync(`rm uploads/${uniqueFileName}.md`, { shell: true });
+	return tex;
+}
+
+function deleteOldestFile(folder: string, keepHowMany: number = 10): void {
+	const allFiles = fs.readdirSync(folder);
+	if (allFiles.length >= keepHowMany) {
+		const oldestFile = allFiles.reduce((oldest, file) => {
+			const oldestTime = fs.statSync(`${folder}/${oldest}`).mtimeMs;
+			const fileTime = fs.statSync(`${folder}/${file}`).mtimeMs;
+			return oldestTime < fileTime ? oldest : file;
+		});
+		fs.unlinkSync(`${folder}/${oldestFile}`);
+	}
 }

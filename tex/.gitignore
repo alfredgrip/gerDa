@@ -1,0 +1,11 @@
+# LaTeX stuff
+*.log
+*.pdf
+*.aux
+
+# Testing stuff
+results/
+build/
+
+# Publishing stuff
+*.zip

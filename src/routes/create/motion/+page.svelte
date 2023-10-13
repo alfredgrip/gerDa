@@ -6,6 +6,7 @@
 	import ResizeableTextInput from '$lib/components/resizeableTextInput.svelte';
 	import { onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
+	import DocumentTypeInput from '$lib/components/documentTypeInput.svelte';
 
 	let clauses: Writable<
 		Array<{
@@ -66,7 +67,7 @@
 	}}
 />
 <h1>Du skapar en motion</h1>
-<input type="hidden" name="documentType" value="motion" />
+<DocumentTypeInput documentType="motion" />
 <MdLatexRadio />
 <ResizeableTextInput
 	required="true"
