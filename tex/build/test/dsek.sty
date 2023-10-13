@@ -1,0 +1,165 @@
+%%% D-sek common package
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{dsek}[2022/09/26]
+
+\RequirePackage{expl3}
+
+\ExplSyntaxOn
+
+\RequirePackage{xparse}
+\RequirePackage{graphicx}
+\RequirePackage{enumitem}
+
+\str_new:N \g_dsek_image_dir_str
+\str_gset:Nn \g_dsek_image_dir_str { images/ }
+
+\bool_new:N \g_dsek_in_color_bool
+
+%%% Options
+%% Graphics in color or in black and white by default?
+\DeclareOption{color}{\bool_set_true:N \g_dsek_in_color_bool}
+\DeclareOption{bw}   {\bool_set_false:N \g_dsek_in_color_bool}
+
+\ProcessOptions\relax
+
+%%% Commands
+%% Snippets
+
+\tl_const:Nn \c_dsek_long_name_tl {D-sektionen~inom~TLTH}
+\NewDocumentCommand \Dseklongname {} {\tl_use:N \c_dsek_long_name_tl}
+
+\tl_const:Nn \c_idet_name_tl {iDét}
+\NewDocumentCommand \idet {} {\tl_use:N \c_idet_name_tl}
+
+% Commitees
+
+\tl_const:Nn \c_medaljk_name_tl {Medaljelelekommitén}
+\NewDocumentCommand \medaljk {} {\tl_use:N \c_medaljk_name_tl}
+
+% Positions
+
+\tl_const:Nn \c_overphos_name_tl {Øverphøs}
+\NewDocumentCommand \overphos {} {\tl_use:N \c_overphos_name_tl}
+
+\tl_const:Nn \c_overpeppare_name_tl {Øverpeppare}
+\NewDocumentCommand \overpeppare {} {\tl_use:N \c_overpeppare_name_tl}
+
+\tl_const:Nn \c_medaljk_member_name_tl {Medaljelelekommitémedlem}
+\NewDocumentCommand \medaljkmedlem {} {\tl_use:N \c_medaljk_member_name_tl}
+
+%% Graphics
+
+\dim_new:N \l_dsek_height_dim
+
+% A helper command for creating graphic commands
+\cs_new_protected:Npn \__dsek_graphic:nn #1#2 {
+  \group_begin:
+
+  \bool_set_eq:NN \l_dsek_in_color_bool \g_dsek_in_color_bool
+
+  \dim_set:Nn \l_dsek_height_dim {10pt}
+
+  % Define how options passed are going to be handled
+  \keys_define:nn { dsek / graphics } {
+    bw     .bool_set_inverse:N = \l_dsek_in_color_bool,
+    bw     .default:n = {true},
+
+    color  .bool_set:N = \l_dsek_in_color_bool,
+    color  .default:n = {true},
+
+    height .dim_set:N = \l_dsek_height_dim,
+  }
+
+  % Process the options
+  \keys_set:nn { dsek / graphics } { #2 }
+
+  % Actually insert the graphics
+  \includegraphics[ height = \l_dsek_height_dim ] {
+    \g_dsek_image_dir_str #1
+    \bool_if:NTF \l_dsek_in_color_bool
+      {-color}
+      {-bw}
+  }
+  \group_end:
+}
+
+\cs_generate_variant:Nn \__dsek_graphic:nn { nx }
+
+\NewDocumentCommand{\Dsymbol}{ O{} } {
+  \__dsek_graphic:nx { D-symbol } { #1 , color=false }
+}
+
+\NewDocumentCommand{\Dseksigil}{ O{} } {
+  \__dsek_graphic:nx { D-guild-sigil } { #1 }
+}
+
+\NewDocumentCommand{\Cprogsigil}{ O{} } {
+  \__dsek_graphic:nx { C-program-sigil } { #1 }
+}
+
+\NewDocumentCommand{\Dprogsigil}{ O{} } {
+  \__dsek_graphic:nx { D-program-sigil } { #1 }
+}
+
+%% Lists
+
+\NewDocumentEnvironment{boldlist}{ m } {
+  \begin{itemize}[label=\textbf{ #1 },
+                  labelsep=.5em]
+} {
+  \end{itemize}
+}
+
+\NewDocumentEnvironment{attlist}{} {
+  \begin{boldlist}{att}
+} {
+  \end{boldlist}
+}
+
+%% Signatures
+
+\dim_new:N \g_dsek_sign_space_height
+\dim_gset:Nn \g_dsek_sign_space_height {15mm}
+
+\NewDocumentCommand{\setsignspaceheight}{ m }{
+  \dim_gset:Nn \g_dsek_sign_space_height { #1 }
+}
+
+\dim_new:N \l__dsek_sign_width
+
+\NewDocumentCommand{\signature}{ o m m m } {
+  \group_begin:
+  \dim_zero_new:N \l__dsek_sign_space_height
+  \dim_set_eq:NN \l__dsek_sign_space_height \g_dsek_sign_space_height
+
+  \settowidth{\l__dsek_sign_width}{#2}
+  \settowidth{\l_tmpa_dim}{#3}
+
+  \dim_set:Nn \l__dsek_sign_width {
+    \dim_max:nn {\l_tmpa_dim} {\l__dsek_sign_width}}
+
+  \settowidth{\l_tmpa_dim}{#4}
+
+  \dim_set:Nn \l__dsek_sign_width {
+    \dim_max:nn {\l_tmpa_dim} {\l__dsek_sign_width}}
+
+  \dim_add:Nn \l__dsek_sign_width {2em}
+
+  \keys_define:nn { dsek / signatures } {
+    hspace .dim_set:N = \l__dsek_sign_space_height,
+    width  .dim_set:N = \l__dsek_sign_width
+  }
+
+  \IfValueT{#1} {\keys_set:nn { dsek / signatures } { #1 }}
+
+  \parbox[t]{ \dim_use:N \l__dsek_sign_width }{
+    \raggedright #2
+    \vspace{ \dim_use:N \l__dsek_sign_space_height } \\
+    #3 \\
+    #4
+  }
+  \group_end:
+}
+
+\ExplSyntaxOff

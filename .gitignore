@@ -145,7 +145,8 @@ dist
 *.fdb_latexmk
 
 *.pdf
-!tex/*.pdf
+!tex/**/*.pdf
+!tex/build
 
 uploads/*
 logs/*

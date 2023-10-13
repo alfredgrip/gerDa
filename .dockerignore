@@ -8,15 +8,10 @@ build/
 .git
 .gitignore
 Dockerfile
-alpine-pacakges/*
 
 # Ignore all .log except all logs in the logs folder
 *.log
 !logs/*.log
-
-*.pdf
-!output/*.pdf
-!uploads/*.pdf
 
 *.aux
 *.fls

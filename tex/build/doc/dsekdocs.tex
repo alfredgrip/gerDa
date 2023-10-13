@@ -1,0 +1,278 @@
+\documentclass[a4paper, oneside]{ltxdoc}
+\usepackage[
+  colorlinks=true,
+  bookmarks=true,
+  bookmarksnumbered=true,
+  bookmarksopen=true,
+  bookmarksopenlevel=3,
+  pdfauthor={D-sektionen},
+  pdftitle={dsekdocs manual},
+  pdfsubject={Manual for the dsekdocs LaTeX package},
+]{hyperref}
+\usepackage{dsek}
+\usepackage{array}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{3mm}
+
+\author{D-sektionen}
+\title{The \textsf{dsekdocs} manual}
+
+\begin{document}
+\maketitle
+
+\section{Overview}
+This is the manual for version 0.1.1 of the \textsf{dsekdocs} packages for the
+typesetting of documents for the D-guild at the technical faculty of Lund
+university.
+
+\section{The \textsf{dsek} package}
+This package contains macros for the inclusion of D-guild related stuff in any
+document.  To use it, write \cs{usepackage\{dsek\}}.
+
+\subsection{Fonts}
+The \textsf{dsek} package uses the free Domitian and \TeX Gyre Heros as stand
+ins for non-free Palatino and Helvetica fonts.
+
+It is worth noting that it by default uses old style figures, i.e. ``lower case
+numbers'', by default.  If you want to turn that off somewhere, like maybe in a
+table, use
+
+\cs{addfontfeatures\{Numbers=\{Monospaced,Lining\}\}}
+
+This makes the numbers full height and monospaced to increase readability.
+
+\subsection{Commands}
+
+\subsubsection{Text snippets}
+
+These are commands that insert a snippet of text when used.  They exist to
+prevent misspellings when writing hard to spell phrases.
+
+\begin{center}
+  \begin{tabular}{r | l}
+    \cs{Dseklongname}  & \Dseklongname  \\
+    \cs{idet}          & \idet          \\
+    \cs{medaljk}       & \medaljk       \\
+    \cs{overphos}      & \overphos      \\
+    \cs{overpeppare}   & \overpeppare   \\
+    \cs{medaljkmedlem} & \medaljkmedlem \\
+  \end{tabular}
+\end{center}
+
+\subsubsection{Graphics}
+
+These are commands that insert some kind of graphic when used.  All graphics
+accept these options as the optional arguments (comma separated if multiple):
+
+\begin{description}
+  \item[\texttt{bw}] Forces the usage of the black and white version of the
+    graphic.
+  \item[\texttt{color}] Forces the usage of the colored version of the graphic
+    (if it exists).
+  \item[\texttt{height=}\textit{dim}] Sets the height of the graphic.
+\end{description}
+
+\begin{center}
+  \begin{tabular}{r | c c}
+    Command & Colored & Black and white \\ \hline
+    \cs{Dsymbol} & N/A & \Dsymbol[bw, height=10mm] \\
+    \cs{Dseksigil} & \Dseksigil[color, height=20mm] & \Dseksigil[bw,
+      height=20mm] \\
+    \cs{Cprogsigil} & \Cprogsigil[color, height=20mm] & \Cprogsigil[bw,
+      height=20mm] \\
+    \cs{Dprogsigil} & \Dprogsigil[color, height=20mm] & \Dprogsigil[bw,
+      height=20mm] \\
+  \end{tabular}
+\end{center}
+
+\subsubsection{Lists}
+As it is often desirable to create so called ``att-listor'' to reflect decisions
+taken or the proposed actions in motions, facilities to create them are provided:
+
+\begin{center}
+  \begin{tabular}{l}
+    \cs{begin\{attlist\}}\\
+    ... \\
+    \cs{end\{attlist\}}
+  \end{tabular}
+\end{center}
+
+For example:
+
+\begin{center}
+  \begin{tabular}{l | l}
+    \begin{minipage}{0.5\linewidth}
+      \texttt{Mötet beslutade} \\
+      \cs{begin\{attlist\}}\\
+      \cs{item} \texttt{steka pannkakor,} \\
+      \cs{item} \texttt{D-sektionen är bäst!} \\
+      \cs{end\{attlist\}}
+    \end{minipage}
+    &
+    \begin{minipage}{0.5\linewidth}
+      Mötet beslutade
+      \begin{attlist}
+      \item steka pannkakor,
+      \item D-sektionen är bäst!
+      \end{attlist}
+    \end{minipage}
+  \end{tabular}
+\end{center}
+
+If you would like to create a list in the same style but with another word in
+place of \textit{att}, use the \texttt{boldlist} environment:
+
+\begin{center}
+  \begin{tabular}{l}
+    \cs{begin\{boldlist\}}\marg{bullet word}\\
+    ... \\
+    \cs{end\{boldlist\}}
+  \end{tabular}
+\end{center}
+
+\subsubsection{Signatures}
+Finally, the \textsf{dsek} package also includes facilities for adding
+signatures.
+
+\begin{center}
+  \cs{signature}\oarg{options}\marg{date and location}\marg{name}\marg{title}
+\end{center}
+
+For instance, a signature declaration that looks like this:
+
+\begin{center}
+  \cs{signature}\texttt{\{Lund, dag som ovan\}\{Trula Trulsson\}\{Ordförande\}}
+\end{center}
+
+results in
+
+\begin{center}
+  \signature{Lund, dag som ovan}{Trula Trulsson}{Ordförande}
+\end{center}
+
+\noindent
+The signature command accepts the following options:
+\begin{description}
+  \item[\texttt{width=}\textlangle\textit{dim}\textrangle] Sets the width of the
+    signature.  By default, it is set to the maximum of the widths of the
+    entered texts.
+  \item[\texttt{hspace=}\textlangle\textit{dim}\textrangle] Sets the height of
+    the signature space.  By default it is set to 15mm.
+\end{description}
+
+\noindent
+Additionally, the default signature height space for all signatures can be set
+through this command:
+\begin{center}
+  \cs{setsignspaceheight}\marg{dim}
+\end{center}
+
+\subsection{Package options}
+The \textsf{dsek} package accepts the following options, (comma separated if
+multiple):
+
+\begin{description}
+  \item[\texttt{bw}] Makes graphics render in black and white by default.
+  \item[\texttt{color}] Makes graphics render in color by default.
+\end{description}
+
+\section{The \textsf{dsekdoc} document class}
+The \textsf{dsekdoc} document class is meant to be used for any guild related
+documents for which the standard style is desired.  It is based of the
+\textsf{article} document class, but changes fonts, paragraph styles, headers
+and footers amongst a few other things.
+
+\subsection{Options}
+The \textsf{dsekdoc} document only declares one special option,
+\texttt{english}, which tells the language package \textsf{polyglossia} that the
+main language for the document is English instead of Swedish.  All other
+arguments are passed along to the \textsf{article} document class.
+
+\subsection{Commands}
+Because of how the \cs{title}, \cs{author} and \cs{date} commands work, we can't
+easily use what is given to them for our own purposes, so as a replacement we
+have
+\begin{center}
+  \cs{settitle}\marg{title}, \cs{setauthor}\marg{author} and \cs{setdate}\marg{date}
+\end{center}
+
+These commands wrap around the usual \cs{title} commands etc., so there's no
+need to use both.
+
+\subsubsection{Headers}
+In addition to the name of the guild and the date, the headers of the document
+will include a short version of the document title and the meeting it is meant
+for or when it was established.  Those are set with
+
+\begin{center}
+  \cs{setshorttitle}\marg{short title} and \cs{setmeeting}\marg{meeting}
+\end{center}
+
+\subsubsection{Cover page}
+For longer, more important documents it is nice to have a cover page for the
+document.  To insert one, use
+
+\begin{center}
+  \cs{coverpage}
+\end{center}
+
+In addition to the guild's name, the guild's sigil and the title of the
+document, the cover page also features a small text that might be used as a
+subtitle.  It can be set with
+
+\begin{center}
+  \cs{setcovptext}\marg{text}
+\end{center}
+
+\subsubsection{Reusing}
+To use any of the properties we have described in this section, change the
+``set'' in the command to ``use''.  So, to use the title you set with the
+\cs{settitle} command in your document, you write \cs{usetitle} and it will be
+inserted.
+
+\section{The \textsf{dsekregdoc} document class}
+The \textsf{dsekregdoc} document class is meant to be used for the creation of
+the guild's regulatory documents.  The only thing that it provides is the
+\textsf{regsection} list environment.  It is intended to be the body of each
+section of a regulatory document; it begins right after the \cs{section} call
+and ends right before the next one.  Inside it, each paragraph is declared like
+so:
+
+\begin{center}
+  \cs{regitem}\marg{title}.
+\end{center}
+
+By default, all paragraphs follow the numbering format §\(X.Y\), where \(X\) is
+the section number and \(Y\) is the paragraph number.  This format can be
+altered with the following command:
+
+\begin{center}
+  \cs{setregpnumformat}\marg{format}
+\end{center}
+
+The default format can be achieved like this:
+
+\begin{center}
+  \cs{setregpnumformat}\texttt{\{§\cs{arabic}\{section\}.\cs{arabic}\{DsekRegParagraph\}\}}
+\end{center}
+
+If you want a single \texttt{regitem} to have a special numbering (maybe not a
+number at all), you can do so like this:
+
+\begin{center}
+  \cs{regitem}\oarg{numbering}\marg{title}
+\end{center}
+
+This won't step the paragraph counter.
+
+\section{Technical notes}
+
+\subsection{Compatability}
+
+The \textsf{dsekdoc} and \textsf{dsekregdoc} document classes make use of the
+\href{https://ctan.org/pkg/fontspec}{\textsf{fontspec}} and
+\href{https://ctan.org/pkg/polyglossia}{\textsf{polyglossia}} packages, both of
+which are incompatible with \textsf{pdflatex}.  So, to use them, use
+\textsf{xelatex} or \textsf{lualatex} instead.
+
+\end{document}
