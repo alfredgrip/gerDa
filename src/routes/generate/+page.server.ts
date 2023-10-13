@@ -1,6 +1,6 @@
 import { error, type Actions, redirect } from '@sveltejs/kit';
 import {
-	GENERATE_ELECTION_PROPOSAL,
+	NEW_GENERATE_ELECTION_PROPOSAL,
 	NEW_GENERATE_MOTION,
 	NEW_GENERATE_PROPOSITION
 } from '$lib/templates';
@@ -16,12 +16,23 @@ export const actions = {
 			const keys = Array.from(formData.keys());
 			keys.forEach((key) => {
 				const value = formData.get(key);
-				if (typeof value === 'string' && key !== 'title') {
+				// if (key.startsWith('what-to-who-') && key.endsWith('-who')) {
+				// 	params[key] = (value as string).split('\n').join('\n\n');
+				// 	console.log('splitting what-to-who-who');
+				// 	console.log(params[key]);
+				// }
+				if (
+					typeof value === 'string' &&
+					key !== 'markdown' &&
+					key !== 'documentType' &&
+					key !== 'meeting' &&
+					key !== 'title' &&
+					!(key.startsWith('what-to-who-') && key.endsWith('-who'))
+				) {
 					params[key] = markdownToLatex(value);
 				}
 			});
 			Object.keys(params).forEach((key) => {
-				console.log('setting' + key + 'to' + params[key]);
 				formData.set(key, params[key]);
 			});
 		}
@@ -98,7 +109,8 @@ function generateElectionProposalTex(formData: FormData): string {
 	const authors = extractAuthors(formData);
 	const whatToWho = extractWhatToWho(formData);
 	const statistics = extractStatistics(formData);
-	return GENERATE_ELECTION_PROPOSAL({
+	return NEW_GENERATE_ELECTION_PROPOSAL({
+		// return GENERATE_ELECTION_PROPOSAL({
 		meeting: formData.get('meeting') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		authors: authors,
@@ -107,8 +119,7 @@ function generateElectionProposalTex(formData: FormData): string {
 		signMessage: (formData.get('signMessage')?.toString().length === 0
 			? 'För Valberedningen'
 			: formData.get('signMessage')) as string,
-		late: formData.get('late') === 'on',
-		markdown: formData.get('markdown') === 'on'
+		late: formData.get('late') === 'on'
 	});
 }
 
@@ -121,26 +132,36 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	// if there are more than 10 logs in the logs folder, delete the oldest one
 	deleteOldestFile('logs');
 
+	// console.log(tex);
+	// console.log(fileName);
 	fs.writeFileSync(`uploads/${fileName}.tex`, tex);
 
 	// Compile tex, multiple times to make sure all references are correct, e.g. page numbers
-	// spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
-	// spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
-	// spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
-	spawnSync(`latexmk -g uploads/${fileName}.tex || true`, { shell: true });
-	spawnSync(`latexmk -g -f uploads/${fileName}.tex || true`, { shell: true });
-	// spawnSync(`latexmk -g uploads/${fileName}.tex || true`, { shell: true });
-	// spawnSync(`latexmk -g -f --shell-escape uploads/${fileName}.tex || true`, { shell: true });
+	// console.log(
+	// 	spawnSync(`latexmk -g uploads/${fileName}.tex || true`, { shell: true }).stdout.toString()
+	// );
+	// console.log(
+	// 	spawnSync(`latexmk -g -f uploads/${fileName}.tex || true`, { shell: true }).stdout.toString()
+	// );
+	console.log(
+		spawnSync(
+			`tectonic -X compile uploads/${fileName}.tex -Z search-path=tex -Z continue-on-errors`,
+			{
+				shell: true
+			}
+		).stdout.toString()
+	);
 
 	// Move files to output folder
-	spawnSync('mv *.pdf output/ && mv *.log logs/', { shell: true });
+	// spawnSync('mv *.pdf output/ && mv *.log logs/', { shell: true });
+	spawnSync(`mv uploads/${fileName}.pdf output/ && mv ${fileName}.log logs/`, { shell: true });
 	// Clean up
-	spawnSync(
-		`rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz *.markdown.in *.markdown.lua uploads/${fileName}.tex`,
-		{
-			shell: true
-		}
-	);
+	// spawnSync(
+	// 	`rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz *.markdown.in *.markdown.lua uploads/${fileName}.tex`,
+	// 	{
+	// 		shell: true
+	// 	}
+	// );
 	spawnSync('rm -rf _markdown_*', { shell: true });
 	return `output/${fileName}.pdf`;
 }

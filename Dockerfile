@@ -32,10 +32,12 @@
 # CMD ORIGIN=http://localhost:3000 node fileServer.js
 
 FROM node:18-alpine
-RUN apk update && apk upgrade && apk add texlive-full pandoc
+# RUN apk update && apk upgrade && apk add texlive-full pandoc
+RUN apk update && apk upgrade && apk add tectonic pandoc
 ENV TZ=Etc/UTC
 WORKDIR /app
 COPY . .
+RUN tectonic -X compile example.tex -Z search-path=tex -Z continue-on-errors
 COPY package*.json .
 RUN npm install
 RUN npm run build

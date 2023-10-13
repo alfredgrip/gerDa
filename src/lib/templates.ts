@@ -223,8 +223,10 @@ const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) =>
 
 const GENERATE_WHAT_TO_WHO = (whatToWho: WhatToWho[]) =>
 	whatToWho
-		.map((whatToWho) => `  \\WHATWHO{${whatToWho.what}}{${whatToWho.who.join('\\\\')}}\\\\`)
-		.join('');
+		.map(
+			(whatToWho) => `  \\WHATWHO{${whatToWho.what}}{${whatToWho.who.join('\\newline')}}\\newline`
+		)
+		.join('\\newline');
 
 // .map(
 // 	(whatToWho) => `  \\WHATWHO{${whatToWho.what}}{
@@ -345,6 +347,69 @@ ${GENERATE_CLAUSES(parameters.clauses)}
 \\medskip
 
 ${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
+
+\\end{document}
+`;
+
+export const NEW_GENERATE_ELECTION_PROPOSAL = (parameters: {
+	meeting: string;
+	body: string;
+	authors: Author[];
+	whatToWho: WhatToWho[];
+	statistics: Statistics[];
+	signMessage?: string;
+	late: boolean;
+}) => `
+\\documentclass{dsekdoc}
+\\usepackage{dsek}
+\\usepackage{array}
+\\usepackage{fontspec}
+\\usepackage{polyglossia}
+\\usepackage{calc}
+\\usepackage{geometry}
+\\usepackage{titlesec}
+\\usepackage{hyperref}
+\\usepackage{lastpage}
+\\usepackage{multicol}
+
+\\begin{document}
+\\settitle{Valberedningens förslag inför ${parameters.meeting}}
+\\setauthor{${parameters.authors[0].name}}
+\\setdate{\\today}
+\\setshorttitle{${parameters.late ? 'Sen handling' : 'Handling'}}
+\\setmeeting{${parameters.meeting}}
+\\newcommand{\\WHATWHO}[2]{\\textbf{#1}\\newline #2\\newline\\newline}
+\\newcommand{\\WHATCOUNT}[2]{\\textbf{#1}#2 st}
+
+
+
+\\section*{Valberedningens förslag inför ${parameters.meeting}}
+${parameters.body}
+
+Valberedningens förslag inför \\MOTE \\ är följande:
+\\begin{multicols*}{2}  
+
+${GENERATE_WHAT_TO_WHO(parameters.whatToWho)}
+
+\\end{multicols*}
+
+\\medskip
+
+{Valstatistik presenteras på nästkommande sida.\\newline}
+
+\\medskip
+
+${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
+
+\\newpage
+\\subsection*{Valstatistik}
+Nedan presenteras antalet personer som genomgick valprocessen i intervall om storlek 5.
+
+\\begin{multicols}{2}
+
+${GENERATE_STATISTICS(parameters.statistics)}
+
+\\end{multicols}
 
 \\end{document}
 `;

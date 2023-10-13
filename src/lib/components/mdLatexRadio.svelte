@@ -10,7 +10,7 @@
 		<input type="radio" name="markdown" value="latex" id="latex" />
 		<label for="latex">LaTeX</label>
 	</div>
-	<small>(Gäller ej för titeln)</small>
+	<small>(Gäller ej för titeln eller mötet)</small>
 </div>
 
 <style>
