@@ -1,7 +1,6 @@
 <script lang="ts">
 	import AddButton from '$lib/components/addButton.svelte';
 	import DocumentTypeInput from '$lib/components/documentTypeInput.svelte';
-	import GenerateButton from '$lib/components/generateButton.svelte';
 	import MdLatexRadio from '$lib/components/mdLatexRadio.svelte';
 	import RemoveButton from '$lib/components/removeButton.svelte';
 	import ResizeableTextInput from '$lib/components/resizeableTextInput.svelte';
@@ -71,10 +70,6 @@
 		required="true"
 		placeholder="Ex. HTM-val, S02, VTM1"
 	/>
-	<label>
-		Sen?
-		<input name="late" type="checkbox" />
-	</label>
 </div>
 <ResizeableTextInput
 	idName="body"
@@ -82,7 +77,7 @@
 	labelName="Brödtext"
 	id="body"
 	numRows="4"
-	placeholder="(Frivillig) Här kan du eventuellt skriva något om hur valberedningen har arbetat med förslaget."
+	placeholder="(Frivillig) Här kan du eventuellt skriva om hur valberedningen har arbetat med förslaget."
 />
 <!-- svelte-ignore a11y-label-has-associated-control -->
 <label>

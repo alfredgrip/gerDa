@@ -1,4 +1,4 @@
-import { error, type Actions, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import {
 	NEW_GENERATE_ELECTION_PROPOSAL,
 	NEW_GENERATE_MOTION,
@@ -8,67 +8,70 @@ import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 
-export const actions = {
-	default: async ({ request }) => {
-		const formData = await request.formData();
-		const params: Record<string, string> = {};
-		if (formData.get('markdown') === 'markdown') {
-			const keys = Array.from(formData.keys());
-			keys.forEach((key) => {
-				const value = formData.get(key);
-				// if (key.startsWith('what-to-who-') && key.endsWith('-who')) {
-				// 	params[key] = (value as string).split('\n').join('\n\n');
-				// 	console.log('splitting what-to-who-who');
-				// 	console.log(params[key]);
-				// }
-				if (
-					typeof value === 'string' &&
-					key !== 'markdown' &&
-					key !== 'documentType' &&
-					key !== 'meeting' &&
-					key !== 'title' &&
-					!(key.startsWith('what-to-who-') && key.endsWith('-who'))
-				) {
-					params[key] = markdownToLatex(value);
-				}
-			});
-			Object.keys(params).forEach((key) => {
-				formData.set(key, params[key]);
-			});
-		}
-		switch (formData.get('documentType')) {
-			case 'motion': {
-				const tex = generateMotionTex(formData);
-				const uniqueFileName = `motion-${(formData.get('title') as string).replace(
-					/ /g,
-					'_'
-				)}-${Date.now()}`;
-				const filePath = await compileTex(tex, uniqueFileName);
-				throw redirect(303, encodeURIComponent(filePath.replace('output/', '')));
+export async function GET() {
+	return new Response('hi');
+}
+
+export async function POST(event) {
+	const request = event.request;
+	const formData = await request.formData();
+	const params: Record<string, string> = {};
+	if (formData.get('markdown') === 'markdown') {
+		const keys = Array.from(formData.keys());
+		keys.forEach((key) => {
+			const value = formData.get(key);
+			// if (key.startsWith('what-to-who-') && key.endsWith('-who')) {
+			// 	params[key] = (value as string).split('\n').join('\n\n');
+			// 	console.log('splitting what-to-who-who');
+			// 	console.log(params[key]);
+			// }
+			if (
+				typeof value === 'string' &&
+				key !== 'markdown' &&
+				key !== 'documentType' &&
+				key !== 'meeting' &&
+				key !== 'title' &&
+				!(key.startsWith('what-to-who-') && key.endsWith('-who'))
+			) {
+				params[key] = markdownToLatex(value);
 			}
-			case 'proposition': {
-				const tex = generatePropositionTex(formData);
-				const uniqueFileName = `proposition-${(formData.get('title') as string).replace(
-					/ /g,
-					'_'
-				)}-${Date.now()}`;
-				const filePath = await compileTex(tex, uniqueFileName);
-				throw redirect(303, encodeURIComponent(filePath.replace('output/', '')));
-			}
-			case 'electionProposal': {
-				const tex = generateElectionProposalTex(formData);
-				const uniqueFileName = `proposal-${(formData.get('meeting') as string).replace(
-					/ /g,
-					'_'
-				)}-${Date.now()}`;
-				const filePath = await compileTex(tex, uniqueFileName);
-				throw redirect(303, encodeURIComponent(filePath.replace('output/', '')));
-			}
-			default:
-				throw error(400, 'Invalid document type');
-		}
+		});
+		Object.keys(params).forEach((key) => {
+			formData.set(key, params[key]);
+		});
 	}
-} satisfies Actions;
+	switch (formData.get('documentType')) {
+		case 'motion': {
+			const tex = generateMotionTex(formData);
+			const uniqueFileName = `motion-${(formData.get('title') as string).replace(
+				/ /g,
+				'_'
+			)}-${Date.now()}`;
+			const filePath = await compileTex(tex, uniqueFileName);
+			return new Response(filePath.replace('output/', ''));
+		}
+		case 'proposition': {
+			const tex = generatePropositionTex(formData);
+			const uniqueFileName = `proposition-${(formData.get('title') as string).replace(
+				/ /g,
+				'_'
+			)}-${Date.now()}`;
+			const filePath = await compileTex(tex, uniqueFileName);
+			return new Response(filePath.replace('output/', ''));
+		}
+		case 'electionProposal': {
+			const tex = generateElectionProposalTex(formData);
+			const uniqueFileName = `proposal-${(formData.get('meeting') as string).replace(
+				/ /g,
+				'_'
+			)}-${Date.now()}`;
+			const filePath = await compileTex(tex, uniqueFileName);
+			return new Response(filePath.replace('output/', ''));
+		}
+		default:
+			throw error(400, 'Invalid document type');
+	}
+}
 
 function generateMotionTex(formData: FormData): string {
 	const clauses = extractClauses(formData);
@@ -82,8 +85,7 @@ function generateMotionTex(formData: FormData): string {
 		authors: authors,
 		signMessage: (formData.get('signMessage')?.toString().length === 0
 			? 'För D-sektionen, dag som ovan'
-			: formData.get('signMessage')) as string,
-		late: formData.get('late') === 'on'
+			: formData.get('signMessage')) as string
 	});
 }
 
@@ -91,7 +93,6 @@ function generatePropositionTex(formData: FormData): string {
 	const clauses = extractClauses(formData);
 	const authors = extractAuthors(formData);
 	return NEW_GENERATE_PROPOSITION({
-		// return GENERATE_PROPOSITION({
 		meeting: formData.get('meeting') as string,
 		title: formData.get('title') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
@@ -100,7 +101,6 @@ function generatePropositionTex(formData: FormData): string {
 		signMessage: (formData.get('signMessage')?.toString().length === 0
 			? 'För D-sektionen, dag som ovan'
 			: formData.get('signMessage')) as string,
-		late: formData.get('late') === 'on',
 		markdown: formData.get('markdown') === 'markdown'
 	});
 }
@@ -118,8 +118,7 @@ function generateElectionProposalTex(formData: FormData): string {
 		statistics: statistics,
 		signMessage: (formData.get('signMessage')?.toString().length === 0
 			? 'För Valberedningen'
-			: formData.get('signMessage')) as string,
-		late: formData.get('late') === 'on'
+			: formData.get('signMessage')) as string
 	});
 }
 
@@ -132,8 +131,6 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	// if there are more than 10 logs in the logs folder, delete the oldest one
 	deleteOldestFile('logs');
 
-	// console.log(tex);
-	// console.log(fileName);
 	fs.writeFileSync(`uploads/${fileName}.tex`, tex);
 
 	// Compile tex, multiple times to make sure all references are correct, e.g. page numbers
@@ -155,14 +152,7 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	// Move files to output folder
 	// spawnSync('mv *.pdf output/ && mv *.log logs/', { shell: true });
 	spawnSync(`mv uploads/${fileName}.pdf output/ && mv ${fileName}.log logs/`, { shell: true });
-	// Clean up
-	// spawnSync(
-	// 	`rm -f *.aux *.fdb_latexmk *.fls *.out *.synctex.gz *.markdown.in *.markdown.lua uploads/${fileName}.tex`,
-	// 	{
-	// 		shell: true
-	// 	}
-	// );
-	spawnSync('rm -rf _markdown_*', { shell: true });
+	spawnSync('rm -rf _markdown_* && rm -rf uploads/*', { shell: true });
 	return `output/${fileName}.pdf`;
 }
 
@@ -189,7 +179,7 @@ function extractClauses(formData: FormData): Clause[] {
 		const toClause = formData.get(`to-clause-${i.toString()}`) as string;
 		const description = formData.get(`to-clause-${i.toString()}-description`) as string | null;
 		if (toClause) {
-			clauses.push({ toClause, description });
+			clauses.push({ toClause, description: description ?? '' });
 		} else {
 			break;
 		}

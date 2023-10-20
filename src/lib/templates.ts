@@ -1,225 +1,225 @@
 import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 
-export const GENERATE_MOTION = (parameters: {
-	meeting: string;
-	title: string;
-	body: string;
-	clauses: Clause[];
-	authors: Author[];
-	signMessage?: string;
-	late: boolean;
-	markdown: boolean;
-}) => `
-\\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
+// export const GENERATE_MOTION = (parameters: {
+// 	meeting: string;
+// 	title: string;
+// 	body: string;
+// 	clauses: Clause[];
+// 	authors: Author[];
+// 	signMessage?: string;
+// 	late: boolean;
+// 	markdown: boolean;
+// }) => `
+// \\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
 
-\\usepackage{dsekcommon}
-\\usepackage{dsekdokument}
-\\usepackage[T1]{fontenc}
-%\\usepackage[utf8]{inputenc}
-\\usepackage[swedish]{babel}
-\\usepackage{markdown}
-\\usepackage{csquotes}
+// \\usepackage{dsekcommon}
+// \\usepackage{dsekdokument}
+// \\usepackage[T1]{fontenc}
+// %\\usepackage[utf8]{inputenc}
+// \\usepackage[swedish]{babel}
+// \\usepackage{markdown}
+// \\usepackage{csquotes}
 
+// % this enables lth-symbols
+// %\\pdfgentounicode=0
 
-% this enables lth-symbols
-%\\pdfgentounicode=0
+// \\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
+// \\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
+// \\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
+// \\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
+// \\newcommand{\\UNDER}{${
+// 	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
+// 		? 'Undertecknad yrkar att sektionsmötet må besluta'
+// 		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
+// 		? 'Undertecknad yrkar att styrelsemötet må besluta'
+// 		: 'Undertecknad yrkar att mötet må besluta'
+// }}
+// }}
+// \\newcommand{\\ATT}[1]{\\item #1}
+// \\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
 
-\\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
-\\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
-\\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
-\\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
-\\newcommand{\\UNDER}{${
-	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
-		? 'Undertecknad yrkar att sektionsmötet må besluta'
-		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
-		? 'Undertecknad yrkar att styrelsemötet må besluta'
-		: 'Undertecknad yrkar att mötet må besluta'
-}}
-}}
-\\newcommand{\\ATT}[1]{\\item #1}
-\\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
+// \\setheader{${parameters.late ? 'Sen motion' : 'Motion'}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
+// \\title{${parameters.late ? 'Sen motion' : 'Motion'}: \\TITLE}
 
-\\setheader{${parameters.late ? 'Sen motion' : 'Motion'}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
-\\title{${parameters.late ? 'Sen motion' : 'Motion'}: \\TITLE}
+// \\begin{document}
+// \\section*{${'Motion'}: \\TITLE}
 
-\\begin{document}
-\\section*{${'Motion'}: \\TITLE}
+// ${GENERATE_BODY(parameters.body, parameters.markdown)}
 
-${GENERATE_BODY(parameters.body, parameters.markdown)}
+// \\medskip
 
-\\medskip
+// \\UNDER
 
-\\UNDER
+// \\begin{attlista}
+// 	${GENERATE_CLAUSES(parameters.clauses)}
+// \\end{attlista}
 
+// ${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
+// \\end{document}
+// `;
 
-\\begin{attlista}
-	${GENERATE_CLAUSES(parameters.clauses)}
-\\end{attlista}
+// export const GENERATE_PROPOSITION = (parameters: {
+// 	meeting: string;
+// 	title: string;
+// 	body: string;
+// 	clauses: Clause[];
+// 	authors: Author[];
+// 	signMessage?: string;
+// 	late: boolean;
+// 	markdown: boolean;
+// }) => `
+// \\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
-\\end{document}
-`;
+// \\usepackage{dsekcommon}
+// \\usepackage{dsekdokument}
+// \\usepackage[T1]{fontenc}
+// %\\usepackage[utf8]{inputenc}
+// \\usepackage[swedish]{babel}
+// \\usepackage{markdown}
+// \\usepackage{csquotes}
 
-export const GENERATE_PROPOSITION = (parameters: {
-	meeting: string;
-	title: string;
-	body: string;
-	clauses: Clause[];
-	authors: Author[];
-	signMessage?: string;
-	late: boolean;
-	markdown: boolean;
-}) => `
-\\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
+// % this enables lth-symbols
+// \\pdfgentounicode=0
 
-\\usepackage{dsekcommon}
-\\usepackage{dsekdokument}
-\\usepackage[T1]{fontenc}
-%\\usepackage[utf8]{inputenc}
-\\usepackage[swedish]{babel}
-\\usepackage{markdown}
-\\usepackage{csquotes}
+// \\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
+// \\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
+// \\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
+// \\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
+// \\newcommand{\\UNDER}{${
+// 	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
+// 		? 'Undertecknad yrkar att sektionsmötet må besluta'
+// 		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
+// 		? 'Undertecknad yrkar att styrelsemötet må besluta'
+// 		: 'Undertecknad yrkar att mötet må besluta'
+// }}
+// }}
+// \\newcommand{\\ATT}[1]{\\begin{markdown}\\item #1\\end{markdown}}
+// \\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
 
-% this enables lth-symbols
-\\pdfgentounicode=0
+// \\setheader{${
+// 	parameters.late ? 'Sen proposition' : 'Proposition'
+// }}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
+// \\title{${parameters.late ? 'Sen proposition' : 'Proposition'}: \\TITLE}
 
-\\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
-\\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
-\\newcommand{\\TITLE}{${parameters.title}} % Fyll i titel på handlingen
-\\newcommand{\\PLACE}{Lund} % Fyll i plats där handlingen skrevs, oftast bara "Lund"
-\\newcommand{\\UNDER}{${
-	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
-		? 'Undertecknad yrkar att sektionsmötet må besluta'
-		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
-		? 'Undertecknad yrkar att styrelsemötet må besluta'
-		: 'Undertecknad yrkar att mötet må besluta'
-}}
-}}
-\\newcommand{\\ATT}[1]{\\begin{markdown}\\item #1\\end{markdown}}
-\\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
+// \\begin{document}
+// \\section*{${'Proposition'}: \\TITLE}
 
-\\setheader{${
-	parameters.late ? 'Sen proposition' : 'Proposition'
-}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
-\\title{${parameters.late ? 'Sen proposition' : 'Proposition'}: \\TITLE}
+// ${GENERATE_BODY(parameters.body, parameters.markdown)}
 
-\\begin{document}
-\\section*{${'Proposition'}: \\TITLE}
+// \\medskip
 
+// \\UNDER
 
-${GENERATE_BODY(parameters.body, parameters.markdown)}
+// \\begin{attlista}
+// 	${GENERATE_CLAUSES(parameters.clauses)}
+// \\end{attlista}
 
-\\medskip
+// ${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
+// \\end{document}
+// `;
 
-\\UNDER
+// export const GENERATE_ELECTION_PROPOSAL = (parameters: {
+// 	meeting: string;
+// 	body: string;
+// 	authors: Author[];
+// 	whatToWho: WhatToWho[];
+// 	statistics: Statistics[];
+// 	signMessage?: string;
+// 	late: boolean;
+// 	markdown: boolean;
+// }) => `
+// \\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
 
+// \\usepackage{dsekcommon}
+// \\usepackage{dsekdokument}
+// \\usepackage[T1]{fontenc}
+// %\\usepackage[utf8]{inputenc}
+// \\usepackage[swedish]{babel}
+// \\usepackage{multicol}
+// \\usepackage{markdown}
+// \\usepackage{csquotes}
 
-\\begin{attlista}
-	${GENERATE_CLAUSES(parameters.clauses)}
-\\end{attlista}
+// \\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
+// \\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
+// \\newcommand{\\TITLE}{Valberedningens förslag inför \\MOTE} % Fyll i titel på motionen
+// \\newcommand{\\PLACE}{Lund} % Fyll i plats där motionen skrevs, oftast bara "Lund"
+// \\newcommand{\\WHATWHO}[2]{\\subsubsection*{#1}#2}
+// \\newcommand{\\WHATCOUNT}[2]{\\subsubsection*{#1}#2 st}
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
-\\end{document}
-`;
+// \\setheader{${parameters.late ? 'Sen handling' : 'Handling'}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
+// \\title{${parameters.late ? 'Sen handling' : 'Handling'}: \\TITLE}
 
-export const GENERATE_ELECTION_PROPOSAL = (parameters: {
-	meeting: string;
-	body: string;
-	authors: Author[];
-	whatToWho: WhatToWho[];
-	statistics: Statistics[];
-	signMessage?: string;
-	late: boolean;
-	markdown: boolean;
-}) => `
-\\documentclass[nopdfbookmarks,a4paper, 11pt, twoside]{article}
+// \\begin{document}
+// \\section*{Valberedningens förslag inför \\MOTE}
 
-\\usepackage{dsekcommon}
-\\usepackage{dsekdokument}
-\\usepackage[T1]{fontenc}
-%\\usepackage[utf8]{inputenc}
-\\usepackage[swedish]{babel}
-\\usepackage{multicol}
-\\usepackage{markdown}
-\\usepackage{csquotes}
+// ${GENERATE_BODY(parameters.body, parameters.markdown)}
 
+// Valberedningens förslag inför \\MOTE \\ är följande:
+// \\begin{multicols*}{2}
 
-\\newcommand{\\MOTE}{${parameters.meeting}} % Fyll i vilket möte det gäller
-\\newcommand{\\YEAR}{\\the\\year{}} % Fyll i år
-\\newcommand{\\TITLE}{Valberedningens förslag inför \\MOTE} % Fyll i titel på motionen
-\\newcommand{\\PLACE}{Lund} % Fyll i plats där motionen skrevs, oftast bara "Lund"
-\\newcommand{\\WHATWHO}[2]{\\subsubsection*{#1}#2}
-\\newcommand{\\WHATCOUNT}[2]{\\subsubsection*{#1}#2 st}
+// ${GENERATE_WHAT_TO_WHO(parameters.whatToWho)}
 
-\\setheader{${parameters.late ? 'Sen handling' : 'Handling'}}{\\MOTE\\ - \\YEAR}{\\PLACE, \\today}
-\\title{${parameters.late ? 'Sen handling' : 'Handling'}: \\TITLE}
+// \\end{multicols*}
 
-\\begin{document}
-\\section*{Valberedningens förslag inför \\MOTE}
+// \\medskip
 
-${GENERATE_BODY(parameters.body, parameters.markdown)}
+// {Valstatistik presenteras på nästkommande sida.\\newline}
 
-Valberedningens förslag inför \\MOTE \\ är följande:
-\\begin{multicols*}{2}  
+// \\medskip
 
-${GENERATE_WHAT_TO_WHO(parameters.whatToWho)}
+// ${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
 
-\\end{multicols*}
+// \\newpage
+// \\subsection*{Valstatistik}
+// Nedan presenteras antalet personer som genomgick valprocessen i intervall om storlek 5.
 
-\\medskip
+// \\begin{multicols}{2}
 
-{Valstatistik presenteras på nästkommande sida.\\newline}
+// ${GENERATE_STATISTICS(parameters.statistics)}
 
-\\medskip
+// \\end{multicols}
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
+// \\end{document}
+// `;
 
-\\newpage
-\\subsection*{Valstatistik}
-Nedan presenteras antalet personer som genomgick valprocessen i intervall om storlek 5.
-
-\\begin{multicols}{2}
-
-${GENERATE_STATISTICS(parameters.statistics)}
-
-\\end{multicols}
-
-\\end{document}
-`;
-
-const GENERATE_BODY = (body: string, markdown: boolean) => {
-	if (markdown) {
-		return `
-\\begin{markdown}
-${body}
-\\end{markdown}`;
-	}
-	return body;
-};
+// const GENERATE_BODY = (body: string, markdown: boolean) => {
+// 	if (markdown) {
+// 		return `
+// \\begin{markdown}
+// ${body}
+// \\end{markdown}`;
+// 	}
+// 	return body;
+// };
 
 const GENERATE_CLAUSES = (clauses: Clause[]) =>
 	clauses
 		.map((clause) =>
-			clause.description
-				? `  \\ATTDESC{${clause.toClause
-						.replaceAll(RegExp(/"([^"]*)"/g), '\\enquote{$1}')
-						.replaceAll('\n', '\\\\')}}{${clause.description
-						.replaceAll(RegExp(/"([^"]*)"/g), '\\enquote{$1}')
-						.replaceAll('\n', '\\\\')}}\n`
-				: `  \\ATT{${clause.toClause
-						.replaceAll(RegExp(/"([^"]*)"/g), '\\enquote{$1}')
-						.replaceAll('\n', '\\\\')}}\n`
+			clause.description?.trim.length
+				? `  \\attdesc{${clause.toClause}}{${clause.description}}\n`
+				: `  \\item{${clause.toClause}}\n`
 		)
 		.join('');
+
 const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) =>
 	authors
 		.map(
 			(author, index) =>
 				`  \\signature{${
 					index === 0 ? signMessage ?? 'För D-sektionen, dag som ovan' : '\\phantom{}'
-				}}{${author.name}}{${author.position ? `${author.position}` : ''}}`
+				}}{${author.name}}{${author.position ?? ''}}`
 		)
 		.join('');
+
+const GENERATE_DEMAND = (meeting: string) => {
+	if (meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)) {
+		return 'Undertecknad yrkar att sektionsmötet må besluta';
+	} else if (meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)) {
+		return 'Undertecknad yrkar att styrelsemötet må besluta';
+	} else {
+		return 'Undertecknad yrkar att mötet må besluta';
+	}
+};
 
 const GENERATE_WHAT_TO_WHO = (whatToWho: WhatToWho[]) =>
 	whatToWho
@@ -227,13 +227,6 @@ const GENERATE_WHAT_TO_WHO = (whatToWho: WhatToWho[]) =>
 			(whatToWho) => `  \\WHATWHO{${whatToWho.what}}{${whatToWho.who.join('\\newline')}}\\newline`
 		)
 		.join('\\newline');
-
-// .map(
-// 	(whatToWho) => `  \\WHATWHO{${whatToWho.what}}{
-// 	\\begin{itemize}
-// 	${whatToWho.who.map((who) => `\\item ${who}`).join('\n')}
-// \\end{itemize}}\n`
-// )
 
 const GENERATE_STATISTICS = (statistics: Statistics[]) =>
 	statistics
@@ -247,42 +240,21 @@ export const NEW_GENERATE_MOTION = (parameters: {
 	clauses: Clause[];
 	authors: Author[];
 	signMessage?: string;
-	late: boolean;
 }) => `
-\\documentclass{dsekdoc}
+\\documentclass[motion]{dsekmotion}
 \\usepackage{dsek}
-\\usepackage{array}
-\\usepackage{fontspec}
-\\usepackage{polyglossia}
-\\usepackage{calc}
-\\usepackage{geometry}
-\\usepackage{titlesec}
-\\usepackage{hyperref}
-\\usepackage{lastpage}
-
 
 \\begin{document}
 \\settitle{${parameters.title}}
 \\setauthor{${parameters.authors[0].name}}
 \\setdate{\\today}
-\\setshorttitle{${parameters.late ? 'Sen motion' : 'Motion'}}
 \\setmeeting{${parameters.meeting}}
 
-\\newcommand{\\ATT}[1]{\\item #1}
-\\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
-
-\\section*{${parameters.late ? 'Sen motion' : 'Motion'}: \\usetitle}
 ${parameters.body}
 
 \\medskip
 
-${
-	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
-		? 'Undertecknad yrkar att sektionsmötet må besluta'
-		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
-		? 'Undertecknad yrkar att styrelsemötet må besluta'
-		: 'Undertecknad yrkar att mötet må besluta'
-}
+${GENERATE_DEMAND(parameters.meeting)}
 
 \\begin{attlist}
 ${GENERATE_CLAUSES(parameters.clauses)}
@@ -302,43 +274,23 @@ export const NEW_GENERATE_PROPOSITION = (parameters: {
 	clauses: Clause[];
 	authors: Author[];
 	signMessage?: string;
-	late: boolean;
 	markdown: boolean;
 }) => `
-\\documentclass{dsekdoc}
+\\documentclass[proposition]{dsekmotion}
 \\usepackage{dsek}
-\\usepackage{array}
-\\usepackage{fontspec}
-\\usepackage{polyglossia}
-\\usepackage{calc}
-\\usepackage{geometry}
-\\usepackage{titlesec}
-\\usepackage{hyperref}
-\\usepackage{lastpage}
-
 
 \\begin{document}
 \\settitle{${parameters.title}}
 \\setauthor{${parameters.authors[0].name}}
 \\setdate{\\today}
-\\setshorttitle{${parameters.late ? 'Sen proposition' : 'Proposition'}}
+\\setshorttitle{Proposition}
 \\setmeeting{${parameters.meeting}}
 
-\\newcommand{\\ATT}[1]{\\item #1}
-\\newcommand{\\ATTDESC}[2]{\\item #1 \\begin{description} \\item #2 \\end{description}}
-
-\\section*{${parameters.late ? 'Sen proposition' : 'Proposition'}: \\usetitle}
 ${parameters.body}
 
 \\medskip
 
-${
-	parameters.meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)
-		? 'Undertecknad yrkar att sektionsmötet må besluta'
-		: parameters.meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)
-		? 'Undertecknad yrkar att styrelsemötet må besluta'
-		: 'Undertecknad yrkar att mötet må besluta'
-}
+${GENERATE_DEMAND(parameters.meeting)}
 
 \\begin{attlist}
 ${GENERATE_CLAUSES(parameters.clauses)}
@@ -358,25 +310,15 @@ export const NEW_GENERATE_ELECTION_PROPOSAL = (parameters: {
 	whatToWho: WhatToWho[];
 	statistics: Statistics[];
 	signMessage?: string;
-	late: boolean;
 }) => `
 \\documentclass{dsekdoc}
 \\usepackage{dsek}
-\\usepackage{array}
-\\usepackage{fontspec}
-\\usepackage{polyglossia}
-\\usepackage{calc}
-\\usepackage{geometry}
-\\usepackage{titlesec}
-\\usepackage{hyperref}
-\\usepackage{lastpage}
-\\usepackage{multicol}
 
 \\begin{document}
 \\settitle{Valberedningens förslag inför ${parameters.meeting}}
 \\setauthor{${parameters.authors[0].name}}
 \\setdate{\\today}
-\\setshorttitle{${parameters.late ? 'Sen handling' : 'Handling'}}
+\\setshorttitle{'Handling'}
 \\setmeeting{${parameters.meeting}}
 \\newcommand{\\WHATWHO}[2]{\\textbf{#1}\\newline #2\\newline\\newline}
 \\newcommand{\\WHATCOUNT}[2]{\\textbf{#1}#2 st}

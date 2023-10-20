@@ -7,9 +7,9 @@ const app = express();
 const outputPath = 'output';
 
 // add a route that lives separately from the SvelteKit app
-app.get('/output/*', (req, res) => {
+app.get(`/${outputPath}/*`, (req, res) => {
 	const fileName = req.url.split('/').pop();
-	res.sendFile('output/' + fileName, { root: '.' });
+	res.sendFile(`/${outputPath}/` + fileName, { root: '.' });
 });
 
 app.use(express.static(outputPath));

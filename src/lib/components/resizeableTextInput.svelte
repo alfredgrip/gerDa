@@ -44,7 +44,6 @@
 	}
 
 	textarea {
-		width: 100%;
 		/* min-height: 50px; */
 		height: auto;
 		resize: none;

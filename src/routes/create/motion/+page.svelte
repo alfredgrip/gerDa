@@ -84,10 +84,6 @@
 	required="true"
 	placeholder="Ex. HTM-val, S02, VTM1"
 />
-<label>
-	Sen handling?
-	<input name="late" type="checkbox" />
-</label>
 <ResizeableTextInput
 	idName="body"
 	type="textArea"
