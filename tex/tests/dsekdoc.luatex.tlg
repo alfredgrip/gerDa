@@ -2638,16 +2638,21 @@ ion TLT
 ......\localbrokenpenalty=0
 ......\localleftbox=null
 ......\localrightbox=null
-.....\hbox(6.9204+0.18616)x0.0, direction TLT
+.....\hbox(6.9204+1.935)x0.0, direction TLT
 ......\glue 0.0
 ......\glue -21.9
 ......\glue -5.47499
-......\hbox(6.9204+0.18616)x21.9, glue set 21.9fil, direction TLT
+......\hbox(6.9204+1.935)x21.9, glue set 21.9fil, direction TLT
 .......\pdfcolorstack 0 push {0 g 0 G}
 .......\penalty 10000
 .......\glue 0.0 plus 1.0fil minus 1.0fil
-.......\hbox(6.9204+0.18616)x0.0, glue set - 12.7677fil, direction TLT
+.......\hbox(6.9204+1.935)x0.0, glue set - 25.99919fil, direction TLT
 ........\glue 0.0 plus 1.0fil minus 1.0fil
+........\TU/Domitian-Roman.otf(0)/m/n/9 (
+........\TU/Domitian-Roman.otf(0)/m/n/9 1
+........\TU/Domitian-Roman.otf(0)/m/n/9 )
+........\kern0.0 (italic)
+........\glue 2.7375 plus 1.36874 minus 0.9125
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 a
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 t
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 t
@@ -2692,16 +2697,21 @@ ion TLT
 ......\localbrokenpenalty=0
 ......\localleftbox=null
 ......\localrightbox=null
-.....\hbox(6.9204+0.18616)x0.0, direction TLT
+.....\hbox(6.9204+1.935)x0.0, direction TLT
 ......\glue 0.0
 ......\glue -21.9
 ......\glue -5.47499
-......\hbox(6.9204+0.18616)x21.9, glue set 21.9fil, direction TLT
+......\hbox(6.9204+1.935)x21.9, glue set 21.9fil, direction TLT
 .......\pdfcolorstack 0 push {0 g 0 G}
 .......\penalty 10000
 .......\glue 0.0 plus 1.0fil minus 1.0fil
-.......\hbox(6.9204+0.18616)x0.0, glue set - 12.7677fil, direction TLT
+.......\hbox(6.9204+1.935)x0.0, glue set - 25.99919fil, direction TLT
 ........\glue 0.0 plus 1.0fil minus 1.0fil
+........\TU/Domitian-Roman.otf(0)/m/n/9 (
+........\TU/Domitian-Roman.otf(0)/m/n/9 2
+........\TU/Domitian-Roman.otf(0)/m/n/9 )
+........\kern0.0 (italic)
+........\glue 2.7375 plus 1.36874 minus 0.9125
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 a
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 t
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 t
@@ -3362,23 +3372,28 @@ rection TLT
 ....\glue(\parskip) 4.5 plus 2.0 minus 1.0
 ....\glue(\parskip) 0.0
 ....\glue(\baselineskip) 2.57336
-....\hbox(7.94969+0.219)x427.8691, glue set 330.98352fil, shifted 27.37498, dire
+....\hbox(7.94969+2.133)x427.8691, glue set 330.98352fil, shifted 27.37498, dire
 ction TLT
 .....\localpar
 ......\localinterlinepenalty=0
 ......\localbrokenpenalty=0
 ......\localleftbox=null
 ......\localrightbox=null
-.....\hbox(6.9204+0.18616)x0.0, direction TLT
+.....\hbox(6.9204+2.133)x0.0, direction TLT
 ......\glue 0.0
 ......\glue -21.9
 ......\glue -5.47499
-......\hbox(6.9204+0.18616)x21.9, glue set 21.9fil, direction TLT
+......\hbox(6.9204+2.133)x21.9, glue set 21.9fil, direction TLT
 .......\pdfcolorstack 0 push {0 g 0 G}
 .......\penalty 10000
 .......\glue 0.0 plus 1.0fil minus 1.0fil
-.......\hbox(6.9204+0.18616)x0.0, glue set - 12.7677fil, direction TLT
+.......\hbox(6.9204+2.133)x0.0, glue set - 25.99919fil, direction TLT
 ........\glue 0.0 plus 1.0fil minus 1.0fil
+........\TU/Domitian-Roman.otf(0)/m/n/9 (
+........\TU/Domitian-Roman.otf(0)/m/n/9 3
+........\TU/Domitian-Roman.otf(0)/m/n/9 )
+........\kern0.0 (italic)
+........\glue 2.7375 plus 1.36874 minus 0.9125
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 a
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 t
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 t
@@ -3415,7 +3430,7 @@ ction TLT
 ....\glue 9.0 plus 3.0 minus 5.0
 ....\glue(\parskip) 8.53581
 ....\glue(\parskip) 0.0
-....\glue(\baselineskip) 5.40941
+....\glue(\baselineskip) 3.4954
 ....\hbox(7.9716+3.07695)x455.24408, glue set 0.84665, direction TLT
 .....\localpar
 ......\localinterlinepenalty=0

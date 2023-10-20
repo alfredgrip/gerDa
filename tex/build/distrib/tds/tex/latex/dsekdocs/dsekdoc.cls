@@ -16,6 +16,11 @@
 \PassOptionsToClass{11pt}{article}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{article}}
 
+\bool_new:N \g_dsekdoc_shadow_maketitle_bool
+\bool_set_true:N \g_dsek_shadow_maketitle_bool
+
+\DeclareOption{maketitle}{\bool_set_false:N \g_dsek_in_color_bool}
+
 \ExplSyntaxOff
 
 %% Execution of options
@@ -176,6 +181,10 @@
       \Dseksigil[color, height=70mm]
     \end{center}
   \end{titlepage}
+}
+
+\bool_if:NT \g_dsek_shadow_maketitle_bool {
+  \RenewDocumentCommand \maketitle {} { \coverpage }
 }
 
 %% Headers and footers

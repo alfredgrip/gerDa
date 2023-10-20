@@ -36,6 +36,7 @@ Package: enumitem ....-..-.. v... Customized lists
 \enitdp@description=\count...
 )
 \l_dsek_height_dim=\dimen...
+\c@DsekAttListItem=\count...
 \g_dsek_sign_space_height=\dimen...
 \l__dsek_sign_width=\dimen...
 ) (dsek-lists.aux)
@@ -229,15 +230,18 @@ Completed box being shipped out [1]
 ...\glue(\parskip) 0.0
 ...\glue(\baselineskip) 4.84001
 ...\hbox(6.94+2.155)x320.0, glue set 108.73596fil, shifted 25.0
-....\hbox(6.35+0.05998)x0.0
+....\hbox(6.35+1.99998)x0.0
 .....\glue 0.0
 .....\glue -20.0
 .....\glue -5.0
-.....\hbox(6.35+0.05998)x20.0, glue set 20.0fil
+.....\hbox(6.35+1.99998)x20.0, glue set 20.0fil
 ......\penalty 10000
 ......\glue 0.0 plus 1.0fil minus 1.0fil
-......\hbox(6.35+0.05998)x0.0, glue set - 14.53fil
+......\hbox(6.35+1.99998)x0.0, glue set - 28.716fil
 .......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/lmr/m/n/8 (1)
+.......\kern 0.0
+.......\glue 3.33 plus 1.665 minus 1.11
 .......\TU/lmr/bx/n/10 att
 .......\kern 0.0
 .....\glue 5.0
@@ -278,15 +282,18 @@ Completed box being shipped out [1]
 ...\glue(\parskip) 0.0
 ...\glue(\baselineskip) 2.905
 ...\hbox(6.94+2.05998)x320.0, glue set 205.70999fil, shifted 25.0
-....\hbox(6.35+0.05998)x0.0
+....\hbox(6.35+1.99998)x0.0
 .....\glue 0.0
 .....\glue -20.0
 .....\glue -5.0
-.....\hbox(6.35+0.05998)x20.0, glue set 20.0fil
+.....\hbox(6.35+1.99998)x20.0, glue set 20.0fil
 ......\penalty 10000
 ......\glue 0.0 plus 1.0fil minus 1.0fil
-......\hbox(6.35+0.05998)x0.0, glue set - 14.53fil
+......\hbox(6.35+1.99998)x0.0, glue set - 28.716fil
 .......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/lmr/m/n/8 (2)
+.......\kern 0.0
+.......\glue 3.33 plus 1.665 minus 1.11
 .......\TU/lmr/bx/n/10 att
 .......\kern 0.0
 .....\glue 5.0

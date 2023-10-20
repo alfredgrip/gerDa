@@ -36,6 +36,7 @@ Package: enumitem ....-..-.. v... Customized lists
 \enitdp@description=\count...
 )
 \l_dsek_height_dim=\dimen...
+\c@DsekAttListItem=\count...
 \g_dsek_sign_space_height=\dimen...
 \l__dsek_sign_width=\dimen...
 ) (dsek-lists.aux)
@@ -441,15 +442,20 @@ Completed box being shipped out [1]
 .....\localbrokenpenalty=0
 .....\localleftbox=null
 .....\localrightbox=null
-....\hbox(6.35+0.06)x0.0, direction TLT
+....\hbox(6.35+2.0)x0.0, direction TLT
 .....\glue 0.0
 .....\glue -20.0
 .....\glue -5.0
-.....\hbox(6.35+0.06)x20.0, glue set 20.0fil, direction TLT
+.....\hbox(6.35+2.0)x20.0, glue set 20.0fil, direction TLT
 ......\penalty 10000
 ......\glue 0.0 plus 1.0fil minus 1.0fil
-......\hbox(6.35+0.06)x0.0, glue set - 14.53fil, direction TLT
+......\hbox(6.35+2.0)x0.0, glue set - 28.716fil, direction TLT
 .......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/lmr/m/n/8 (
+.......\TU/lmr/m/n/8 1
+.......\TU/lmr/m/n/8 )
+.......\kern0.0 (italic)
+.......\glue 3.33 plus 1.665 minus 1.11
 .......\TU/lmr/bx/n/10 a
 .......\TU/lmr/bx/n/10 t
 .......\TU/lmr/bx/n/10 t
@@ -532,15 +538,20 @@ Completed box being shipped out [1]
 .....\localbrokenpenalty=0
 .....\localleftbox=null
 .....\localrightbox=null
-....\hbox(6.35+0.06)x0.0, direction TLT
+....\hbox(6.35+2.0)x0.0, direction TLT
 .....\glue 0.0
 .....\glue -20.0
 .....\glue -5.0
-.....\hbox(6.35+0.06)x20.0, glue set 20.0fil, direction TLT
+.....\hbox(6.35+2.0)x20.0, glue set 20.0fil, direction TLT
 ......\penalty 10000
 ......\glue 0.0 plus 1.0fil minus 1.0fil
-......\hbox(6.35+0.06)x0.0, glue set - 14.53fil, direction TLT
+......\hbox(6.35+2.0)x0.0, glue set - 28.716fil, direction TLT
 .......\glue 0.0 plus 1.0fil minus 1.0fil
+.......\TU/lmr/m/n/8 (
+.......\TU/lmr/m/n/8 2
+.......\TU/lmr/m/n/8 )
+.......\kern0.0 (italic)
+.......\glue 3.33 plus 1.665 minus 1.11
 .......\TU/lmr/bx/n/10 a
 .......\TU/lmr/bx/n/10 t
 .......\TU/lmr/bx/n/10 t

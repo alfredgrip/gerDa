@@ -404,6 +404,8 @@ Completed box being shipped out [1]
 .........\hbox(7.9716+3.09883)x157.61101
 ..........\hbox(0.0+0.0)x0.0
 ..........\hbox(7.76355+2.39804)x43.79999, glue set 24.6375fil
+...........\special{pdf:dest (par:^^a71.1) [@thispage /XYZ @xpos @ypos null]}
+...........\penalty 10000
 ...........\TU/Domitian-Roman.otf(0)/m/n/10.95 ^^a71.1
 ...........\glue 0.0 plus 1.0fil minus 1.0fil
 ..........\vbox(7.9716+3.09883)x113.81102
@@ -751,16 +753,19 @@ Completed box being shipped out [1]
 ....\glue(\parskip) 0.0
 ....\glue(\baselineskip) 5.43134
 ....\hbox(7.94969+3.07693)x262.59312, glue set 81.78676fil, shifted 192.65096
-.....\hbox(6.9204+0.18614)x0.0
+.....\hbox(6.9204+1.93498)x0.0
 ......\glue 0.0
 ......\glue -13.13995
 ......\glue -5.47499
-......\hbox(6.9204+0.18614)x13.13995, glue set 13.13995fil
+......\hbox(6.9204+1.93498)x13.13995, glue set 13.13995fil
 .......\special{color push  Black}
 .......\penalty 10000
 .......\glue 0.0 plus 1.0fil minus 1.0fil
-.......\hbox(6.9204+0.18614)x0.0, glue set - 12.7677fil
+.......\hbox(6.9204+1.93498)x0.0, glue set - 25.9992fil
 ........\glue 0.0 plus 1.0fil minus 1.0fil
+........\TU/Domitian-Roman.otf(0)/m/n/9 (1)
+........\kern 0.0
+........\glue 2.7375 plus 1.36874 minus 0.91249
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 att
 ........\kern 0.0
 .......\special{color pop}
@@ -781,17 +786,20 @@ Completed box being shipped out [1]
 ....\glue(\parskip) 2.0 plus 1.0 minus 1.0
 ....\glue(\parskip) 0.0
 ....\glue(\baselineskip) 2.57338
-....\hbox(7.94969+0.21898)x262.59312, glue set 212.92393fil, shifted 192.65096
-.....\hbox(6.9204+0.18614)x0.0
+....\hbox(7.94969+1.93498)x262.59312, glue set 212.92393fil, shifted 192.65096
+.....\hbox(6.9204+1.93498)x0.0
 ......\glue 0.0
 ......\glue -13.13995
 ......\glue -5.47499
-......\hbox(6.9204+0.18614)x13.13995, glue set 13.13995fil
+......\hbox(6.9204+1.93498)x13.13995, glue set 13.13995fil
 .......\special{color push  Black}
 .......\penalty 10000
 .......\glue 0.0 plus 1.0fil minus 1.0fil
-.......\hbox(6.9204+0.18614)x0.0, glue set - 12.7677fil
+.......\hbox(6.9204+1.93498)x0.0, glue set - 25.9992fil
 ........\glue 0.0 plus 1.0fil minus 1.0fil
+........\TU/Domitian-Roman.otf(0)/m/n/9 (2)
+........\kern 0.0
+........\glue 2.7375 plus 1.36874 minus 0.91249
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 att
 ........\kern 0.0
 .......\special{color pop}
@@ -805,13 +813,13 @@ Completed box being shipped out [1]
 .....\glue(\rightskip) 0.0
 ....\penalty -51
 ....\glue 4.5 plus 2.0 minus 1.0
-....\glue -4.71898 plus -2.0 minus -1.0
+....\glue -6.43498 plus -2.0 minus -1.0
 ....\penalty -51
-....\glue 0.21898
+....\glue 1.93498
 ....\glue 4.5 plus 2.0 minus 1.0
 ....\glue(\parskip) 4.5 plus 2.0 minus 1.0
 ....\glue(\parskip) 0.0
-....\glue(\baselineskip) 3.86107
+....\glue(\baselineskip) 2.14507
 ....\hbox(9.51996+4.08003)x286.68307, glue set - 0.80685, shifted 168.561
 .....\hbox(9.51996+4.08003)x0.0
 ......\glue 0.0
@@ -827,6 +835,8 @@ Completed box being shipped out [1]
 .........\hbox(7.9716+3.09883)x157.61101
 ..........\hbox(0.0+0.0)x0.0
 ..........\hbox(7.76355+2.39804)x43.79999, glue set 24.6375fil
+...........\special{pdf:dest (par:^^a71.2) [@thispage /XYZ @xpos @ypos null]}
+...........\penalty 10000
 ...........\TU/Domitian-Roman.otf(0)/m/n/10.95 ^^a71.2
 ...........\glue 0.0 plus 1.0fil minus 1.0fil
 ..........\vbox(7.9716+3.09883)x113.81102
@@ -1062,16 +1072,19 @@ Completed box being shipped out [1]
 ....\glue(\parskip) 0.0
 ....\glue(\baselineskip) 5.43134
 ....\hbox(7.94969+3.09883)x262.59312, glue set 47.0862fil, shifted 192.65096
-.....\hbox(6.9204+0.18614)x0.0
+.....\hbox(6.9204+1.93498)x0.0
 ......\glue 0.0
 ......\glue -13.13995
 ......\glue -5.47499
-......\hbox(6.9204+0.18614)x13.13995, glue set 13.13995fil
+......\hbox(6.9204+1.93498)x13.13995, glue set 13.13995fil
 .......\special{color push  Black}
 .......\penalty 10000
 .......\glue 0.0 plus 1.0fil minus 1.0fil
-.......\hbox(6.9204+0.18614)x0.0, glue set - 12.7677fil
+.......\hbox(6.9204+1.93498)x0.0, glue set - 25.9992fil
 ........\glue 0.0 plus 1.0fil minus 1.0fil
+........\TU/Domitian-Roman.otf(0)/m/n/9 (1)
+........\kern 0.0
+........\glue 2.7375 plus 1.36874 minus 0.91249
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 att
 ........\kern 0.0
 .......\special{color pop}
@@ -1099,16 +1112,19 @@ Completed box being shipped out [1]
 ....\glue(\parskip) 0.0
 ....\glue(\baselineskip) 2.55148
 ....\hbox(7.94969+3.09883)x262.59312, glue set 1.06282, shifted 192.65096
-.....\hbox(6.9204+0.18614)x0.0
+.....\hbox(6.9204+1.93498)x0.0
 ......\glue 0.0
 ......\glue -13.13995
 ......\glue -5.47499
-......\hbox(6.9204+0.18614)x13.13995, glue set 13.13995fil
+......\hbox(6.9204+1.93498)x13.13995, glue set 13.13995fil
 .......\special{color push  Black}
 .......\penalty 10000
 .......\glue 0.0 plus 1.0fil minus 1.0fil
-.......\hbox(6.9204+0.18614)x0.0, glue set - 12.7677fil
+.......\hbox(6.9204+1.93498)x0.0, glue set - 25.9992fil
 ........\glue 0.0 plus 1.0fil minus 1.0fil
+........\TU/Domitian-Roman.otf(0)/m/n/9 (2)
+........\kern 0.0
+........\glue 2.7375 plus 1.36874 minus 0.91249
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 att
 ........\kern 0.0
 .......\special{color pop}
@@ -1159,6 +1175,8 @@ Completed box being shipped out [1]
 .........\hbox(7.9716+41.019)x157.61101
 ..........\hbox(0.0+0.0)x0.0
 ..........\hbox(7.76355+2.59514)x43.79999, glue set 24.6375fil
+...........\special{pdf:dest (par:^^a71.3) [@thispage /XYZ @xpos @ypos null]}
+...........\penalty 10000
 ...........\TU/Domitian-Roman.otf(0)/m/n/10.95 ^^a71.3
 ...........\glue 0.0 plus 1.0fil minus 1.0fil
 ..........\vbox(7.9716+41.019)x113.81102
@@ -1635,16 +1653,19 @@ Completed box being shipped out [2]
 ....\glue(\parskip) 0.0
 ....\glue(\baselineskip) 5.43134
 ....\hbox(7.94969+3.07693)x262.59312, glue set 105.14308fil, shifted 192.65096
-.....\hbox(6.9204+0.18614)x0.0
+.....\hbox(6.9204+1.93498)x0.0
 ......\glue 0.0
 ......\glue -13.13995
 ......\glue -5.47499
-......\hbox(6.9204+0.18614)x13.13995, glue set 13.13995fil
+......\hbox(6.9204+1.93498)x13.13995, glue set 13.13995fil
 .......\special{color push  Black}
 .......\penalty 10000
 .......\glue 0.0 plus 1.0fil minus 1.0fil
-.......\hbox(6.9204+0.18614)x0.0, glue set - 12.7677fil
+.......\hbox(6.9204+1.93498)x0.0, glue set - 25.9992fil
 ........\glue 0.0 plus 1.0fil minus 1.0fil
+........\TU/Domitian-Roman.otf(0)/m/n/9 (1)
+........\kern 0.0
+........\glue 2.7375 plus 1.36874 minus 0.91249
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 att
 ........\kern 0.0
 .......\special{color pop}
@@ -1668,16 +1689,19 @@ Completed box being shipped out [2]
 ....\glue(\parskip) 0.0
 ....\glue(\baselineskip) 2.57338
 ....\hbox(7.94969+3.09883)x262.59312, glue set 107.7054fil, shifted 192.65096
-.....\hbox(6.9204+0.18614)x0.0
+.....\hbox(6.9204+1.93498)x0.0
 ......\glue 0.0
 ......\glue -13.13995
 ......\glue -5.47499
-......\hbox(6.9204+0.18614)x13.13995, glue set 13.13995fil
+......\hbox(6.9204+1.93498)x13.13995, glue set 13.13995fil
 .......\special{color push  Black}
 .......\penalty 10000
 .......\glue 0.0 plus 1.0fil minus 1.0fil
-.......\hbox(6.9204+0.18614)x0.0, glue set - 12.7677fil
+.......\hbox(6.9204+1.93498)x0.0, glue set - 25.9992fil
 ........\glue 0.0 plus 1.0fil minus 1.0fil
+........\TU/Domitian-Roman.otf(0)/m/n/9 (2)
+........\kern 0.0
+........\glue 2.7375 plus 1.36874 minus 0.91249
 ........\TU/Domitian-Roman.otf(0)/b/n/10.95 att
 ........\kern 0.0
 .......\special{color pop}
@@ -1772,6 +1796,8 @@ Completed box being shipped out [2]
 .........\hbox(7.9716+3.09883)x157.61101
 ..........\hbox(0.0+0.0)x0.0
 ..........\hbox(7.76355+2.39804)x43.79999, glue set 21.9fil
+...........\special{pdf:dest (par:^^a72.1.) [@thispage /XYZ @xpos @ypos null]}
+...........\penalty 10000
 ...........\TU/Domitian-Roman.otf(0)/m/n/10.95 ^^a72.1.
 ...........\glue 0.0 plus 1.0fil minus 1.0fil
 ..........\vbox(7.9716+3.09883)x113.81102
@@ -2272,6 +2298,8 @@ Completed box being shipped out [2]
 .........\hbox(7.9716+13.81898)x157.61101
 ..........\hbox(0.0+0.0)x0.0
 ..........\hbox(7.76355+3.07693)x43.79999, glue set 18.62595fil
+...........\special{pdf:dest (par:Spec.) [@thispage /XYZ @xpos @ypos null]}
+...........\penalty 10000
 ...........\TU/Domitian-Roman.otf(0)/m/n/10.95 Spec.
 ...........\glue 0.0 plus 1.0fil minus 1.0fil
 ..........\vbox(7.9716+13.81898)x113.81102

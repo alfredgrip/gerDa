@@ -183,10 +183,14 @@ documents for which the standard style is desired.  It is based of the
 and footers amongst a few other things.
 
 \subsection{Options}
-The \textsf{dsekdoc} document only declares one special option,
-\texttt{english}, which tells the language package \textsf{polyglossia} that the
-main language for the document is English instead of Swedish.  All other
-arguments are passed along to the \textsf{article} document class.
+The \textsf{dsekdoc} document declares two special options:
+\begin{description}
+\item[\texttt{maketitle}] makes \textsf{dsekdoc} not redefine the \cs{maketitle}
+  command (use the \cs{coverpage} command instead).
+\item[\texttt{english}] tells the language package \textsf{polyglossia} that
+  the main language for the document is English instead of Swedish.
+\end{description}
+All other arguments are passed through to the \textsf{article} document class.
 
 \subsection{Commands}
 Because of how the \cs{title}, \cs{author} and \cs{date} commands work, we can't
@@ -210,10 +214,10 @@ for or when it was established.  Those are set with
 
 \subsubsection{Cover page}
 For longer, more important documents it is nice to have a cover page for the
-document.  To insert one, use
+document.  By default, the cover page is inserted with
 
 \begin{center}
-  \cs{coverpage}
+  \cs{maketitle} or \cs{coverpage}
 \end{center}
 
 In addition to the guild's name, the guild's sigil and the title of the
@@ -264,6 +268,14 @@ number at all), you can do so like this:
 \end{center}
 
 This won't step the paragraph counter.
+
+All paragraphs can be linked to using the \cs{hyperlink} command to create
+clickable links in the document.  So, to link to the paragraph §1.2, you would
+write
+
+\begin{center}
+  \cs{hyperlink}\texttt{\{par:§1.2\}\{See §1.2\} for further examples.}
+\end{center}
 
 \section{Technical notes}
 

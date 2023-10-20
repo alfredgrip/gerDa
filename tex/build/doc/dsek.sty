@@ -111,7 +111,23 @@
   \end{itemize}
 }
 
+\newcounter{DsekAttListItem}
+
+\tl_new:N \g_dsek_att_list_format_tl
+\tl_set:Nn \g_dsek_att_list_format_tl
+   {\stepcounter{DsekAttListItem}
+    {\footnotesize (\arabic{DsekAttListItem})}~\textbf{att}}
+
 \NewDocumentEnvironment{attlist}{} {
+  \setcounter{DsekAttListItem}{0}
+
+  \begin{itemize}[label={\tl_use:N \g_dsek_att_list_format_tl},
+                  labelsep=.5em]
+} {
+  \end{itemize}
+}
+
+\NewDocumentEnvironment{attlist*}{} { % Simpler version without numbering
   \begin{boldlist}{att}
 } {
   \end{boldlist}

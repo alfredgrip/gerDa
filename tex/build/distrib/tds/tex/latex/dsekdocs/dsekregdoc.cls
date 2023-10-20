@@ -60,7 +60,7 @@
 
 % This command creates a § label from a given number and label
 \cs_new_protected:Npn \__dsek_regp_label:nn #1#2 {
-  \makebox[\g_dsek_regp_num_dim][l]{#1}
+  \makebox[\g_dsek_regp_num_dim][l]{\hypertarget{par:#1}{#1}}
   \parbox[t]{\g_dsek_regp_label_dim}{#2}
 }
 
