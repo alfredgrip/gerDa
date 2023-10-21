@@ -6,8 +6,7 @@
 			event.preventDefault();
 			let form = document.querySelector('form');
 			if (form == null) throw error(500, 'Form is null');
-			form = form as HTMLFormElement;
-			handleSubmit({ currentTarget: form });
+			handleSubmit({ currentTarget: form as HTMLFormElement });
 		}
 	}
 
@@ -31,8 +30,7 @@
 <svelte:window on:keydown={onKeyDown} />
 
 <section id="outer-section">
-	<div>
-		<button id="back-button" on:click={() => (window.location.href = '/')}>Hem</button>
+	<div id="form-wrapper">
 		<section>
 			<form method="POST" on:submit|preventDefault={handleSubmit}>
 				<slot />
@@ -44,7 +42,7 @@
 </section>
 
 <style>
-	button {
+	/* button {
 		border-radius: 0.5rem;
 		border: 1px solid rgb(255, 241, 241);
 		padding: 0.25rem 0.5rem;
@@ -56,7 +54,7 @@
 		position: absolute;
 		top: 0.5rem;
 		left: 1rem;
-	}
+	} */
 
 	form {
 		display: flex;
@@ -79,8 +77,19 @@
 	}
 
 	embed {
+		background-color: rgb(255, 241, 241);
+		padding: 1rem;
 		width: 100%;
 		height: 100vh;
+		margin: 1rem;
+		border-radius: 1rem;
+	}
+
+	#form-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 		margin: 1rem;
 	}
 </style>

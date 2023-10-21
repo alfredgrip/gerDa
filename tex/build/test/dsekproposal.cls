@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{dsekmotion}[2023/10/14]
+\ProvidesClass{dsekproposal}[2023/10/14]
 \RequirePackage{expl3}
 
 \ExplSyntaxOn
@@ -27,6 +27,14 @@
         \tl_gset:Nn \g_dsek_title_tl {Proposition #1 }
         \section*{Proposition:~ #1}
     }
+}
+
+\RenewDocumentEnvironment {attlist} { } {
+    \vspace{0.5cm}
+    Undertecknad~yrkar~att~mötet~må~besluta
+    \begin{boldlist}{att}
+} {
+    \end{boldlist}
 }
 
 %% Handy commands to be used in att-lists

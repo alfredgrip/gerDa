@@ -11,7 +11,6 @@
 
 	onMount(() => {
 		const input = document.getElementById(idName) as HTMLInputElement;
-		// console.log('input' + input);
 		if (input == null) throw error(500);
 		input.addEventListener('input', () => {
 			input.style.height = 'auto';
@@ -44,7 +43,6 @@
 	}
 
 	textarea {
-		/* min-height: 50px; */
 		height: auto;
 		resize: none;
 		border: 1px solid rgb(209, 209, 209);

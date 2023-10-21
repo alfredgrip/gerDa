@@ -205,4 +205,54 @@
 }
 \pagestyle{main}
 
+%% LTH symbols
+
+\newfontfamily{\lthsymbols}{lthsymbols}[Extension = .otf]
+\NewDocumentCommand \lthsymbol { m } {
+  {\lthsymbols #1}
+}
+
+\NewDocumentCommand \tlth { } {
+  \lthsymbol{T}
+}
+\NewDocumentCommand \fsek { } {
+  \lthsymbol{F}
+}
+\NewDocumentCommand \esek { } {
+  \lthsymbol{E}
+}
+\NewDocumentCommand \msek { } {
+  \lthsymbol{M}
+}
+\NewDocumentCommand \vsek { } {
+  \lthsymbol{V}
+}
+\NewDocumentCommand \asek { } {
+  \lthsymbol{A}
+}
+\NewDocumentCommand \ksek { } {
+  \lthsymbol{K}
+}
+\NewDocumentCommand \dsek { } {
+  \lthsymbol{D}
+}
+\NewDocumentCommand \doktsek { } {
+  \lthsymbol{O}
+}
+\NewDocumentCommand \ingsek { } {
+  \lthsymbol{H}
+}
+\NewDocumentCommand \wsek { } {
+  \lthsymbol{W}
+}
+\NewDocumentCommand \isek { } {
+  \lthsymbol{I}
+}
+\NewDocumentCommand \infocom { } {
+  \lthsymbol{c}
+}
+\NewDocumentCommand \hilbert { } {
+  \lthsymbol{h}
+}
+
 \ExplSyntaxOff
