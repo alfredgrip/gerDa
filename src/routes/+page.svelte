@@ -7,10 +7,10 @@
 		<div>
 			<button on:click={() => (window.location.href = '/create/motion')}> Motion </button>
 			<button on:click={() => (window.location.href = '/create/proposition')}> Proposition </button>
-			<button on:click={() => (window.location.href = '/create/election-proposal')}>
+			<!-- <button on:click={() => (window.location.href = '/create/election-proposal')}>
 				"Valberedningens förslag"-handling
 				<p>(Beta-funktion)</p>
-			</button>
+			</button> -->
 		</div>
 		<div id="help">
 			<h2>Hjälp! Vad är vad?</h2>

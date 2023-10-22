@@ -16,4 +16,8 @@
 		border: 1px solid rgb(209, 209, 209);
 		padding: 0.25rem 0.5rem;
 	}
+
+	.remove-button:hover {
+		background-color: rgb(209, 84, 84, 0.8);
+	}
 </style>

@@ -18,7 +18,7 @@
 			body: data
 		});
 
-		const result = await response.text();
+		const result = encodeURI(await response.text());
 		console.log(result);
 		let pdfEmbed = document.getElementById('pdf-embed');
 		if (pdfEmbed == null) throw error(500, 'pdfEmbed is null');
@@ -94,6 +94,7 @@
 		height: 100vh;
 		margin: 1rem;
 		border-radius: 1rem;
+		border: 1px solid rgb(209, 209, 209);
 	}
 
 	#form-wrapper {

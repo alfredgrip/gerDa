@@ -8,4 +8,8 @@
 		padding: 0rem 1rem;
 		border: 2px solid rgb(209, 209, 209);
 	}
+
+	#generate-button:hover {
+		background-color: rgb(123, 206, 142, 0.8);
+	}
 </style>
