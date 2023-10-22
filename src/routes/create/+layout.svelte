@@ -22,8 +22,19 @@
 		console.log(result);
 		let pdfEmbed = document.getElementById('pdf-embed');
 		if (pdfEmbed == null) throw error(500, 'pdfEmbed is null');
-		pdfEmbed = pdfEmbed as HTMLObjectElement;
 		pdfEmbed.setAttribute('src', '/output/' + result + '#pagemode=none');
+		// const parent = pdfEmbed.parentElement;
+		// if (parent == null) throw error(500, 'parent is null');
+		// parent.removeChild(pdfEmbed);
+		// const newEmbed = document.createElement('embed');
+		// newEmbed.setAttribute('id', 'pdf-embed');
+		// newEmbed.setAttribute('src', '/output/' + result + '#pagemode=none');
+		// newEmbed.setAttribute('width', '100%');
+		// newEmbed.setAttribute('height', '100vh');
+		// newEmbed.setAttribute('margin', '1rem');
+		// newEmbed.setAttribute('padding', '1rem');
+		// newEmbed.setAttribute('border-radius', '1rem');
+		// parent.appendChild(newEmbed);
 	}
 </script>
 
@@ -38,7 +49,7 @@
 			</form>
 		</section>
 	</div>
-	<embed id="pdf-embed" src="/GUIDE.pdf#pagemode=none" />
+	<iframe id="pdf-embed" src="/GUIDE.pdf#pagemode=none" title="PDF Embed" />
 </section>
 
 <style>
@@ -76,7 +87,7 @@
 		justify-content: center;
 	}
 
-	embed {
+	iframe {
 		background-color: rgb(255, 241, 241);
 		padding: 1rem;
 		width: 100%;

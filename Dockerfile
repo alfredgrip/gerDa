@@ -38,6 +38,7 @@ ENV TZ=Etc/UTC
 WORKDIR /app
 COPY . .
 RUN tectonic -X compile GUIDE.tex -Z search-path=tex -Z continue-on-errors
+RUN mv GUIDE.pdf static/GUIDE.pdf
 COPY package*.json .
 RUN npm install
 RUN npm run build
