@@ -37,7 +37,7 @@ RUN apk update && apk upgrade && apk add tectonic pandoc
 ENV TZ=Etc/UTC
 WORKDIR /app
 COPY . .
-RUN tectonic -X compile example.tex -Z search-path=tex -Z continue-on-errors
+RUN tectonic -X compile GUIDE.tex -Z search-path=tex -Z continue-on-errors
 COPY package*.json .
 RUN npm install
 RUN npm run build
