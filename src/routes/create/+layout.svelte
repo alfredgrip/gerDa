@@ -32,7 +32,8 @@
 		console.log(text);
 		const element = document.createElement('a');
 		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-		element.setAttribute('download', 'motion.tex');
+		const title = data.get('title')?.length ? data.get('title') : 'generatedDocument';
+		element.setAttribute('download', `${title}.tex`);
 		element.style.display = 'none';
 		document.body.appendChild(element);
 		element.click();
