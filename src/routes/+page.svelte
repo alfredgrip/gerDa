@@ -11,19 +11,20 @@
 				"Valberedningens förslag"-handling
 				<p>(Beta-funktion)</p>
 			</button> -->
+			<!-- <button on:click={() => (window.location.href = '/create/custom')}> Eget dokument </button> -->
 		</div>
 		<div id="help">
 			<h2>Hjälp! Vad är vad?</h2>
 			<ul>
 				<li>
-					En <i>motion</i> är ett förslag som kommer från en sektionsmedlem eller ett utskott.
+					En <i>motion</i> är ett förslag som kommer från en sektionsmedlem eller ett ibland ett utskott.
 				</li>
 				<li>En <i>proposition</i> är ett förslag som kommer från styrelsen.</li>
-				<li>
+				<!-- <li>
 					En <i>"Valberedningens förslag"-handling</i> är det dokument som Valberedningen skickar in
 					till ett möte för att presentera vem eller vilka de anser vara den bästa kandidaten till ett
 					visst val.
-				</li>
+				</li> -->
 			</ul>
 		</div>
 	</div>
@@ -50,6 +51,10 @@
 		background-color: rgb(255, 241, 241);
 		border: 1px solid rgb(255, 241, 241);
 		border-radius: 0.5rem;
+	}
+
+	button:hover {
+		background-color: rgb(255, 241, 241, 0.8);
 	}
 
 	#help {
