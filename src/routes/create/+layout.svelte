@@ -29,7 +29,7 @@
 			body: data
 		});
 		const text = await response.text();
-		console.log(text);
+		// console.log(text);
 		const element = document.createElement('a');
 		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
 		const title = data.get('title')?.length ? data.get('title') : 'generatedDocument';
@@ -48,7 +48,12 @@
 	<div id="form-wrapper">
 		<form method="POST" on:submit|preventDefault={handleSubmit}>
 			<slot />
-			<GenerateButton />
+			<div style="display: flex; flex-direction: row; gap: 1rem; justify-content: center;">
+				<GenerateButton />
+				<button id="tex-button" on:click|preventDefault={downloadAsTeX}
+					>Ladda ner som TeX-fil</button
+				>
+			</div>
 		</form>
 	</div>
 	<div id="pdf-wrapper">
@@ -62,7 +67,6 @@
 					<iframe id="pdf-embed" src={text} title="PDF Embed" />
 				{:else}
 					<iframe id="pdf-embed" src={`/output/${text}#pagemode=none`} title="PDF Embed" />
-					<button id="tex-button" on:click={downloadAsTeX}>Ladda ner som .tex</button>
 				{/if}
 			{:catch error}
 				<p>{error.message}</p>
@@ -131,9 +135,9 @@
 
 	#tex-button {
 		background-color: rgb(123, 206, 142);
-		border: 1px solid rgb(123, 206, 142);
 		border-radius: 0.5rem;
-		padding: 0.5rem;
+		padding: 0rem 1rem;
+		border: 2px solid rgb(209, 209, 209);
 	}
 
 	#tex-button:hover {
