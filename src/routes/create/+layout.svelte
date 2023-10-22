@@ -19,6 +19,26 @@
 			body: data
 		});
 	}
+
+	async function downloadAsTeX() {
+		const form = document.querySelector('form');
+		if (form == null) throw error(500, 'Form is null');
+		const data = new FormData(form);
+		const response = await fetch('/api/generate', {
+			method: 'PUT',
+			body: data
+		});
+		const text = await response.text();
+		console.log(text);
+		const element = document.createElement('a');
+		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+		element.setAttribute('download', 'motion.tex');
+		element.style.display = 'none';
+		document.body.appendChild(element);
+		element.click();
+		document.body.removeChild(element);
+	}
+
 	let promise: ReturnType<typeof fetch> = Promise.resolve(new Response('/GUIDE.pdf#pagemode=none'));
 </script>
 
@@ -41,6 +61,7 @@
 					<iframe id="pdf-embed" src={text} title="PDF Embed" />
 				{:else}
 					<iframe id="pdf-embed" src={`/output/${text}#pagemode=none`} title="PDF Embed" />
+					<button id="tex-button" on:click={downloadAsTeX}>Ladda ner som .tex</button>
 				{/if}
 			{:catch error}
 				<p>{error.message}</p>
@@ -48,7 +69,6 @@
 		{:catch error}
 			<p>{error.message}</p>
 		{/await}
-		<div class="loader" style="display: none;" />
 	</div>
 </section>
 
@@ -106,5 +126,16 @@
 		100% {
 			transform: rotate(360deg);
 		}
+	}
+
+	#tex-button {
+		background-color: rgb(123, 206, 142);
+		border: 1px solid rgb(123, 206, 142);
+		border-radius: 0.5rem;
+		padding: 0.5rem;
+	}
+
+	#tex-button:hover {
+		background-color: rgb(123, 206, 142, 0.8);
 	}
 </style>

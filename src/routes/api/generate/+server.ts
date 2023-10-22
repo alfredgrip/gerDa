@@ -8,23 +8,12 @@ import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 
-export async function GET() {
-	return new Response('hi');
-}
-
-export async function POST(event) {
-	const request = event.request;
-	const formData = await request.formData();
+const extractFormData = (formData: FormData) => {
 	const params: Record<string, string> = {};
 	if (formData.get('markdown') === 'markdown') {
 		const keys = Array.from(formData.keys());
 		keys.forEach((key) => {
 			const value = formData.get(key);
-			// if (key.startsWith('what-to-who-') && key.endsWith('-who')) {
-			// 	params[key] = (value as string).split('\n').join('\n\n');
-			// 	console.log('splitting what-to-who-who');
-			// 	console.log(params[key]);
-			// }
 			if (
 				typeof value === 'string' &&
 				key !== 'markdown' &&
@@ -40,6 +29,33 @@ export async function POST(event) {
 			formData.set(key, params[key]);
 		});
 	}
+	return formData;
+};
+
+export async function PUT(event) {
+	const request = event.request;
+	const formData = extractFormData(await request.formData());
+	switch (formData.get('documentType')) {
+		case 'motion': {
+			const tex = generateMotionTex(formData);
+			return new Response(tex);
+		}
+		case 'proposition': {
+			const tex = generatePropositionTex(formData);
+			return new Response(tex);
+		}
+		case 'electionProposal': {
+			const tex = generateElectionProposalTex(formData);
+			return new Response(tex);
+		}
+		default:
+			throw error(400, 'Invalid document type');
+	}
+}
+
+export async function POST(event) {
+	const request = event.request;
+	const formData = extractFormData(await request.formData());
 	switch (formData.get('documentType')) {
 		case 'motion': {
 			const tex = generateMotionTex(formData);
