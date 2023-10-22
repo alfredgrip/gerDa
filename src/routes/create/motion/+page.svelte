@@ -1,5 +1,4 @@
 <script lang="ts">
-	import GenerateButton from '$lib/components/generateButton.svelte';
 	import AddButton from '$lib/components/addButton.svelte';
 	import MdLatexRadio from '$lib/components/mdLatexRadio.svelte';
 	import RemoveButton from '$lib/components/removeButton.svelte';
@@ -66,9 +65,8 @@
 		onUnload(event);
 	}}
 />
-<h1>Du skapar en motion</h1>
 <DocumentTypeInput documentType="motion" />
-<MdLatexRadio />
+<!-- <MdLatexRadio /> -->
 <ResizeableTextInput
 	required="true"
 	idName="title"

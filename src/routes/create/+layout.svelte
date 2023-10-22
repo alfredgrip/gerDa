@@ -1,6 +1,14 @@
 <script lang="ts">
 	import GenerateButton from '$lib/components/generateButton.svelte';
 	import { error } from '@sveltejs/kit';
+
+	import { page } from '$app/stores';
+
+	const urlToNames = new Map<string, string>();
+	urlToNames.set('/create/election-proposal', '"Valberedningsförslag"-handling');
+	urlToNames.set('/create/motion', 'Motion');
+	urlToNames.set('/create/proposition', 'Proposition');
+
 	async function onKeyDown(event: KeyboardEvent) {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
 			event.preventDefault();
@@ -47,6 +55,20 @@
 <section id="outer-section">
 	<div id="form-wrapper">
 		<form method="POST" on:submit|preventDefault={handleSubmit}>
+			<div style="display: flex; flex-direction: row; justify-content: start; column-gap: 2rem;">
+				<button on:click|preventDefault={() => (window.location.href = '/')} id="back-button"
+					><strong>&#8592 Hem</strong></button
+				>
+				<h1 style="width: fit-content;">Du skapar en {urlToNames.get($page.route.id ?? '')}</h1>
+			</div>
+			<p>
+				Psst... du kan skriva i både <a
+					href="https://www.markdownguide.org/cheat-sheet/"
+					target="_blank">Markdown</a
+				>
+				och <a href="https://wch.github.io/latexsheet/latexsheet.pdf" target="_blank">LaTeX</a> samtidigt,
+				programmet löser det automagiskt!
+			</p>
 			<slot />
 			<div style="display: flex; flex-direction: row; gap: 1rem; justify-content: center;">
 				<GenerateButton />
@@ -66,7 +88,11 @@
 				{#if text.startsWith('/GUIDE.pdf')}
 					<iframe id="pdf-embed" src={text} title="PDF Embed" />
 				{:else}
-					<iframe id="pdf-embed" src={`/output/${text}#pagemode=none`} title="PDF Embed" />
+					<iframe
+						id="pdf-embed"
+						src={`/output/${encodeURI(text)}#pagemode=none`}
+						title="PDF Embed"
+					/>
 				{/if}
 			{:catch error}
 				<p>{error.message}</p>
@@ -121,7 +147,9 @@
 		width: 120px;
 		height: 120px;
 		animation: spin 2s linear infinite;
-		margin-top: 5rem;
+		display: grid;
+		place-items: center;
+		margin-top: 50vh;
 	}
 
 	@keyframes spin {
@@ -142,5 +170,33 @@
 
 	#tex-button:hover {
 		background-color: rgb(123, 206, 142, 0.8);
+	}
+
+	#back-button {
+		border-radius: 0.5rem;
+		padding: 0rem 1rem;
+		border: 2px solid rgb(209, 209, 209);
+		/* make it less height */
+		height: 2rem;
+		margin-top: 1rem;
+	}
+
+	a {
+		text-decoration: underline;
+		color: rgb(0, 0, 0);
+	}
+
+	@media (max-width: 600px) {
+		#outer-section {
+			flex-direction: column;
+			row-gap: 1rem;
+		}
+		#outer-section > * {
+			flex: 1;
+		}
+
+		iframe {
+			height: 100vh;
+		}
 	}
 </style>

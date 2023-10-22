@@ -10,25 +10,25 @@ import fs from 'node:fs';
 
 const extractFormData = (formData: FormData) => {
 	const params: Record<string, string> = {};
-	if (formData.get('markdown') === 'markdown') {
-		const keys = Array.from(formData.keys());
-		keys.forEach((key) => {
-			const value = formData.get(key);
-			if (
-				typeof value === 'string' &&
-				key !== 'markdown' &&
-				key !== 'documentType' &&
-				key !== 'meeting' &&
-				key !== 'title' &&
-				!(key.startsWith('what-to-who-') && key.endsWith('-who'))
-			) {
-				params[key] = markdownToLatex(value);
-			}
-		});
-		Object.keys(params).forEach((key) => {
-			formData.set(key, params[key]);
-		});
-	}
+	// if (formData.get('markdown') === 'markdown') { // pandoc handles mixing markdown and latex
+	const keys = Array.from(formData.keys());
+	keys.forEach((key) => {
+		const value = formData.get(key);
+		if (
+			typeof value === 'string' &&
+			key !== 'markdown' &&
+			key !== 'documentType' &&
+			key !== 'meeting' &&
+			key !== 'title' &&
+			!(key.startsWith('what-to-who-') && key.endsWith('-who'))
+		) {
+			params[key] = markdownToLatex(value);
+		}
+	});
+	Object.keys(params).forEach((key) => {
+		formData.set(key, params[key]);
+	});
+	// }
 	return formData;
 };
 

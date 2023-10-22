@@ -58,10 +58,7 @@
 	}}
 />
 
-<h1>Du skapar en "Valberedningsförslag"-handling</h1>
-<p>(Beta-funktion)</p>
 <DocumentTypeInput documentType="electionProposal" />
-<MdLatexRadio />
 <div id="title-meeting">
 	<ResizeableTextInput
 		idName="meeting"

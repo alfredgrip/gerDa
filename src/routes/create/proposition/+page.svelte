@@ -68,7 +68,6 @@
 />
 <h1>Du skapar en proposition</h1>
 <DocumentTypeInput documentType="proposition" />
-<MdLatexRadio />
 <ResizeableTextInput
 	required="true"
 	idName="title"
