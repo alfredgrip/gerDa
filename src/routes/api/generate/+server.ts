@@ -64,7 +64,7 @@ export async function POST(event) {
 				'_'
 			)}-${Date.now()}`;
 			const filePath = await compileTex(tex, uniqueFileName);
-			return new Response(encodeURI(filePath.replace('output/', '')));
+			return new Response(filePath.replace('output/', ''));
 		}
 		case 'proposition': {
 			const tex = generatePropositionTex(formData);
@@ -73,7 +73,7 @@ export async function POST(event) {
 				'_'
 			)}-${Date.now()}`;
 			const filePath = await compileTex(tex, uniqueFileName);
-			return new Response(encodeURI(filePath.replace('output/', '')));
+			return new Response(filePath.replace('output/', ''));
 		}
 		case 'electionProposal': {
 			const tex = generateElectionProposalTex(formData);
@@ -82,7 +82,7 @@ export async function POST(event) {
 				'_'
 			)}-${Date.now()}`;
 			const filePath = await compileTex(tex, uniqueFileName);
-			return new Response(encodeURI(filePath.replace('output/', '')));
+			return new Response(filePath.replace('output/', ''));
 		}
 		default:
 			throw error(400, 'Invalid document type');

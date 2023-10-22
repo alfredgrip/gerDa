@@ -28,6 +28,24 @@
 		});
 	}
 
+	async function downloadPdf() {
+		const pdfEmbed = document.getElementById('pdf-embed');
+		if (pdfEmbed == null) throw error(500, 'pdfEmbed is null');
+		const src = (pdfEmbed as HTMLIFrameElement).src;
+		const element = document.createElement('a');
+		element.setAttribute('href', src);
+		let titleInput = document.querySelector('textarea[name="title"]');
+		if (titleInput == null) throw error(500, 'titleInput is null');
+		const title = (titleInput as HTMLTextAreaElement).value.length
+			? (titleInput as HTMLTextAreaElement).value
+			: 'generatedDocument';
+		element.setAttribute('download', `${title}.pdf`);
+		element.style.display = 'none';
+		document.body.appendChild(element);
+		element.click();
+		document.body.removeChild(element);
+	}
+
 	async function downloadAsTeX() {
 		const form = document.querySelector('form');
 		if (form == null) throw error(500, 'Form is null');
@@ -72,7 +90,8 @@
 			<slot />
 			<div style="display: flex; flex-direction: row; gap: 1rem; justify-content: center;">
 				<GenerateButton />
-				<button id="tex-button" on:click|preventDefault={downloadAsTeX}
+				<button class="tex-button" on:click|preventDefault={downloadPdf}>Ladda ner PDF</button>
+				<button class="tex-button" on:click|preventDefault={downloadAsTeX}
 					>Ladda ner som TeX-fil</button
 				>
 			</div>
@@ -161,14 +180,14 @@
 		}
 	}
 
-	#tex-button {
+	.tex-button {
 		background-color: rgb(123, 206, 142);
 		border-radius: 0.5rem;
 		padding: 0rem 1rem;
 		border: 2px solid rgb(209, 209, 209);
 	}
 
-	#tex-button:hover {
+	.tex-button:hover {
 		background-color: rgb(123, 206, 142, 0.8);
 	}
 
