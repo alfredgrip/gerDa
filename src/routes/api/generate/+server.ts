@@ -59,7 +59,7 @@ export async function POST(event) {
 	switch (formData.get('documentType')) {
 		case 'motion': {
 			const tex = generateMotionTex(formData);
-			const uniqueFileName = `motion-${(formData.get('title') as string).replace(
+			const uniqueFileName = `Motion-${(formData.get('title') as string).replace(
 				/ /g,
 				'_'
 			)}-${Date.now()}`;
@@ -68,7 +68,7 @@ export async function POST(event) {
 		}
 		case 'proposition': {
 			const tex = generatePropositionTex(formData);
-			const uniqueFileName = `proposition-${(formData.get('title') as string).replace(
+			const uniqueFileName = `Proposition-${(formData.get('title') as string).replace(
 				/ /g,
 				'_'
 			)}-${Date.now()}`;
@@ -77,7 +77,7 @@ export async function POST(event) {
 		}
 		case 'electionProposal': {
 			const tex = generateElectionProposalTex(formData);
-			const uniqueFileName = `proposal-${(formData.get('meeting') as string).replace(
+			const uniqueFileName = `Proposal-${(formData.get('meeting') as string).replace(
 				/ /g,
 				'_'
 			)}-${Date.now()}`;
@@ -237,12 +237,16 @@ function extractStatistics(formData: FormData): Statistics[] {
 }
 
 function markdownToLatex(md: string): string {
+	// Why create a temporary file?
+	// We could pipe the md-string into pandoc
+	// But we get better results if we let pandoc read from a file
+	// For example when including math equations
 	const uniqueFileName = `markdown-tmp-${Date.now()}`;
 	// create a temporary file
 	fs.mkdirSync('uploads', { recursive: true });
 	fs.writeFileSync(`uploads/${uniqueFileName}.md`, md);
 	// convert markdown to tex
-	const tex = spawnSync(`pandoc uploads/${uniqueFileName}.md -t latex`, {
+	const tex = spawnSync(`pandoc uploads/${uniqueFileName}.md -f gfm -t latex`, {
 		shell: true
 	}).stdout.toString();
 	// remove temporary file
