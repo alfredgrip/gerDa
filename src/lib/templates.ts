@@ -243,6 +243,8 @@ export const NEW_GENERATE_MOTION = (parameters: {
 }) => `
 \\documentclass[motion]{dsekmotion}
 \\usepackage{dsek}
+\\usepackage{longtable}
+\\usepackage{booktabs}
 
 \\begin{document}
 \\settitle{${parameters.title}}
@@ -278,6 +280,8 @@ export const NEW_GENERATE_PROPOSITION = (parameters: {
 }) => `
 \\documentclass[proposition]{dsekmotion}
 \\usepackage{dsek}
+\\usepackage{longtable}
+\\usepackage{booktabs}
 
 \\begin{document}
 \\settitle{${parameters.title}}
@@ -313,6 +317,8 @@ export const NEW_GENERATE_ELECTION_PROPOSAL = (parameters: {
 }) => `
 \\documentclass{dsekdoc}
 \\usepackage{dsek}
+\\usepackage{longtable}
+\\usepackage{booktabs}
 
 \\begin{document}
 \\settitle{Valberedningens förslag inför ${parameters.meeting}}
