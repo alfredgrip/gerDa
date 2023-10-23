@@ -195,7 +195,7 @@ function extractClauses(formData: FormData): Clause[] {
 		const toClause = formData.get(`to-clause-${i.toString()}`) as string;
 		const description = formData.get(`to-clause-${i.toString()}-description`) as string | null;
 		if (toClause) {
-			clauses.push({ toClause, description: description ?? '' });
+			clauses.push({ toClause, description: description?.trim() === '' ? null : description });
 		} else {
 			break;
 		}

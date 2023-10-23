@@ -195,11 +195,11 @@ import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 const GENERATE_CLAUSES = (clauses: Clause[]) =>
 	clauses
 		.map((clause) =>
-			clause.description?.trim.length
-				? `  \\attdesc{${clause.toClause}}{${clause.description}}\n`
-				: `  \\item{${clause.toClause}}\n`
+			clause.description != null && clause.description.trim().length > 0
+				? `  \\attdesc{${clause.toClause}}{${clause.description}}`
+				: `  \\att{${clause.toClause}}`
 		)
-		.join('');
+		.join('\n');
 
 const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) =>
 	authors
