@@ -1,18 +1,10 @@
 <script lang="ts">
 	import AddButton from '$lib/components/addButton.svelte';
+	import AuthorBlock from '$lib/components/authorBlock.svelte';
 	import DocumentTypeInput from '$lib/components/documentTypeInput.svelte';
-	import MdLatexRadio from '$lib/components/mdLatexRadio.svelte';
 	import RemoveButton from '$lib/components/removeButton.svelte';
-	import ResizeableTextInput from '$lib/components/resizeableTextInput.svelte';
+	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
 	import { writable, type Writable } from 'svelte/store';
-
-	let authors: Writable<
-		Array<{
-			name: string;
-			position?: string;
-			uuid: string;
-		}>
-	> = writable([{ name: '', position: '', uuid: Math.random().toString() }]);
 
 	let whatToWho: Writable<
 		Array<{
@@ -21,17 +13,6 @@
 			uuid: string;
 		}>
 	> = writable([{ what: '', who: '', uuid: Math.random().toString() }]);
-
-	function addAuthor() {
-		authors.update((authors) => [
-			...authors,
-			{ name: '', position: '', uuid: Math.random().toString() }
-		]);
-	}
-
-	function removeAuthor(uuid: string) {
-		authors.update((authors) => authors.filter((author) => author.uuid !== uuid));
-	}
 
 	function addWhatToWho() {
 		whatToWho.update((whatToWho) => [
@@ -43,24 +24,11 @@
 	function removeWhatToWho(uuid: string) {
 		whatToWho.update((whatToWho) => whatToWho.filter((whatToWho) => whatToWho.uuid !== uuid));
 	}
-
-	function onUnload(event: BeforeUnloadEvent) {
-		const body = document.getElementById('body') as HTMLInputElement;
-		if (body?.value?.length > 20) {
-			event.returnValue = 'Är du säker på att du vill lämna sidan?';
-		}
-	}
 </script>
-
-<svelte:window
-	on:beforeunload={(event) => {
-		onUnload(event);
-	}}
-/>
 
 <DocumentTypeInput documentType="electionProposal" />
 <div id="title-meeting">
-	<ResizeableTextInput
+	<ResizingTextInput
 		idName="meeting"
 		type="textArea"
 		labelName="Möte"
@@ -68,7 +36,7 @@
 		placeholder="Ex. HTM-val, S02, VTM1"
 	/>
 </div>
-<ResizeableTextInput
+<ResizingTextInput
 	idName="body"
 	type="textArea"
 	labelName="Brödtext"
@@ -81,21 +49,21 @@
 	Förslag
 	{#each $whatToWho as whatToWho, i (whatToWho.uuid)}
 		<div>
-			<ResizeableTextInput
+			<ResizingTextInput
 				idName={`what-to-who-${i.toString()}-what`}
 				type="textArea"
 				labelName=""
 				required="true"
 				placeholder="Vilken post?"
 			/>
-			<ResizeableTextInput
+			<ResizingTextInput
 				idName={`what-to-who-${i.toString()}-who`}
 				type="textArea"
 				labelName=""
 				required="true"
 				placeholder="Vem? (Om flera personer, skriv namnen på separata rader)"
 			/>
-			<ResizeableTextInput
+			<ResizingTextInput
 				idName={`statistics-${i.toString()}-interval`}
 				type="textArea"
 				labelName=""
@@ -113,38 +81,14 @@
 	{/each}
 	<AddButton buttonText="Lägg till förslag" addFunction={addWhatToWho} />
 </label>
-<ResizeableTextInput
+
+<ResizingTextInput
 	idName="signMessage"
 	labelName="Signaturmeddelande"
 	placeholder="För Valberedningen"
 />
-<!-- svelte-ignore a11y-label-has-associated-control -->
-<label>
-	Författare
-	{#each $authors as author, i (author.uuid)}
-		<div id="author-div">
-			<ResizeableTextInput
-				idName={`author-${i.toString()}-name`}
-				placeholder="Namn"
-				labelName=""
-				required="true"
-			/>
-			<ResizeableTextInput
-				idName={`author-${i.toString()}-position`}
-				placeholder="Post (frivillig)"
-				labelName=""
-			/>
-			{#if i !== 0}
-				<RemoveButton
-					uuid={author.uuid}
-					removeFunction={removeAuthor}
-					buttonText="Ta bort författare"
-				/>
-			{/if}
-		</div>
-	{/each}
-	<AddButton buttonText="Lägg till författare" addFunction={addAuthor} />
-</label>
+
+<AuthorBlock />
 
 <style>
 	div {

@@ -1,0 +1,77 @@
+<script lang="ts">
+	import { writable, type Writable } from 'svelte/store';
+	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
+	import RemoveButton from '$lib/components/removeButton.svelte';
+	import AddButton from '$lib/components/addButton.svelte';
+
+	let authors: Writable<
+		Array<{
+			name: string;
+			position?: string;
+			uuid: string;
+		}>
+	> = writable([{ name: '', position: '', uuid: Math.random().toString() }]);
+
+	function addAuthor() {
+		authors.update((authors) => [
+			...authors,
+			{ name: '', position: '', uuid: Math.random().toString() }
+		]);
+	}
+
+	function removeAuthor(uuid: string) {
+		authors.update((authors) => authors.filter((author) => author.uuid !== uuid));
+	}
+</script>
+
+<!-- svelte-ignore a11y-label-has-associated-control -->
+<div class="author-wrapper">
+	<label>
+		Författare
+		{#each $authors as author, i (author.uuid)}
+			<div class="author-div">
+				<div class="inner-author-div">
+					<ResizingTextInput
+						idName={`author-${i.toString()}-name`}
+						placeholder="Namn"
+						labelName=""
+						required="true"
+					/>
+					<ResizingTextInput
+						idName={`author-${i.toString()}-position`}
+						placeholder="Post (frivillig)"
+						labelName=""
+					/>
+				</div>
+				{#if i !== 0}
+					<RemoveButton
+						buttonText={`Ta bort författare ${(i + 1).toString()}`}
+						uuid={author.uuid}
+						removeFunction={removeAuthor}
+					/>
+				{/if}
+			</div>
+		{/each}
+		<AddButton buttonText="Lägg till författare" addFunction={addAuthor} />
+	</label>
+</div>
+
+<style>
+	.author-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.author-div {
+		display: flex;
+		flex-direction: column;
+		margin: 0.5rem 0;
+	}
+
+	.inner-author-div {
+		display: flex;
+		flex-direction: column;
+		/* gap: 1rem; */
+	}
+</style>

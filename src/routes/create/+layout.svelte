@@ -3,11 +3,29 @@
 	import { error } from '@sveltejs/kit';
 
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	const urlToNames = new Map<string, string>();
 	urlToNames.set('/create/election-proposal', '"Valberedningsförslag"-handling');
 	urlToNames.set('/create/motion', 'Motion');
 	urlToNames.set('/create/proposition', 'Proposition');
+
+	onMount(() => {
+		const form = document.querySelector('form');
+		if (form == null) throw new Error('Form is null');
+		form.addEventListener('keypress', function (e) {
+			if (e.key === 'Enter' && !(e.target instanceof HTMLTextAreaElement)) {
+				e.preventDefault();
+			}
+		});
+	});
+
+	function onUnload(event: BeforeUnloadEvent) {
+		const body = document.getElementById('body') as HTMLInputElement;
+		if (body?.value?.length > 20) {
+			event.returnValue = 'Är du säker på att du vill lämna sidan?';
+		}
+	}
 
 	async function onKeyDown(event: KeyboardEvent) {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -69,7 +87,12 @@
 	let promise: ReturnType<typeof fetch> = Promise.resolve(new Response('/GUIDE.pdf#pagemode=none'));
 </script>
 
-<svelte:window on:keydown={onKeyDown} />
+<svelte:window
+	on:keydown={onKeyDown}
+	on:beforeunload={(event) => {
+		onUnload(event);
+	}}
+/>
 <section id="outer-section">
 	<div id="form-wrapper">
 		<form method="POST" on:submit|preventDefault={handleSubmit}>
