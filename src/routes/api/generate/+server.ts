@@ -246,7 +246,7 @@ function markdownToLatex(md: string): string {
 	fs.mkdirSync('uploads', { recursive: true });
 	fs.writeFileSync(`uploads/${uniqueFileName}.md`, md);
 	// convert markdown to tex
-	const tex = spawnSync(`pandoc uploads/${uniqueFileName}.md -f gfm -t latex`, {
+	const tex = spawnSync(`pandoc uploads/${uniqueFileName}.md -f markdown -t latex`, {
 		shell: true
 	}).stdout.toString();
 	// remove temporary file
