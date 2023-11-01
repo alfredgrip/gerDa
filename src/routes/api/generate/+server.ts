@@ -98,10 +98,9 @@ function generateMotionTex(formData: FormData): string {
 		title: formData.get('title') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		clauses: clauses,
+		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
 		authors: authors,
-		signMessage: (formData.get('signMessage')?.toString().length === 0
-			? 'För D-sektionen, dag som ovan'
-			: formData.get('signMessage')) as string
+		signMessage: formData.get('signMessage') as string
 	});
 }
 
@@ -113,11 +112,9 @@ function generatePropositionTex(formData: FormData): string {
 		title: formData.get('title') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		clauses: clauses,
+		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
 		authors: authors,
-		signMessage: (formData.get('signMessage')?.toString().length === 0
-			? 'För D-sektionen, dag som ovan'
-			: formData.get('signMessage')) as string,
-		markdown: formData.get('markdown') === 'markdown'
+		signMessage: formData.get('signMessage') as string
 	});
 }
 
@@ -132,9 +129,7 @@ function generateElectionProposalTex(formData: FormData): string {
 		authors: authors,
 		whatToWho: whatToWho,
 		statistics: statistics,
-		signMessage: (formData.get('signMessage')?.toString().length === 0
-			? 'För Valberedningen'
-			: formData.get('signMessage')) as string
+		signMessage: formData.get('signMessage') as string
 	});
 }
 

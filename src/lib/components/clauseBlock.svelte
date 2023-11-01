@@ -27,6 +27,10 @@
 <div class="clause-wrapper">
 	<label>
 		Att-satser
+		<div>
+			<input type="checkbox" name="numberedClauses" checked={true} />
+			<label><small>Numrerade att-satser?</small></label>
+		</div>
 		{#each $clauses as clause, i (clause.uuid)}
 			<div class="clause-div">
 				<div class="inner-clause-div">

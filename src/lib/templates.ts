@@ -192,24 +192,34 @@ import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 // 	return body;
 // };
 
-const GENERATE_CLAUSES = (clauses: Clause[]) =>
-	clauses
-		.map((clause) =>
-			clause.description != null && clause.description.trim().length > 0
-				? `  \\attdesc{${clause.toClause}}{${clause.description}}`
-				: `  \\att{${clause.toClause}}`
-		)
-		.join('\n');
+const GENERATE_ATTLIST = (clauses: Clause[], numbered = false) => {
+	const prefix = (numbered ? '\\begin{attlist}' : '\\begin{attlist*}') + '\n';
+	const suffix = (numbered ? '\\end{attlist}' : '\\end{attlist*}') + '\n';
+	return (
+		prefix +
+		clauses
+			.map((clause) =>
+				clause.description != null && clause.description.trim().length > 0
+					? `  \\attdesc{${clause.toClause}}{${clause.description}}`
+					: `  \\att{${clause.toClause}}`
+			)
+			.join('\n') +
+		'\n' +
+		suffix
+	);
+};
 
-const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) =>
-	authors
+const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) => {
+	const sm = signMessage?.trim().length == 0 ? 'För D-sektionen, dag som ovan' : signMessage;
+	return authors
 		.map(
 			(author, index) =>
-				`  \\signature{${
-					index === 0 ? signMessage ?? 'För D-sektionen, dag som ovan' : '\\phantom{}'
-				}}{${author.name}}{${author.position ?? ''}}`
+				`  \\signature{${index === 0 ? sm : '\\phantom{}'}}{${author.name}}{${
+					author.position ?? ''
+				}}`
 		)
 		.join('');
+};
 
 const GENERATE_DEMAND = (meeting: string) => {
 	if (meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)) {
@@ -238,6 +248,7 @@ export const NEW_GENERATE_MOTION = (parameters: {
 	title: string;
 	body: string;
 	clauses: Clause[];
+	numberedClauses: boolean;
 	authors: Author[];
 	signMessage?: string;
 }) => `
@@ -258,9 +269,7 @@ ${parameters.body}
 
 ${GENERATE_DEMAND(parameters.meeting)}
 
-\\begin{attlist}
-${GENERATE_CLAUSES(parameters.clauses)}
-\\end{attlist}
+${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
 \\medskip
 
@@ -274,9 +283,9 @@ export const NEW_GENERATE_PROPOSITION = (parameters: {
 	title: string;
 	body: string;
 	clauses: Clause[];
+	numberedClauses: boolean;
 	authors: Author[];
 	signMessage?: string;
-	markdown: boolean;
 }) => `
 \\documentclass[proposition]{dsekmotion}
 \\usepackage{dsek}
@@ -296,9 +305,7 @@ ${parameters.body}
 
 ${GENERATE_DEMAND(parameters.meeting)}
 
-\\begin{attlist}
-${GENERATE_CLAUSES(parameters.clauses)}
-\\end{attlist}
+${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
 \\medskip
 
