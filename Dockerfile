@@ -31,14 +31,16 @@
 # ENV NODE_ENV=production
 # CMD ORIGIN=http://localhost:3000 node fileServer.js
 
-FROM node:18-alpine
+FROM node:alpine
 # RUN apk update && apk upgrade && apk add texlive-full pandoc
 RUN apk update && apk upgrade && apk add tectonic pandoc
 ENV TZ=Etc/UTC
 WORKDIR /app
 COPY . .
+
 RUN tectonic -X compile GUIDE.tex -Z search-path=tex -Z continue-on-errors
 RUN mv GUIDE.pdf static/GUIDE.pdf
+
 COPY package*.json .
 RUN npm install
 RUN npm run build
