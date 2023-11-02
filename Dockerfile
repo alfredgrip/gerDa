@@ -33,10 +33,15 @@
 
 FROM node:alpine
 # RUN apk update && apk upgrade && apk add texlive-full pandoc
-RUN apk update && apk upgrade && apk add tectonic pandoc
+RUN apk update && apk upgrade && apk add tectonic pandoc wget unzip
 ENV TZ=Etc/UTC
 WORKDIR /app
 COPY . .
+
+RUN wget https://github.com/Dsek-LTH/dsekdocs/archive/refs/heads/main.zip
+RUN unzip main.zip
+RUN mkdir -p tex
+RUN mv dsekdocs-main/* tex/
 
 RUN tectonic -X compile GUIDE.tex -Z search-path=tex -Z continue-on-errors
 RUN mv GUIDE.pdf static/GUIDE.pdf

@@ -4,6 +4,8 @@ index.js
 
 README.md
 build/
+tex/
+oldtex/
 
 .git
 .gitignore
