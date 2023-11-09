@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import {
-	NEW_GENERATE_ELECTION_PROPOSAL,
-	NEW_GENERATE_MOTION,
-	NEW_GENERATE_PROPOSITION,
+	GENERATE_ELECTION_PROPOSAL,
+	GENERATE_MOTION,
+	GENERATE_PROPOSITION,
 	GENERATE_CUSTOM_DOCUMENT
 } from '$lib/templates';
 import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
@@ -106,7 +106,7 @@ export async function POST(event) {
 function generateMotionTex(formData: FormData): string {
 	const clauses = extractClauses(formData);
 	const authors = extractAuthors(formData);
-	return NEW_GENERATE_MOTION({
+	return GENERATE_MOTION({
 		// return GENERATE_MOTION({
 		meeting: formData.get('meeting') as string,
 		title: formData.get('title') as string,
@@ -121,7 +121,7 @@ function generateMotionTex(formData: FormData): string {
 function generatePropositionTex(formData: FormData): string {
 	const clauses = extractClauses(formData);
 	const authors = extractAuthors(formData);
-	return NEW_GENERATE_PROPOSITION({
+	return GENERATE_PROPOSITION({
 		meeting: formData.get('meeting') as string,
 		title: formData.get('title') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
@@ -136,8 +136,7 @@ function generateElectionProposalTex(formData: FormData): string {
 	const authors = extractAuthors(formData);
 	const whatToWho = extractWhatToWho(formData);
 	const statistics = extractStatistics(formData);
-	return NEW_GENERATE_ELECTION_PROPOSAL({
-		// return GENERATE_ELECTION_PROPOSAL({
+	return GENERATE_ELECTION_PROPOSAL({
 		meeting: formData.get('meeting') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		authors: authors,
