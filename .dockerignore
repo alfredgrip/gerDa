@@ -19,3 +19,6 @@ Dockerfile
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+
+main.zip
+dsekdocs-main

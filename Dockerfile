@@ -51,4 +51,6 @@ RUN npm install
 RUN npm run build
 EXPOSE 3000
 ENV NODE_ENV=production
+# Change this to the domain you are using
+# i.e. CMD ORIGIN=https://gerda.dsek.se node fileServer.js
 CMD ORIGIN=http://localhost:3000 node fileServer.js
