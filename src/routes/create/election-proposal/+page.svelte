@@ -24,6 +24,8 @@
 	function removeWhatToWho(uuid: string) {
 		whatToWho.update((whatToWho) => whatToWho.filter((whatToWho) => whatToWho.uuid !== uuid));
 	}
+
+	let isStatistics: Writable<boolean> = writable(true);
 </script>
 
 <DocumentTypeInput documentType="electionProposal" />
@@ -36,19 +38,30 @@
 		placeholder="Ex. HTM-val, S02, VTM1"
 	/>
 </div>
-<ResizingTextInput
+<!-- <ResizingTextInput
 	idName="body"
 	type="textArea"
 	labelName="Brödtext"
 	id="body"
 	numRows="4"
 	placeholder="(Frivillig) Här kan du eventuellt skriva om hur valberedningen har arbetat med förslaget."
-/>
+/> -->
 <!-- svelte-ignore a11y-label-has-associated-control -->
 <label>
 	Förslag
+	<div>
+		<input
+			style="align-self: flex-start; "
+			type="checkbox"
+			name="isStatistics"
+			bind:checked={$isStatistics}
+		/>
+		<label><small>Inkludera statistik?</small></label><br /><small
+			>Om valet hade en stängd nomineringslista ska statistik inkluderas, annars ej</small
+		>
+	</div>
 	{#each $whatToWho as whatToWho, i (whatToWho.uuid)}
-		<div>
+		<div style="margin: 0.5rem 0;">
 			<ResizingTextInput
 				idName={`what-to-who-${i.toString()}-what`}
 				type="textArea"
@@ -63,13 +76,15 @@
 				required="true"
 				placeholder="Vem? (Om flera personer, skriv namnen på separata rader)"
 			/>
-			<ResizingTextInput
-				idName={`statistics-${i.toString()}-interval`}
-				type="textArea"
-				labelName=""
-				required="true"
-				placeholder="Hur många sökte? Ange i intervall om storlek 5 (ex. 5-10)"
-			/>
+			{#if $isStatistics}
+				<ResizingTextInput
+					idName={`statistics-${i.toString()}-interval`}
+					type="textArea"
+					labelName=""
+					required="true"
+					placeholder="Hur många sökte? Ange i intervall om storlek 5 (ex. 5-10)"
+				/>
+			{/if}
 			{#if i !== 0}
 				<RemoveButton
 					uuid={whatToWho.uuid}
@@ -91,9 +106,9 @@
 <AuthorBlock />
 
 <style>
-	div {
+	/* div {
 		display: flex;
 		flex-direction: column;
 		margin: 0.5rem 0;
-	}
+	} */
 </style>

@@ -2,7 +2,8 @@ import { error } from '@sveltejs/kit';
 import {
 	NEW_GENERATE_ELECTION_PROPOSAL,
 	NEW_GENERATE_MOTION,
-	NEW_GENERATE_PROPOSITION
+	NEW_GENERATE_PROPOSITION,
+	GENERATE_CUSTOM_DOCUMENT
 } from '$lib/templates';
 import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 import { spawnSync } from 'node:child_process';
@@ -48,6 +49,10 @@ export async function PUT(event) {
 			const tex = generateElectionProposalTex(formData);
 			return new Response(tex);
 		}
+		case 'custom': {
+			const tex = generateCustomDocumentTex(formData);
+			return new Response(tex);
+		}
 		default:
 			throw error(400, 'Invalid document type');
 	}
@@ -77,6 +82,15 @@ export async function POST(event) {
 		}
 		case 'electionProposal': {
 			const tex = generateElectionProposalTex(formData);
+			const uniqueFileName = `Proposal-${(formData.get('meeting') as string).replace(
+				/ /g,
+				'_'
+			)}-${Date.now()}`;
+			const filePath = await compileTex(tex, uniqueFileName);
+			return new Response(filePath.replace('output/', ''));
+		}
+		case 'custom': {
+			const tex = generateCustomDocumentTex(formData);
 			const uniqueFileName = `Proposal-${(formData.get('meeting') as string).replace(
 				/ /g,
 				'_'
@@ -129,6 +143,21 @@ function generateElectionProposalTex(formData: FormData): string {
 		authors: authors,
 		whatToWho: whatToWho,
 		statistics: statistics,
+		signMessage:
+			formData.get('signMessage')?.toString().trim().length == 0
+				? 'För Valberedningen'
+				: (formData.get('signMessage') as string)
+	});
+}
+
+function generateCustomDocumentTex(formData: FormData): string {
+	const authors = extractAuthors(formData);
+	return GENERATE_CUSTOM_DOCUMENT({
+		title: formData.get('title') as string,
+		shortTitle: formData.get('shortTitle') as string,
+		meeting: formData.get('meeting') as string,
+		body: formData.get('body') as string,
+		authors: authors,
 		signMessage: formData.get('signMessage') as string
 	});
 }
@@ -144,13 +173,6 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 
 	fs.writeFileSync(`uploads/${fileName}.tex`, tex);
 
-	// Compile tex, multiple times to make sure all references are correct, e.g. page numbers
-	// console.log(
-	// 	spawnSync(`latexmk -g uploads/${fileName}.tex || true`, { shell: true }).stdout.toString()
-	// );
-	// console.log(
-	// 	spawnSync(`latexmk -g -f uploads/${fileName}.tex || true`, { shell: true }).stdout.toString()
-	// );
 	console.log(
 		spawnSync(
 			`tectonic -X compile uploads/${fileName}.tex -Z search-path=tex -Z continue-on-errors`,

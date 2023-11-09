@@ -5,10 +5,12 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	const urlToNames = new Map<string, string>();
-	urlToNames.set('/create/election-proposal', '"Valberedningsförslag"-handling');
-	urlToNames.set('/create/motion', 'Motion');
-	urlToNames.set('/create/proposition', 'Proposition');
+	const urlToNames = new Map<string, string>([
+		['/create/election-proposal', 'en "Valberedningens förslag"-handling'],
+		['/create/motion', 'en motion'],
+		['/create/proposition', 'en proposition'],
+		['/create/custom', 'ett eget dokument']
+	]);
 
 	onMount(() => {
 		const form = document.querySelector('form');
@@ -76,7 +78,9 @@
 		// console.log(text);
 		const element = document.createElement('a');
 		element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-		const title = data.get('title')?.length ? data.get('title') : 'generatedDocument';
+		const title = (data.get('title') as string | undefined)?.length
+			? data.get('title')
+			: 'generatedDocument';
 		element.setAttribute('download', `${title}.tex`);
 		element.style.display = 'none';
 		document.body.appendChild(element);
@@ -100,7 +104,7 @@
 				<button on:click|preventDefault={() => (window.location.href = '/')} id="back-button"
 					><strong>&#8592 Hem</strong></button
 				>
-				<h1 style="width: fit-content;">Du skapar en {urlToNames.get($page.route.id ?? '')}</h1>
+				<h1 style="width: fit-content;">Du skapar {urlToNames.get($page.route.id ?? '')}</h1>
 			</div>
 			<p>
 				Psst... du kan skriva i både <a

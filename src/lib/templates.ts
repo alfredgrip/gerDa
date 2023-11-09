@@ -192,7 +192,7 @@ import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 // 	return body;
 // };
 
-const GENERATE_ATTLIST = (clauses: Clause[], numbered = false) => {
+const GENERATE_ATTLIST = (clauses: Clause[], numbered = false): string => {
 	const prefix = (numbered ? '\\begin{attlist}' : '\\begin{attlist*}') + '\n';
 	const suffix = (numbered ? '\\end{attlist}' : '\\end{attlist*}') + '\n';
 	return (
@@ -209,8 +209,13 @@ const GENERATE_ATTLIST = (clauses: Clause[], numbered = false) => {
 	);
 };
 
-const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) => {
-	const sm = signMessage?.trim().length == 0 ? 'För D-sektionen, dag som ovan' : signMessage;
+const GENERATE_AUTHORS = (
+	authors: Author[],
+	signMessage?: string,
+	fallBack = 'För D-sektionen, dag som ovan'
+): string => {
+	const sm = signMessage?.trim().length == 0 ? fallBack : signMessage;
+	// const sm = signMessage ?? 'För D-sektionen, dag som ovan';
 	return authors
 		.map(
 			(author, index) =>
@@ -221,7 +226,7 @@ const GENERATE_AUTHORS = (authors: Author[], signMessage?: string) => {
 		.join('');
 };
 
-const GENERATE_DEMAND = (meeting: string) => {
+const GENERATE_DEMAND = (meeting: string): string => {
 	if (meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)) {
 		return 'Undertecknad yrkar att sektionsmötet må besluta';
 	} else if (meeting.toLocaleUpperCase().match(/^(S[0-9]+)/)) {
@@ -231,17 +236,38 @@ const GENERATE_DEMAND = (meeting: string) => {
 	}
 };
 
-const GENERATE_WHAT_TO_WHO = (whatToWho: WhatToWho[]) =>
-	whatToWho
-		.map(
-			(whatToWho) => `  \\WHATWHO{${whatToWho.what}}{${whatToWho.who.join('\\newline')}}\\newline`
-		)
-		.join('\\newline');
+const GENERATE_WHO_SECTION = (whatToWho: WhatToWho[], body?: string): string => {
+	const prefix = (body?.trim().length ? `${body}\n` : '') + '\\begin{vemsection}';
+	const suffix = '\\end{vemsection}';
+	return (
+		prefix +
+		whatToWho
+			.map(
+				(whatToWho) =>
+					`\\begin{vemlist}{${whatToWho.what}}
+				${whatToWho.who.map((who) => '\\item ' + who.replace('\r', '\n')).join('')}
+			\\end{vemlist}`
+			)
+			.join('\n\n') +
+		'\n' +
+		suffix
+	);
+};
 
-const GENERATE_STATISTICS = (statistics: Statistics[]) =>
-	statistics
-		.map((statistics) => `  \\WHATCOUNT{${statistics.what}}{${statistics.interval}}\n`)
-		.join('');
+const GENERATE_STATISTICS_PAGE = (statistics: Statistics[]): string => {
+	if (statistics.reduce((acc, curr) => acc + curr.interval.trim().length, 0) < 1) {
+		return '';
+	}
+	const prefix = '\\begin{statistikpage}';
+	const suffix = '\\end{statistikpage}';
+	return (
+		prefix +
+		statistics
+			.map((statistics) => `  \\statistik{${statistics.what}}{${statistics.interval}}\n`)
+			.join('') +
+		suffix
+	);
+};
 
 export const NEW_GENERATE_MOTION = (parameters: {
 	meeting: string;
@@ -251,7 +277,7 @@ export const NEW_GENERATE_MOTION = (parameters: {
 	numberedClauses: boolean;
 	authors: Author[];
 	signMessage?: string;
-}) => `
+}): string => `
 \\documentclass[motion]{dsekmotion}
 \\usepackage{dsek}
 \\usepackage{longtable}
@@ -273,7 +299,7 @@ ${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
 \\medskip
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
+${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, 'För D-sektionen, dag som ovan')}
 
 \\end{document}
 `;
@@ -286,7 +312,7 @@ export const NEW_GENERATE_PROPOSITION = (parameters: {
 	numberedClauses: boolean;
 	authors: Author[];
 	signMessage?: string;
-}) => `
+}): string => `
 \\documentclass[proposition]{dsekmotion}
 \\usepackage{dsek}
 \\usepackage{longtable}
@@ -309,62 +335,58 @@ ${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
 \\medskip
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
+${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, 'För D-sektionen, dag som ovan')}
 
 \\end{document}
 `;
 
 export const NEW_GENERATE_ELECTION_PROPOSAL = (parameters: {
 	meeting: string;
-	body: string;
+	body?: string;
 	authors: Author[];
 	whatToWho: WhatToWho[];
 	statistics: Statistics[];
 	signMessage?: string;
-}) => `
-\\documentclass{dsekdoc}
+}): string =>
+	`
+\\documentclass{dsekelectionproposal}
 \\usepackage{dsek}
-\\usepackage{longtable}
-\\usepackage{booktabs}
-
 \\begin{document}
-\\settitle{Valberedningens förslag inför ${parameters.meeting}}
 \\setauthor{${parameters.authors[0].name}}
 \\setdate{\\today}
-\\setshorttitle{'Handling'}
 \\setmeeting{${parameters.meeting}}
-\\newcommand{\\WHATWHO}[2]{\\textbf{#1}\\newline #2\\newline\\newline}
-\\newcommand{\\WHATCOUNT}[2]{\\textbf{#1}#2 st}
+ 
+${GENERATE_WHO_SECTION(parameters.whatToWho, parameters.body)}
 
+${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, 'För Valberedningen')}
 
+${GENERATE_STATISTICS_PAGE(parameters.statistics)}
 
-\\section*{Valberedningens förslag inför ${parameters.meeting}}
+\\end{document}
+`;
+
+export const GENERATE_CUSTOM_DOCUMENT = (parameters: {
+	title: string;
+	shortTitle: string;
+	meeting: string;
+	body: string;
+	authors: Author[];
+	signMessage?: string;
+}): string => `
+\\documentclass{dsekdoc}
+\\usepackage{dsek}
+\\settitle{${parameters.title}}
+\\setshorttitle{${parameters.shortTitle}}
+\\setauthor{${parameters.authors[0].name}}
+\\setdate{\\today}
+\\setmeeting{${parameters.meeting}}
+\\begin{document}
+
 ${parameters.body}
 
-Valberedningens förslag inför \\MOTE \\ är följande:
-\\begin{multicols*}{2}  
-
-${GENERATE_WHAT_TO_WHO(parameters.whatToWho)}
-
-\\end{multicols*}
-
 \\medskip
 
-{Valstatistik presenteras på nästkommande sida.\\newline}
-
-\\medskip
-
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage)}
-
-\\newpage
-\\subsection*{Valstatistik}
-Nedan presenteras antalet personer som genomgick valprocessen i intervall om storlek 5.
-
-\\begin{multicols}{2}
-
-${GENERATE_STATISTICS(parameters.statistics)}
-
-\\end{multicols}
+${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, '')}
 
 \\end{document}
 `;
