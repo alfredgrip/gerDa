@@ -24,6 +24,10 @@
 					till ett möte för att presentera vem eller vilka de anser vara den bästa kandidaten till ett
 					visst val.
 				</li>
+				<li>
+					Ett <i>eget dokument</i> kan du använda om du vill skapa något som inte passar in i någon av
+					de andra kategorierna, exempelvis en godtycklig handling som du vill skicka in till ett möte.
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -45,7 +49,8 @@
 	button {
 		width: 100%;
 		margin: 0.5rem;
-		height: 3rem;
+		height: 4rem;
+		/* min-height: fit-content; */
 		font-size: larger;
 		background-color: rgb(255, 241, 241);
 		border: 1px solid rgb(255, 241, 241);

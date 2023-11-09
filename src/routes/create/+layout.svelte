@@ -175,8 +175,8 @@
 		padding: 1rem;
 		border-radius: 1rem;
 		border: 1px solid rgb(209, 209, 209);
-		width: 90%;
-		height: 100%;
+		width: 95%;
+		height: 110vh;
 	}
 
 	#pdf-wrapper {
