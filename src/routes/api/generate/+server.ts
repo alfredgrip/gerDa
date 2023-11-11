@@ -61,9 +61,11 @@ export async function PUT(event) {
 export async function POST(event) {
 	const request = event.request;
 	const formData = extractFormData(await request.formData());
+	console.log('Recieved request for ' + formData.get('documentType'));
 	switch (formData.get('documentType')) {
 		case 'motion': {
 			const tex = generateMotionTex(formData);
+			console.log('Generated tex:\n' + tex);
 			const uniqueFileName = `Motion-${(formData.get('title') as string).replace(
 				/ /g,
 				'_'
@@ -73,6 +75,7 @@ export async function POST(event) {
 		}
 		case 'proposition': {
 			const tex = generatePropositionTex(formData);
+			console.log('Generated tex:\n' + tex);
 			const uniqueFileName = `Proposition-${(formData.get('title') as string).replace(
 				/ /g,
 				'_'
@@ -82,6 +85,7 @@ export async function POST(event) {
 		}
 		case 'electionProposal': {
 			const tex = generateElectionProposalTex(formData);
+			console.log('Generated tex:\n' + tex);
 			const uniqueFileName = `Proposal-${(formData.get('meeting') as string).replace(
 				/ /g,
 				'_'
@@ -91,6 +95,7 @@ export async function POST(event) {
 		}
 		case 'custom': {
 			const tex = generateCustomDocumentTex(formData);
+			console.log('Generated tex:\n' + tex);
 			const uniqueFileName = `Proposal-${(formData.get('meeting') as string).replace(
 				/ /g,
 				'_'
@@ -162,6 +167,7 @@ function generateCustomDocumentTex(formData: FormData): string {
 }
 
 async function compileTex(tex: string, fileName: string): Promise<string> {
+	console.log('Compiling tex for file ' + fileName);
 	fs.mkdirSync('uploads', { recursive: true });
 	fs.mkdirSync('output', { recursive: true });
 	fs.mkdirSync('logs', { recursive: true });
@@ -170,16 +176,28 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	// if there are more than 10 logs in the logs folder, delete the oldest one
 	deleteOldestFile('logs');
 
+	console.log('Writing tex to file');
 	fs.writeFileSync(`uploads/${fileName}.tex`, tex);
 
-	console.log(
-		spawnSync(
-			`tectonic -X compile uploads/${fileName}.tex -Z search-path=tex -Z continue-on-errors`,
-			{
-				shell: true
-			}
-		).stdout.toString()
+	console.log('Compiling tex with ');
+	console.log(spawnSync('which tectonic', { shell: true }).stdout.toString());
+	const command = spawnSync(
+		`tectonic -X compile uploads/${fileName}.tex -Z search-path=tex -Z continue-on-errors`,
+		{
+			shell: true
+		}
 	);
+	console.log(command.stdout.toString());
+	console.log(command.stderr.toString());
+
+	// console.log(
+	// 	spawnSync(
+	// 		`tectonic -X compile uploads/${fileName}.tex -Z search-path=tex -Z continue-on-errors`,
+	// 		{
+	// 			shell: true
+	// 		}
+	// 	).stdout.toString()
+	// );
 
 	// Move files to output folder
 	// spawnSync('mv *.pdf output/ && mv *.log logs/', { shell: true });
@@ -259,12 +277,16 @@ function markdownToLatex(md: string): string {
 	// For example when including math equations
 	const uniqueFileName = `markdown-tmp-${Date.now()}`;
 	// create a temporary file
+	console.log('Writing markdown to file');
 	fs.mkdirSync('uploads', { recursive: true });
 	fs.writeFileSync(`uploads/${uniqueFileName}.md`, md);
 	// convert markdown to tex
+	console.log('Converting markdown to tex with ');
+	console.log(spawnSync('which pandoc', { shell: true }).stdout.toString());
 	const tex = spawnSync(`pandoc uploads/${uniqueFileName}.md -f markdown -t latex`, {
 		shell: true
 	}).stdout.toString();
+	console.log('Generated tex from markdown:\n' + tex);
 	// remove temporary file
 	spawnSync(`rm uploads/${uniqueFileName}.md`, { shell: true });
 	return tex;
