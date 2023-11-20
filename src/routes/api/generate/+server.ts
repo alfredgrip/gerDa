@@ -59,44 +59,31 @@ export async function POST(event) {
 	const request = event.request;
 	const formData = extractFormData(await request.formData());
 	console.log('Recieved request for ' + formData.get('documentType'));
+	const uniqueFileName = `${formData.get('documentType')?.toString()}-${encodeURI(
+		formData.get('title') as string
+	).replace(/ /g, '_')}-${Date.now()}`;
 	switch (formData.get('documentType')) {
 		case 'motion': {
 			const tex = generateMotionTex(formData);
 			console.log('Generated tex:\n' + tex);
-			const uniqueFileName = `Motion-${(formData.get('title') as string).replace(
-				/ /g,
-				'_'
-			)}-${Date.now()}`;
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'proposition': {
 			const tex = generatePropositionTex(formData);
 			console.log('Generated tex:\n' + tex);
-			const uniqueFileName = `Proposition-${(formData.get('title') as string).replace(
-				/ /g,
-				'_'
-			)}-${Date.now()}`;
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'electionProposal': {
 			const tex = generateElectionProposalTex(formData);
 			console.log('Generated tex:\n' + tex);
-			const uniqueFileName = `Proposal-${(formData.get('meeting') as string).replace(
-				/ /g,
-				'_'
-			)}-${Date.now()}`;
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'custom': {
 			const tex = generateCustomDocumentTex(formData);
 			console.log('Generated tex:\n' + tex);
-			const uniqueFileName = `Proposal-${(formData.get('meeting') as string).replace(
-				/ /g,
-				'_'
-			)}-${Date.now()}`;
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
@@ -181,7 +168,7 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	console.log('Compiling tex with ');
 	console.log(spawnSync('which tectonic', { shell: true }).stdout.toString());
 	const command = spawnSync(
-		`tectonic -X compile uploads/${fileName}.tex -Z search-path=tex -Z continue-on-errors`,
+		`tectonic -X compile "uploads/${fileName}.tex" -Z search-path=tex -Z continue-on-errors`,
 		{
 			shell: true
 		}
@@ -200,7 +187,7 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 
 	// Move files to output folder
 	// spawnSync('mv *.pdf output/ && mv *.log logs/', { shell: true });
-	spawnSync(`mv uploads/${fileName}.pdf output/ && mv ${fileName}.log logs/`, { shell: true });
+	spawnSync(`mv uploads/*.pdf output`, { shell: true });
 	spawnSync('rm -rf _markdown_* && rm -rf uploads/*', { shell: true });
 	return `output/${fileName}.pdf`;
 }
