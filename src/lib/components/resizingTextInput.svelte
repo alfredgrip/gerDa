@@ -7,6 +7,7 @@
 	export let required: 'true' | 'false' = 'false';
 	export let placeholder: string = '';
 	export let numRows: string = '1';
+	export let explaination: string | null = null;
 	// either normal text input or textArea
 
 	onMount(() => {
@@ -20,21 +21,31 @@
 	});
 </script>
 
-<label>
-	{labelName}
-	{#if required === 'true'}
-		<textarea
-			{...$$restProps}
-			name={idName}
-			required
-			{placeholder}
-			id={idName}
-			rows={parseInt(numRows)}
-		/>
-	{:else}
-		<textarea {...$$restProps} name={idName} {placeholder} id={idName} rows={parseInt(numRows)} />
-	{/if}
-</label>
+<section>
+	<label>
+		{#if explaination !== null}
+			<div id="nameAndExplaination">
+				<p class="none">{labelName}</p>
+				<p class="none">{explaination}</p>
+			</div>
+		{:else}
+			{labelName}
+		{/if}
+
+		{#if required === 'true'}
+			<textarea
+				{...$$restProps}
+				name={idName}
+				required
+				{placeholder}
+				id={idName}
+				rows={parseInt(numRows)}
+			/>
+		{:else}
+			<textarea {...$$restProps} name={idName} {placeholder} id={idName} rows={parseInt(numRows)} />
+		{/if}
+	</label>
+</section>
 
 <style>
 	label {
@@ -48,5 +59,12 @@
 		border: 1px solid rgb(209, 209, 209);
 		border-radius: 0.5rem;
 		padding: 0.5rem;
+	}
+
+	#nameAndExplaination {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		margin-bottom: -0.5rem;
 	}
 </style>

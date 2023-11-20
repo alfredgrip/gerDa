@@ -17,7 +17,6 @@ const extractFormData = (formData: FormData) => {
 		const value = formData.get(key);
 		if (
 			typeof value === 'string' &&
-			key !== 'markdown' &&
 			key !== 'documentType' &&
 			key !== 'meeting' &&
 			key !== 'title' &&
@@ -33,31 +32,29 @@ const extractFormData = (formData: FormData) => {
 	return formData;
 };
 
+// This is used for only generating the tex file and not the pdf
 export async function PUT(event) {
 	const request = event.request;
 	const formData = extractFormData(await request.formData());
 	switch (formData.get('documentType')) {
 		case 'motion': {
-			const tex = generateMotionTex(formData);
-			return new Response(tex);
+			return new Response(generateMotionTex(formData));
 		}
 		case 'proposition': {
-			const tex = generatePropositionTex(formData);
-			return new Response(tex);
+			return new Response(generatePropositionTex(formData));
 		}
 		case 'electionProposal': {
-			const tex = generateElectionProposalTex(formData);
-			return new Response(tex);
+			return new Response(generateElectionProposalTex(formData));
 		}
 		case 'custom': {
-			const tex = generateCustomDocumentTex(formData);
-			return new Response(tex);
+			return new Response(generateCustomDocumentTex(formData));
 		}
 		default:
 			throw error(400, 'Invalid document type');
 	}
 }
 
+// This is used for generating the pdf file and send it back to the client
 export async function POST(event) {
 	const request = event.request;
 	const formData = extractFormData(await request.formData());
@@ -116,6 +113,7 @@ function generateMotionTex(formData: FormData): string {
 		meeting: formData.get('meeting') as string,
 		title: formData.get('title') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
+		demand: formData.get('demand') as string,
 		clauses: clauses,
 		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
 		authors: authors,
@@ -130,6 +128,7 @@ function generatePropositionTex(formData: FormData): string {
 		meeting: formData.get('meeting') as string,
 		title: formData.get('title') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
+		demand: formData.get('demand') as string,
 		clauses: clauses,
 		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
 		authors: authors,

@@ -33,6 +33,8 @@ const GENERATE_AUTHORS = (
 		.join('');
 };
 
+// Not used right now, but might be useful in the future
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const GENERATE_DEMAND = (meeting: string): string => {
 	if (meeting.toLocaleUpperCase().match(/^(VTM|HTM)/)) {
 		return 'Undertecknad yrkar att sektionsmötet må besluta';
@@ -80,6 +82,7 @@ export const GENERATE_MOTION = (parameters: {
 	meeting: string;
 	title: string;
 	body: string;
+	demand: string;
 	clauses: Clause[];
 	numberedClauses: boolean;
 	authors: Author[];
@@ -100,7 +103,7 @@ ${parameters.body}
 
 \\medskip
 
-${GENERATE_DEMAND(parameters.meeting)}
+${parameters.demand}
 
 ${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
@@ -115,6 +118,7 @@ export const GENERATE_PROPOSITION = (parameters: {
 	meeting: string;
 	title: string;
 	body: string;
+	demand: string;
 	clauses: Clause[];
 	numberedClauses: boolean;
 	authors: Author[];
@@ -136,7 +140,7 @@ ${parameters.body}
 
 \\medskip
 
-${GENERATE_DEMAND(parameters.meeting)}
+${parameters.demand}
 
 ${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
@@ -188,6 +192,7 @@ export const GENERATE_CUSTOM_DOCUMENT = (parameters: {
 \\setdate{\\today}
 \\setmeeting{${parameters.meeting}}
 \\begin{document}
+\\section*{\\usetitle}
 
 ${parameters.body}
 

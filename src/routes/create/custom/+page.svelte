@@ -1,7 +1,6 @@
 <script lang="ts">
 	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
 	import DocumentTypeInput from '$lib/components/documentTypeInput.svelte';
-	import ClauseBlock from '$lib/components/clauseBlock.svelte';
 	import AuthorBlock from '$lib/components/authorBlock.svelte';
 </script>
 
@@ -35,7 +34,6 @@
 	idName="body"
 	type="textArea"
 	labelName="Brödtext"
-	id="body"
 	numRows="8"
 	placeholder="Jag tycker att det sjungs alldeles för lite på sektionen. Därför vill jag att sektionen ska..."
 />

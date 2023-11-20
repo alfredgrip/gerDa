@@ -27,9 +27,15 @@
 	idName="body"
 	type="textArea"
 	labelName="Brödtext"
-	id="body"
 	numRows="8"
 	placeholder="Jag tycker att det sjungs alldeles för lite på sektionen. Därför vill jag att sektionen ska..."
+/>
+
+<ResizingTextInput
+	idName="demand"
+	type="textArea"
+	labelName="Krav"
+	placeholder="Undertecknad yrkar att mötet må besluta"
 />
 
 <ClauseBlock />
