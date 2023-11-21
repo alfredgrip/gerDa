@@ -36,6 +36,7 @@
 	type="textArea"
 	labelName="Krav"
 	placeholder="Undertecknad yrkar att mötet må besluta"
+	explaination="Kan utelämnas om det framgår i brödtexten"
 />
 
 <ClauseBlock />
