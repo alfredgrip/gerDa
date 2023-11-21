@@ -76,4 +76,10 @@
 	li {
 		margin: 0.5rem;
 	}
+
+	@media (max-width: 600px) {
+		div {
+			max-width: 100%;
+		}
+	}
 </style>
