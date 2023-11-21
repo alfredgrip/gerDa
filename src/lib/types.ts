@@ -1,4 +1,9 @@
-export type DocumentType = 'motion' | 'proposition' | 'electionProposal' | 'custom';
+export type DocumentType =
+	| 'motion'
+	| 'proposition'
+	| 'electionProposal'
+	| 'custom'
+	| 'requirementProfile';
 
 export type Clause = {
 	toClause: string;

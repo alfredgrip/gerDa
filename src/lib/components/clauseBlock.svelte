@@ -36,14 +36,12 @@
 				<div class="inner-clause-div">
 					<ResizingTextInput
 						idName={`to-clause-${i.toString()}`}
-						type="textArea"
 						labelName=""
 						required="true"
 						placeholder="sjunga mer..."
 					/>
 					<ResizingTextInput
 						idName={`to-clause-${i.toString()}-description`}
-						type="textArea"
 						placeholder="Beskrivning (frivillig)"
 						labelName=""
 					/>

@@ -8,7 +8,6 @@
 	export let placeholder: string = '';
 	export let numRows: string = '1';
 	export let explaination: string | null = null;
-	// either normal text input or textArea
 
 	onMount(() => {
 		const input = document.getElementById(idName) as HTMLInputElement;

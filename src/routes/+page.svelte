@@ -10,6 +10,9 @@
 			<button on:click={() => (window.location.href = '/create/election-proposal')}>
 				"Valberedningens förslag"-handling
 			</button>
+			<button on:click={() => (window.location.href = '/create/requirement-profile')}>
+				Kravprofil
+			</button>
 			<button on:click={() => (window.location.href = '/create/custom')}> Eget dokument </button>
 		</div>
 		<div id="help">
@@ -23,6 +26,11 @@
 					En <i>"Valberedningens förslag"-handling</i> är det dokument som Valberedningen skickar in
 					till ett möte för att presentera vem eller vilka de anser vara den bästa kandidaten till ett
 					visst val.
+				</li>
+				<li>
+					En <i>kravprofil</i> är ett dokument som beskriver vilka krav och meriter som en viss post
+					har. Kraven och meriterna används som underlag för valberedningen under valprocessen. En kravprofil
+					måste finnas tillgänglig när ett val för en post utlyses.
 				</li>
 				<li>
 					Ett <i>eget dokument</i> kan du använda om du vill skapa något som inte passar in i någon av

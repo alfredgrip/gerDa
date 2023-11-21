@@ -3,7 +3,8 @@ import {
 	GENERATE_ELECTION_PROPOSAL,
 	GENERATE_MOTION,
 	GENERATE_PROPOSITION,
-	GENERATE_CUSTOM_DOCUMENT
+	GENERATE_CUSTOM_DOCUMENT,
+	GENERATE_REQUIREMENT_PROFILE
 } from '$lib/templates';
 import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 import { spawnSync } from 'node:child_process';
@@ -15,14 +16,12 @@ const extractFormData = (formData: FormData) => {
 	const keys = Array.from(formData.keys());
 	keys.forEach((key) => {
 		const value = formData.get(key);
-		if (
-			typeof value === 'string' &&
-			key !== 'documentType' &&
-			key !== 'meeting' &&
-			key !== 'title' &&
-			!(key.startsWith('what-to-who-') && key.endsWith('-who'))
-		) {
+		if (key === 'documentType') {
+			params[key] = value?.toString() ?? '';
+		} else if (typeof value === 'string' && !key.endsWith('singlerow')) {
 			params[key] = markdownToLatex(value);
+		} else {
+			params[key] = JSON.stringify(value?.toString().split('\n') ?? []);
 		}
 	});
 	Object.keys(params).forEach((key) => {
@@ -49,6 +48,9 @@ export async function PUT(event) {
 		case 'custom': {
 			return new Response(generateCustomDocumentTex(formData));
 		}
+		case 'requirementProfile': {
+			return new Response(generateRequirementProfileTex(formData));
+		}
 		default:
 			throw error(400, 'Invalid document type');
 	}
@@ -60,7 +62,7 @@ export async function POST(event) {
 	const formData = extractFormData(await request.formData());
 	console.log('Recieved request for ' + formData.get('documentType'));
 	const uniqueFileName = `${formData.get('documentType')?.toString()}-${encodeURI(
-		formData.get('title') as string
+		formData.get('title')?.toString() ?? ''
 	).replace(/ /g, '_')}-${Date.now()}`;
 	switch (formData.get('documentType')) {
 		case 'motion': {
@@ -83,6 +85,12 @@ export async function POST(event) {
 		}
 		case 'custom': {
 			const tex = generateCustomDocumentTex(formData);
+			console.log('Generated tex:\n' + tex);
+			const filePath = await compileTex(tex, uniqueFileName);
+			return new Response(filePath.replace('output/', ''));
+		}
+		case 'requirementProfile': {
+			const tex = generateRequirementProfileTex(formData);
 			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
@@ -149,6 +157,17 @@ function generateCustomDocumentTex(formData: FormData): string {
 		body: formData.get('body') as string,
 		authors: authors,
 		signMessage: formData.get('signMessage') as string
+	});
+}
+
+function generateRequirementProfileTex(formData: FormData): string {
+	return GENERATE_REQUIREMENT_PROFILE({
+		year: (formData.get('year') as string) ?? '',
+		position: (formData.get('position') as string) ?? '',
+		description: (formData.get('description') as string) ?? null,
+		requirement:
+			JSON.parse((formData.get('requirements-singlerow') as string | undefined) ?? '') ?? [],
+		merits: JSON.parse((formData.get('merits-singlerow') as string | undefined) ?? '') ?? []
 	});
 }
 
@@ -229,9 +248,9 @@ function extractWhatToWho(formData: FormData): WhatToWho[] {
 	let i = 0;
 	while (i < 100) {
 		const what = formData.get(`what-to-who-${i.toString()}-what`) as string;
-		const who = formData.get(`what-to-who-${i.toString()}-who`) as string;
+		const who = formData.get(`what-to-who-${i.toString()}-who-singlerow`) as string;
 		if (what && who) {
-			whatToWho.push({ what, who: who.split('\n') });
+			whatToWho.push({ what, who: JSON.parse(who) });
 		} else {
 			break;
 		}

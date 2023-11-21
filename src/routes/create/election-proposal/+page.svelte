@@ -32,7 +32,6 @@
 <div id="title-meeting">
 	<ResizingTextInput
 		idName="meeting"
-		type="textArea"
 		labelName="Möte"
 		required="true"
 		placeholder="Ex. HTM-val, S02, VTM1"
@@ -64,14 +63,12 @@
 		<div style="margin: 0.5rem 0;">
 			<ResizingTextInput
 				idName={`what-to-who-${i.toString()}-what`}
-				type="textArea"
 				labelName=""
 				required="true"
 				placeholder="Vilken post?"
 			/>
 			<ResizingTextInput
-				idName={`what-to-who-${i.toString()}-who`}
-				type="textArea"
+				idName={`what-to-who-${i.toString()}-who-singlerow`}
 				labelName=""
 				required="true"
 				placeholder="Vem? (Om flera personer, skriv namnen på separata rader)"
@@ -79,7 +76,6 @@
 			{#if $isStatistics}
 				<ResizingTextInput
 					idName={`statistics-${i.toString()}-interval`}
-					type="textArea"
 					labelName=""
 					required="true"
 					placeholder="Hur många sökte? Ange i intervall om storlek 5 (ex. 5-10)"

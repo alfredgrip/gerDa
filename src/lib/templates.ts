@@ -78,6 +78,28 @@ const GENERATE_STATISTICS_PAGE = (statistics: Statistics[]): string => {
 	);
 };
 
+const GENERATE_REQUIREMENTS = (requirements: string[]): string => {
+	requirements = requirements.filter((requirement) => requirement.trim().length > 0);
+	if (requirements.length <= 0) {
+		return '';
+	}
+	console.log(requirements);
+	const prefix = '\\subsection*{Krav}\n\\begin{itemize}\n';
+	const suffix = '\n\\end{itemize}';
+	return prefix + requirements.map((requirement) => `\\item ${requirement}`).join('\n') + suffix;
+};
+
+const GENERATE_MERITS = (merits: string[]): string => {
+	merits = merits.filter((merit) => merit.trim().length > 0);
+	if (merits.length <= 0) {
+		return '';
+	}
+	console.log(merits);
+	const prefix = '\\subsection*{Meriterande}\\begin{itemize}';
+	const suffix = '\\end{itemize}';
+	return prefix + merits.map((merit) => `\\item ${merit}`).join('\n') + suffix;
+};
+
 export const GENERATE_MOTION = (parameters: {
 	meeting: string;
 	title: string;
@@ -199,6 +221,41 @@ ${parameters.body}
 \\medskip
 
 ${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, '')}
+
+\\end{document}
+`;
+
+export const GENERATE_REQUIREMENT_PROFILE = (parameters: {
+	position: string;
+	year: string;
+	description: string | null;
+	requirement: string[];
+	merits: string[];
+}): string =>
+	`
+\\documentclass{dsekdoc}
+\\usepackage{dsek}
+\\usepackage{multicol}
+\\settitle{Kravprofil:~${parameters.position}}
+\\setshorttitle{Kravprofil}
+\\setdate{${parameters.year}}
+\\begin{document}
+
+\\section*{Kravprofil:~${parameters.position}}
+
+${parameters.description ?? ''}
+
+\\begin{multicols}{2}
+
+\\begin{minipage}{\\columnwidth}
+${GENERATE_REQUIREMENTS(parameters.requirement)}
+\\end{minipage}
+
+\\begin{minipage}{\\columnwidth}
+${GENERATE_MERITS(parameters.merits)}
+\\end{minipage}
+
+\\end{multicols}
 
 \\end{document}
 `;

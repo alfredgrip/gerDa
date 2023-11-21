@@ -9,7 +9,8 @@
 		['/create/election-proposal', 'en "Valberedningens förslag"-handling'],
 		['/create/motion', 'en motion'],
 		['/create/proposition', 'en proposition'],
-		['/create/custom', 'ett eget dokument']
+		['/create/custom', 'ett eget dokument'],
+		['/create/requirement-profile', 'en kravprofil']
 	]);
 
 	onMount(() => {
@@ -167,7 +168,7 @@
 		border: 1px solid rgb(209, 209, 209);
 		padding: 1rem;
 		border-radius: 1rem;
-		row-gap: 0.5rem;
+		row-gap: 1rem;
 	}
 
 	iframe {
