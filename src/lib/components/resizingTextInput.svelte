@@ -24,10 +24,8 @@
 <section>
 	<label>
 		{#if explaination !== null}
-			<div id="nameAndExplaination">
-				<p class="none">{labelName}</p>
-				<p class="none">{explaination}</p>
-			</div>
+			{labelName}
+			<span><small>{explaination}</small></span>
 		{:else}
 			{labelName}
 		{/if}
@@ -59,12 +57,5 @@
 		border: 1px solid rgb(209, 209, 209);
 		border-radius: 0.5rem;
 		padding: 0.5rem;
-	}
-
-	#nameAndExplaination {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		margin-bottom: -0.5rem;
 	}
 </style>
