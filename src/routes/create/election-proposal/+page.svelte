@@ -18,7 +18,7 @@
 	function addWhatToWho() {
 		currentDraft.whatToWho = [
 			...currentDraft.whatToWho,
-			{ what: '', who: '', numberOfApplicants: '', uuid: Math.random().toString() }
+			{ what: '', who: [], whoString: '', numberOfApplicants: '', uuid: Math.random().toString() }
 		];
 	}
 
@@ -74,7 +74,7 @@
 				labelName=""
 				required="true"
 				placeholder="Vem? (Om flera personer, skriv namnen på separata rader)"
-				bind:value={item.who}
+				bind:value={item.whoString}
 			/>
 			{#if currentDraft.includeStatistics}
 				<ResizingTextInput

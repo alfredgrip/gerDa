@@ -216,9 +216,9 @@ function extractAuthors(formData: FormData): Author[] {
 	let i = 0;
 	while (i < 100) {
 		const name = formData.get(`author-${i.toString()}-name`) as string;
-		const position = formData.get(`author-${i.toString()}-position`) as string | null;
+		const position = (formData.get(`author-${i.toString()}-position`) ?? '') as string;
 		if (name) {
-			authors.push({ name, position });
+			authors.push({ name, position, uuid: '' });
 		} else {
 			break;
 		}
@@ -250,7 +250,13 @@ function extractWhatToWho(formData: FormData): WhatToWho[] {
 		const what = formData.get(`what-to-who-${i.toString()}-what`) as string;
 		const who = formData.get(`what-to-who-${i.toString()}-who-singlerow`) as string;
 		if (what && who) {
-			whatToWho.push({ what, who: JSON.parse(who) });
+			whatToWho.push({
+				what,
+				who: JSON.parse(who),
+				numberOfApplicants: '',
+				uuid: '',
+				whoString: ''
+			});
 		} else {
 			break;
 		}

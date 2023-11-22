@@ -19,9 +19,10 @@ export type Author = {
 // used in election proposal (valberedningens förslag)
 export type WhatToWho = {
 	what: string;
-	who: string;
+	who: string[];
 	numberOfApplicants: string;
 	uuid: string;
+	whoString: string;
 };
 export type Statistics = {
 	what: string;
