@@ -7,6 +7,9 @@
 		<div>
 			<button on:click={() => (window.location.href = '/create/motion')}> Motion </button>
 			<button on:click={() => (window.location.href = '/create/proposition')}> Proposition </button>
+			<button on:click={() => (window.location.href = '/create/board-response')}>
+				Styrelsens svar
+			</button>
 			<button on:click={() => (window.location.href = '/create/election-proposal')}>
 				"Valberedningens förslag"-handling
 			</button>
@@ -22,6 +25,10 @@
 					En <i>motion</i> är ett förslag som kommer från en sektionsmedlem eller ett ibland ett utskott.
 				</li>
 				<li>En <i>proposition</i> är ett förslag som kommer från styrelsen.</li>
+				<li>
+					<i>Styrelsens svar</i> är ett dokument som styrelsen skickar in till ett möte för att svara
+					på en motion.
+				</li>
 				<li>
 					En <i>"Valberedningens förslag"-handling</i> är det dokument som Valberedningen skickar in
 					till ett möte för att presentera vem eller vilka de anser vara den bästa kandidaten till ett
