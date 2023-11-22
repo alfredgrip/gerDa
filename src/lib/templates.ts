@@ -263,3 +263,38 @@ ${GENERATE_MERITS(parameters.merits)}
 
 \\end{document}
 `;
+
+export const GENERATE_BOARD_RESPONSE = (parameters: {
+	title: string;
+	meeting: string;
+	body: string;
+	demand: string;
+	clauses: Clause[];
+	numberedClauses: boolean;
+	authors: Author[];
+	signMessage?: string;
+}): string => `
+\\documentclass{dsekdoc}
+\\usepackage{dsek}
+\\settitle{Styrelsens svar: ${parameters.title}}
+\\setshorttitle{Styrelsens svar}
+\\setauthor{${parameters.authors[0].name}}
+\\setdate{\\today}
+\\setmeeting{${parameters.meeting}}
+\\begin{document}
+\\section*{\\usetitle}
+
+${parameters.body}
+
+\\medskip
+
+${parameters.demand}
+
+${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
+
+\\medskip
+
+${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, '')}
+
+\\end{document}
+`;

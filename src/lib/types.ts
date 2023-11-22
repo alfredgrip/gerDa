@@ -3,7 +3,8 @@ export type DocumentType =
 	| 'proposition'
 	| 'electionProposal'
 	| 'custom'
-	| 'requirementProfile';
+	| 'requirementProfile'
+	| 'board-response';
 
 export type Clause = {
 	toClause: string;

@@ -4,7 +4,8 @@ import {
 	GENERATE_MOTION,
 	GENERATE_PROPOSITION,
 	GENERATE_CUSTOM_DOCUMENT,
-	GENERATE_REQUIREMENT_PROFILE
+	GENERATE_REQUIREMENT_PROFILE,
+	GENERATE_BOARD_RESPONSE
 } from '$lib/templates';
 import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 import { spawnSync } from 'node:child_process';
@@ -51,6 +52,9 @@ export async function PUT(event) {
 		case 'requirementProfile': {
 			return new Response(generateRequirementProfileTex(formData));
 		}
+		case 'board-response': {
+			return new Response(generateBoardResponse(formData));
+		}
 		default:
 			throw error(400, 'Invalid document type');
 	}
@@ -91,6 +95,12 @@ export async function POST(event) {
 		}
 		case 'requirementProfile': {
 			const tex = generateRequirementProfileTex(formData);
+			console.log('Generated tex:\n' + tex);
+			const filePath = await compileTex(tex, uniqueFileName);
+			return new Response(filePath.replace('output/', ''));
+		}
+		case 'board-response': {
+			const tex = generateBoardResponse(formData);
 			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
@@ -168,6 +178,20 @@ function generateRequirementProfileTex(formData: FormData): string {
 		requirement:
 			JSON.parse((formData.get('requirements-singlerow') as string | undefined) ?? '') ?? [],
 		merits: JSON.parse((formData.get('merits-singlerow') as string | undefined) ?? '') ?? []
+	});
+}
+
+function generateBoardResponse(formData: FormData): string {
+	const clauses = extractClauses(formData);
+	return GENERATE_BOARD_RESPONSE({
+		meeting: formData.get('meeting') as string,
+		title: formData.get('title') as string,
+		body: formData.get('body') as string,
+		demand: formData.get('demand') as string,
+		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
+		clauses: clauses,
+		authors: extractAuthors(formData),
+		signMessage: formData.get('signMessage') as string
 	});
 }
 

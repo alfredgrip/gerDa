@@ -10,7 +10,8 @@
 		['/create/motion', 'en motion'],
 		['/create/proposition', 'en proposition'],
 		['/create/custom', 'ett eget dokument'],
-		['/create/requirement-profile', 'en kravprofil']
+		['/create/requirement-profile', 'en kravprofil'],
+		['/create/board-response', 'styrelsens svar']
 	]);
 
 	onMount(() => {
