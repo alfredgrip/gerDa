@@ -12,7 +12,7 @@
 
 <textarea hidden name="title" value="Kravprofil" />
 
-<DocumentTypeInput documentType="requirementProfile" />
+<DocumentTypeInput documentType="requirement-profile" />
 
 <ResizingTextInput
 	required="true"
@@ -34,6 +34,7 @@
 	labelName="Beskrivning"
 	explaination="Behöver ej fyllas i, men kan för de sökandes skull vara bra att veta vad posten innebär"
 	placeholder="Posten som Ordförande innebär att..."
+	numRows="4"
 	bind:value={currentDraft.body}
 />
 

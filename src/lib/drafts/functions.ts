@@ -1,7 +1,8 @@
+import type { DocumentType } from '$lib/types';
 import { emptyDraft } from './data';
-import type { Draft, DraftType } from './types';
+import type { Draft } from './types';
 
-export function importDraft(type: DraftType, selectedDraft: Draft | null) {
+export function importDraft(type: DocumentType, selectedDraft: Draft | null) {
 	let currentDraft: Draft = createEmptyDraft(type);
 	if (selectedDraft && selectedDraft.draftType === currentDraft.draftType) {
 		currentDraft = JSON.parse(JSON.stringify(selectedDraft));
@@ -13,7 +14,7 @@ export function importDraft(type: DraftType, selectedDraft: Draft | null) {
 	return currentDraft;
 }
 
-export function createEmptyDraft(type: DraftType): Draft {
+export function createEmptyDraft(type: DocumentType): Draft {
 	return {
 		...emptyDraft,
 		draftType: type,
@@ -22,7 +23,7 @@ export function createEmptyDraft(type: DraftType): Draft {
 }
 
 export function separateDraftsByType(drafts: Draft[]) {
-	const result: Record<DraftType, Draft[]> = {
+	const result: Record<DocumentType, Draft[]> = {
 		motion: [],
 		proposition: [],
 		'election-proposal': [],

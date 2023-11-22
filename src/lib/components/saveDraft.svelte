@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { createEmptyDraft } from '$lib/drafts/functions';
 	import { drafts, selectedDraft } from '$lib/drafts/store';
-	import type { Draft, DraftType } from '$lib/drafts/types';
+	import type { Draft } from '$lib/drafts/types';
+	import type { DocumentType } from '$lib/types';
 
-	export let draftType: DraftType;
+	export let draftType: DocumentType;
 	export let currentDraft: Draft;
 
 	function importDraft() {
@@ -75,21 +76,44 @@
 	}}
 />
 
-<p>draftid: {$selectedDraft?.uuid}</p>
-
-<button class="tex-button" on:click|preventDefault={importDraft}>Importera utkast</button>
-<button class="tex-button" on:click|preventDefault={exportDraft}>Exportera utkast</button>
-<button class="tex-button" on:click|preventDefault={saveDraft}>Spara utkast</button>
+<div class="draft-buttons">
+	<button class="tex-button" on:click|preventDefault={saveDraft}>Spara utkast</button>
+	<button class="tex-button" on:click|preventDefault={importDraft}>Importera utkast</button>
+	<button class="tex-button" on:click|preventDefault={exportDraft}>Exportera utkast</button>
+</div>
+{#if $selectedDraft?.uuid}
+	<p><strong>Utkast:</strong> {$selectedDraft.title} (id: {$selectedDraft?.uuid})</p>
+{/if}
 
 <style>
 	.tex-button {
-		background-color: rgb(123, 206, 142);
+		background-color: rgb(147, 190, 239);
 		border-radius: 0.5rem;
 		padding: 0rem 1rem;
 		border: 2px solid rgb(209, 209, 209);
 	}
 
 	.tex-button:hover {
-		background-color: rgb(123, 206, 142, 0.8);
+		background-color: rgb(147, 190, 239, 0.8);
+	}
+
+	.draft-buttons {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.5rem;
+		justify-content: space-evenly;
+		align-items: center;
+		min-width: 60%;
+		align-self: center;
+	}
+	.draft-buttons button {
+		width: 100%;
+		min-height: 3rem;
+	}
+
+	p {
+		margin: -0.5rem;
+		text-align: center;
+		align-self: center;
 	}
 </style>

@@ -1,4 +1,4 @@
-import type { Author, WhatToWho } from '$lib/types';
+import type { Author, DocumentType, WhatToWho } from '$lib/types';
 
 export interface Clause {
 	name: string;
@@ -20,19 +20,12 @@ export interface Draft {
 	clauses: Clause[];
 	authors: Author[];
 	whatToWho: WhatToWho[];
-	draftType: DraftType;
+	draftType: DocumentType;
 	includeStatistics: boolean;
 	numberedClauses: boolean;
 }
 
-export type DraftType =
-	| 'motion'
-	| 'proposition'
-	| 'election-proposal'
-	| 'requirement-profile'
-	| 'custom';
-
-export const draftRoutes: DraftType[] = [
+export const draftRoutes: DocumentType[] = [
 	'motion',
 	'proposition',
 	'election-proposal',
@@ -40,10 +33,10 @@ export const draftRoutes: DraftType[] = [
 	'custom'
 ];
 
-export const draftTitles: Record<DraftType, string> = {
+export const draftTitles: Record<DocumentType, string> = {
 	motion: 'Motion',
 	proposition: 'Proposition',
-	'election-proposal': 'Valberedningens förslag"-handling',
+	'election-proposal': '"Valberedningens förslag"-handling',
 	'requirement-profile': 'Kravprofil',
 	custom: 'Eget dokument'
 };

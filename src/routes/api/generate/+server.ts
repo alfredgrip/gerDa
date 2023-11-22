@@ -42,13 +42,13 @@ export async function PUT(event) {
 		case 'proposition': {
 			return new Response(generatePropositionTex(formData));
 		}
-		case 'electionProposal': {
+		case 'election-proposal': {
 			return new Response(generateElectionProposalTex(formData));
 		}
 		case 'custom': {
 			return new Response(generateCustomDocumentTex(formData));
 		}
-		case 'requirementProfile': {
+		case 'requirement-profile': {
 			return new Response(generateRequirementProfileTex(formData));
 		}
 		default:
@@ -77,7 +77,7 @@ export async function POST(event) {
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
-		case 'electionProposal': {
+		case 'election-proposal': {
 			const tex = generateElectionProposalTex(formData);
 			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
@@ -89,7 +89,7 @@ export async function POST(event) {
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
-		case 'requirementProfile': {
+		case 'requirement-profile': {
 			const tex = generateRequirementProfileTex(formData);
 			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);

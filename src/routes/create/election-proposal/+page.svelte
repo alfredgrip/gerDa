@@ -27,7 +27,7 @@
 	}
 </script>
 
-<DocumentTypeInput documentType="electionProposal" />
+<DocumentTypeInput documentType="election-proposal" />
 
 <div id="title-meeting">
 	<ResizingTextInput

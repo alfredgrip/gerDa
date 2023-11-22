@@ -28,8 +28,8 @@
 	$: draftsByType = separateDraftsByType($drafts);
 </script>
 
+<a href="/" id="back-button"><strong>&#8592 Hem</strong></a>
 <div class="container">
-	<a href="/" id="back-button"><strong>&#8592 Hem</strong></a>
 	<h1>Utkast</h1>
 	{#each draftRoutes as route}
 		{#if draftsByType[route].length > 0}
@@ -56,13 +56,14 @@
 		display: flex;
 		flex-direction: row;
 		gap: 0.5rem;
+		justify-content: space-between;
 	}
 	.container {
-		display: flex;
-		flex-direction: column;
+		display: grid;
 		gap: 0.5rem;
-		align-items: center;
+		place-items: center;
 	}
+
 	.button {
 		color: black;
 		display: flex;
@@ -90,5 +91,19 @@
 		color: white;
 		border: 1px solid rgb(137, 25, 25);
 		min-width: 6rem;
+	}
+
+	#back-button {
+		border-radius: 0.5rem;
+		padding: 0.5rem 1rem; /* Adjusted padding for better proportions */
+		border: 2px solid rgb(209, 209, 209);
+		color: black;
+		background-color: rgb(255, 241, 241);
+		margin-top: 1rem;
+		text-decoration: none;
+		height: 2rem; /* Adjusted height */
+	}
+	#back-button:hover {
+		background-color: rgb(255, 241, 241, 0.8);
 	}
 </style>

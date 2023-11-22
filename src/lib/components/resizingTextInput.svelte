@@ -65,5 +65,6 @@
 		border: 1px solid rgb(209, 209, 209);
 		border-radius: 0.5rem;
 		padding: 0.5rem;
+		overflow: hidden;
 	}
 </style>

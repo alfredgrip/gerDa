@@ -104,7 +104,9 @@
 				programmet löser det automagiskt!
 			</p>
 			<slot />
-			<div style="display: flex; flex-direction: row; gap: 1rem; justify-content: center;">
+			<div
+				style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; justify-content: center;"
+			>
 				<GenerateButton />
 				<button class="tex-button" on:click|preventDefault={downloadPdf}>Ladda ner PDF</button>
 				<button class="tex-button" on:click|preventDefault={downloadAsTeX}
