@@ -1,6 +1,10 @@
 import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 
 const GENERATE_ATTLIST = (clauses: Clause[], numbered = false): string => {
+	clauses = clauses.filter((clause) => clause.toClause.trim().length > 0);
+	if (clauses.length <= 0) {
+		return '';
+	}
 	const prefix = (numbered ? '\\begin{attlist}' : '\\begin{attlist*}') + '\n';
 	const suffix = (numbered ? '\\end{attlist}' : '\\end{attlist*}') + '\n';
 	return (
@@ -8,8 +12,8 @@ const GENERATE_ATTLIST = (clauses: Clause[], numbered = false): string => {
 		clauses
 			.map((clause) =>
 				clause.description != null && clause.description.trim().length > 0
-					? `  \\attdesc{${clause.toClause}}{${clause.description}}`
-					: `  \\att{${clause.toClause}}`
+					? `  \\item{{${clause.toClause}}} \\begin{description} \\item {${clause.description}} \\end{description}`
+					: `  \\item{{${clause.toClause}}}`
 			)
 			.join('\n') +
 		'\n' +
