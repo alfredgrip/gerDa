@@ -1,22 +1,20 @@
 <script lang="ts">
+	import { draftRoutes, draftTitles } from '$lib/drafts/types';
+	import { drafts } from '../lib/drafts/store';
 </script>
 
 <section>
 	<div>
 		<h1>Jag vill skapa...</h1>
 		<div>
-			<button on:click={() => (window.location.href = '/create/motion')}> Motion </button>
-			<button on:click={() => (window.location.href = '/create/proposition')}> Proposition </button>
-			<button on:click={() => (window.location.href = '/create/board-response')}>
-				Styrelsens svar
-			</button>
-			<button on:click={() => (window.location.href = '/create/election-proposal')}>
-				"Valberedningens förslag"-handling
-			</button>
-			<button on:click={() => (window.location.href = '/create/requirement-profile')}>
-				Kravprofil
-			</button>
-			<button on:click={() => (window.location.href = '/create/custom')}> Eget dokument </button>
+			{#each draftRoutes as route}
+				<a href={`/create/${route}`}>{draftTitles[route]}</a>
+			{/each}
+			{#if $drafts.length > 0}
+				<a href="/drafts">
+					Mina utkast ({$drafts.length})
+				</a>
+			{/if}
 		</div>
 		<div id="help">
 			<h2>Hjälp! Vad är vad?</h2>
@@ -61,7 +59,12 @@
 		margin: 0 auto;
 	}
 
-	button {
+	a {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-decoration: none;
+		color: black;
 		width: 100%;
 		margin: 0.5rem;
 		height: 4rem;
@@ -70,9 +73,10 @@
 		background-color: rgb(255, 241, 241);
 		border: 1px solid rgb(255, 241, 241);
 		border-radius: 0.5rem;
+		cursor: pointer;
 	}
 
-	button:hover {
+	a:hover {
 		background-color: rgb(255, 241, 241, 0.8);
 	}
 

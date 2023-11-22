@@ -1,26 +1,21 @@
 <script lang="ts">
-	import { writable, type Writable } from 'svelte/store';
 	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
 	import RemoveButton from '$lib/components/removeButton.svelte';
 	import AddButton from '$lib/components/addButton.svelte';
+	import type { Author } from '$lib/types';
 
-	let authors: Writable<
-		Array<{
-			name: string;
-			position?: string;
-			uuid: string;
-		}>
-	> = writable([{ name: '', position: '', uuid: Math.random().toString() }]);
+	export let authors: Author[] = [];
+
+	if (authors.length === 0) {
+		authors = [{ name: '', position: '', uuid: Math.random().toString() }];
+	}
 
 	function addAuthor() {
-		authors.update((authors) => [
-			...authors,
-			{ name: '', position: '', uuid: Math.random().toString() }
-		]);
+		authors = [...authors, { name: '', position: '', uuid: Math.random().toString() }];
 	}
 
 	function removeAuthor(uuid: string) {
-		authors.update((authors) => authors.filter((author) => author.uuid !== uuid));
+		authors = authors.filter((author) => author.uuid !== uuid);
 	}
 </script>
 
@@ -28,17 +23,19 @@
 <div class="author-wrapper">
 	<label>
 		Författare
-		{#each $authors as author, i (author.uuid)}
+		{#each authors as author, i (author.uuid)}
 			<div class="author-div">
 				<div class="inner-author-div">
 					<ResizingTextInput
 						idName={`author-${i.toString()}-name`}
+						bind:value={author.name}
 						placeholder="Namn"
 						labelName=""
 						required="true"
 					/>
 					<ResizingTextInput
 						idName={`author-${i.toString()}-position`}
+						bind:value={author.position}
 						placeholder="Post (frivillig)"
 						labelName=""
 					/>

@@ -4,37 +4,38 @@
 	import DocumentTypeInput from '$lib/components/documentTypeInput.svelte';
 	import RemoveButton from '$lib/components/removeButton.svelte';
 	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
-	import { writable, type Writable } from 'svelte/store';
+	import SaveDraft from '$lib/components/saveDraft.svelte';
+	import { importDraft } from '$lib/drafts/functions';
+	import { selectedDraft } from '$lib/drafts/store';
+	import type { Draft } from '$lib/drafts/types';
 
-	let whatToWho: Writable<
-		Array<{
-			what: string;
-			who: string;
-			uuid: string;
-		}>
-	> = writable([{ what: '', who: '', uuid: Math.random().toString() }]);
+	let currentDraft: Draft = importDraft('election-proposal', $selectedDraft);
+
+	if (currentDraft.whatToWho.length === 0) {
+		addWhatToWho();
+	}
 
 	function addWhatToWho() {
-		whatToWho.update((whatToWho) => [
-			...whatToWho,
-			{ what: '', who: '', uuid: Math.random().toString() }
-		]);
+		currentDraft.whatToWho = [
+			...currentDraft.whatToWho,
+			{ what: '', who: [], whoString: '', numberOfApplicants: '', uuid: Math.random().toString() }
+		];
 	}
 
 	function removeWhatToWho(uuid: string) {
-		whatToWho.update((whatToWho) => whatToWho.filter((whatToWho) => whatToWho.uuid !== uuid));
+		currentDraft.whatToWho = currentDraft.whatToWho.filter((item) => item.uuid !== uuid);
 	}
-
-	let isStatistics: Writable<boolean> = writable(true);
 </script>
 
-<DocumentTypeInput documentType="electionProposal" />
+<DocumentTypeInput documentType="election-proposal" />
+
 <div id="title-meeting">
 	<ResizingTextInput
 		idName="meeting"
 		labelName="Möte"
 		required="true"
 		placeholder="Ex. HTM-val, S02, VTM1"
+		bind:value={currentDraft.meeting}
 	/>
 </div>
 <!-- <ResizingTextInput
@@ -53,37 +54,40 @@
 			style="align-self: flex-start; "
 			type="checkbox"
 			name="isStatistics"
-			bind:checked={$isStatistics}
+			bind:checked={currentDraft.includeStatistics}
 		/>
 		<label><small>Inkludera statistik?</small></label><br /><small
 			>Om valet hade en stängd nomineringslista ska statistik inkluderas, annars ej</small
 		>
 	</div>
-	{#each $whatToWho as whatToWho, i (whatToWho.uuid)}
+	{#each currentDraft.whatToWho as item, i (item.uuid)}
 		<div style="margin: 0.5rem 0;">
 			<ResizingTextInput
 				idName={`what-to-who-${i.toString()}-what`}
 				labelName=""
 				required="true"
 				placeholder="Vilken post?"
+				bind:value={item.what}
 			/>
 			<ResizingTextInput
 				idName={`what-to-who-${i.toString()}-who-singlerow`}
 				labelName=""
 				required="true"
 				placeholder="Vem? (Om flera personer, skriv namnen på separata rader)"
+				bind:value={item.whoString}
 			/>
-			{#if $isStatistics}
+			{#if currentDraft.includeStatistics}
 				<ResizingTextInput
 					idName={`statistics-${i.toString()}-interval`}
 					labelName=""
 					required="true"
 					placeholder="Hur många sökte? Ange i intervall om storlek 5 (ex. 5-10)"
+					bind:value={item.numberOfApplicants}
 				/>
 			{/if}
 			{#if i !== 0}
 				<RemoveButton
-					uuid={whatToWho.uuid}
+					uuid={item.uuid}
 					removeFunction={removeWhatToWho}
 					buttonText="Ta bort förslag"
 				/>
@@ -97,9 +101,12 @@
 	idName="signMessage"
 	labelName="Signaturmeddelande"
 	placeholder="För Valberedningen"
+	bind:value={currentDraft.signMessage}
 />
 
-<AuthorBlock />
+<AuthorBlock bind:authors={currentDraft.authors} />
+
+<SaveDraft draftType="election-proposal" bind:currentDraft />
 
 <style>
 	/* div {
