@@ -1,25 +1,21 @@
 <script lang="ts">
-	import { writable, type Writable } from 'svelte/store';
 	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
 	import RemoveButton from '$lib/components/removeButton.svelte';
 	import AddButton from '$lib/components/addButton.svelte';
+	import type { Clause } from '$lib/drafts/types';
 
-	let clauses: Writable<
-		Array<{
-			name: string;
-			description?: string;
-			uuid: string;
-		}>
-	> = writable([{ name: '', description: '', uuid: Math.random().toString() }]);
+	export let clauses: Clause[] = [];
+	export let numberedClauses: boolean = false;
+
+	if (clauses.length === 0) {
+		clauses = [{ name: '', description: '', uuid: Math.random().toString() }];
+	}
 
 	function addClause() {
-		clauses.update((clauses) => [
-			...clauses,
-			{ name: '', description: '', uuid: Math.random().toString() }
-		]);
+		clauses = [...clauses, { name: '', description: '', uuid: Math.random().toString() }];
 	}
 	function removeClause(uuid: string) {
-		clauses.update((clauses) => clauses.filter((clause) => clause.uuid !== uuid));
+		clauses = clauses.filter((clause) => clause.uuid !== uuid);
 	}
 </script>
 
@@ -28,20 +24,22 @@
 	<label>
 		Att-satser
 		<div>
-			<input type="checkbox" name="numberedClauses" checked={false} />
+			<input type="checkbox" name="numberedClauses" bind:checked={numberedClauses} />
 			<label><small>Numrerade att-satser?</small></label>
 		</div>
-		{#each $clauses as clause, i (clause.uuid)}
+		{#each clauses as clause, i (clause.uuid)}
 			<div class="clause-div">
 				<div class="inner-clause-div">
 					<ResizingTextInput
 						idName={`to-clause-${i.toString()}`}
+						bind:value={clause.name}
 						labelName=""
 						required="true"
 						placeholder="sjunga mer..."
 					/>
 					<ResizingTextInput
 						idName={`to-clause-${i.toString()}-description`}
+						bind:value={clause.description}
 						placeholder="Beskrivning (frivillig)"
 						labelName=""
 					/>

@@ -43,13 +43,13 @@ export async function PUT(event) {
 		case 'proposition': {
 			return new Response(generatePropositionTex(formData));
 		}
-		case 'electionProposal': {
+		case 'election-proposal': {
 			return new Response(generateElectionProposalTex(formData));
 		}
 		case 'custom': {
 			return new Response(generateCustomDocumentTex(formData));
 		}
-		case 'requirementProfile': {
+		case 'requirement-profile': {
 			return new Response(generateRequirementProfileTex(formData));
 		}
 		case 'board-response': {
@@ -81,7 +81,7 @@ export async function POST(event) {
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
-		case 'electionProposal': {
+		case 'election-proposal': {
 			const tex = generateElectionProposalTex(formData);
 			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
@@ -93,7 +93,7 @@ export async function POST(event) {
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
-		case 'requirementProfile': {
+		case 'requirement-profile': {
 			const tex = generateRequirementProfileTex(formData);
 			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
@@ -240,9 +240,9 @@ function extractAuthors(formData: FormData): Author[] {
 	let i = 0;
 	while (i < 100) {
 		const name = formData.get(`author-${i.toString()}-name`) as string;
-		const position = formData.get(`author-${i.toString()}-position`) as string | null;
+		const position = (formData.get(`author-${i.toString()}-position`) ?? '') as string;
 		if (name) {
-			authors.push({ name, position });
+			authors.push({ name, position, uuid: '' });
 		} else {
 			break;
 		}
@@ -274,7 +274,13 @@ function extractWhatToWho(formData: FormData): WhatToWho[] {
 		const what = formData.get(`what-to-who-${i.toString()}-what`) as string;
 		const who = formData.get(`what-to-who-${i.toString()}-who-singlerow`) as string;
 		if (what && who) {
-			whatToWho.push({ what, who: JSON.parse(who) });
+			whatToWho.push({
+				what,
+				who: JSON.parse(who),
+				numberOfApplicants: '',
+				uuid: '',
+				whoString: ''
+			});
 		} else {
 			break;
 		}
