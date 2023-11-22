@@ -23,13 +23,6 @@
 		});
 	});
 
-	function onUnload(event: BeforeUnloadEvent) {
-		const body = document.getElementById('body') as HTMLInputElement;
-		if (body?.value?.length > 20) {
-			event.returnValue = 'Är du säker på att du vill lämna sidan?';
-		}
-	}
-
 	async function onKeyDown(event: KeyboardEvent) {
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
 			event.preventDefault();
@@ -92,12 +85,7 @@
 	let promise: ReturnType<typeof fetch> = Promise.resolve(new Response('/GUIDE.pdf#pagemode=none'));
 </script>
 
-<svelte:window
-	on:keydown={onKeyDown}
-	on:beforeunload={(event) => {
-		onUnload(event);
-	}}
-/>
+<svelte:window on:keydown={onKeyDown} />
 <section id="outer-section">
 	<div id="form-wrapper">
 		<form method="POST" on:submit|preventDefault={handleSubmit}>

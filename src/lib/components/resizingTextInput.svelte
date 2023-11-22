@@ -8,6 +8,7 @@
 	export let placeholder: string = '';
 	export let numRows: string = '1';
 	export let explaination: string | null = null;
+	export let value = '';
 
 	onMount(() => {
 		const input = document.getElementById(idName) as HTMLInputElement;
@@ -37,9 +38,17 @@
 				{placeholder}
 				id={idName}
 				rows={parseInt(numRows)}
+				bind:value
 			/>
 		{:else}
-			<textarea {...$$restProps} name={idName} {placeholder} id={idName} rows={parseInt(numRows)} />
+			<textarea
+				{...$$restProps}
+				name={idName}
+				{placeholder}
+				id={idName}
+				rows={parseInt(numRows)}
+				bind:value
+			/>
 		{/if}
 	</label>
 </section>

@@ -3,6 +3,15 @@
 	import ClauseBlock from '$lib/components/clauseBlock.svelte';
 	import DocumentTypeInput from '$lib/components/documentTypeInput.svelte';
 	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
+	import SaveDraft from '$lib/components/saveDraft.svelte';
+
+	import { importDraft } from '$lib/drafts/functions';
+	import { selectedDraft } from '$lib/drafts/store';
+	import type { Draft } from '$lib/drafts/types';
+
+	console.log($selectedDraft);
+
+	let currentDraft: Draft = importDraft('proposition', $selectedDraft);
 </script>
 
 <DocumentTypeInput documentType="proposition" />
@@ -12,6 +21,7 @@
 	idName="title"
 	labelName="Titel"
 	placeholder="Titeln på propositionen"
+	bind:value={currentDraft.title}
 />
 
 <ResizingTextInput
@@ -19,6 +29,7 @@
 	labelName="Möte"
 	required="true"
 	placeholder="Ex. HTM-val, S02, VTM1"
+	bind:value={currentDraft.meeting}
 />
 
 <ResizingTextInput
@@ -26,6 +37,7 @@
 	labelName="Brödtext"
 	numRows="8"
 	placeholder="Styrelsen tycker att det sjungs alldeles för lite på sektionen. Därför vill vi att sektionen ska..."
+	bind:value={currentDraft.body}
 />
 
 <ResizingTextInput
@@ -33,14 +45,21 @@
 	labelName="Krav"
 	placeholder="Undertecknad yrkar att mötet må besluta"
 	explaination="Kan utelämnas om det framgår i brödtexten"
+	bind:value={currentDraft.demand}
 />
 
-<ClauseBlock />
+<ClauseBlock
+	bind:clauses={currentDraft.clauses}
+	bind:numberedClauses={currentDraft.numberedClauses}
+/>
 
 <ResizingTextInput
 	idName="signMessage"
 	labelName="Signaturmeddelande"
 	placeholder="För D-sektionen, dag som ovan"
+	bind:value={currentDraft.signMessage}
 />
 
-<AuthorBlock />
+<AuthorBlock bind:authors={currentDraft.authors} />
+
+<SaveDraft draftType="proposition" bind:currentDraft />
