@@ -30,8 +30,8 @@ const GENERATE_AUTHORS = (
 	return authors
 		.map(
 			(author, index) =>
-				`  \\signature{${index === 0 ? sm : '\\phantom{}'}}{${author.name}}{${
-					author.position ?? ''
+				`  \\signature{${index === 0 ? sm : `\\phantom{${sm}}`}}{${author.name}}{${
+					author.position ?? '\\phantom{placeholder}'
 				}}`
 		)
 		.join('');
