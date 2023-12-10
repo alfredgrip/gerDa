@@ -3,15 +3,16 @@
 	import RemoveButton from '$lib/components/removeButton.svelte';
 	import AddButton from '$lib/components/addButton.svelte';
 	import type { Author } from '$lib/types';
+	import { uuid } from '$lib/utils';
 
 	export let authors: Author[] = [];
 
 	if (authors.length === 0) {
-		authors = [{ name: '', position: '', uuid: Math.random().toString() }];
+		authors = [{ name: '', position: '', uuid: uuid() }];
 	}
 
 	function addAuthor() {
-		authors = [...authors, { name: '', position: '', uuid: Math.random().toString() }];
+		authors = [...authors, { name: '', position: '', uuid: uuid() }];
 	}
 
 	function removeAuthor(uuid: string) {

@@ -8,6 +8,7 @@
 	import { importDraft } from '$lib/drafts/functions';
 	import { selectedDraft } from '$lib/drafts/store';
 	import type { Draft } from '$lib/drafts/types';
+	import { uuid } from '$lib/utils';
 
 	let currentDraft: Draft = importDraft('election-proposal', $selectedDraft);
 
@@ -18,7 +19,7 @@
 	function addWhatToWho() {
 		currentDraft.whatToWho = [
 			...currentDraft.whatToWho,
-			{ what: '', who: [], whoString: '', numberOfApplicants: '', uuid: Math.random().toString() }
+			{ what: '', who: [], whoString: '', numberOfApplicants: '', uuid: uuid() }
 		];
 	}
 

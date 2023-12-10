@@ -1,6 +1,7 @@
 import type { DocumentType } from '$lib/types';
 import { emptyDraft } from './data';
 import type { Draft } from './types';
+import { uuid } from '$lib/utils';
 
 export function importDraft(type: DocumentType, selectedDraft: Draft | null) {
 	let currentDraft: Draft = createEmptyDraft(type);
@@ -18,7 +19,7 @@ export function createEmptyDraft(type: DocumentType): Draft {
 	return {
 		...emptyDraft,
 		draftType: type,
-		uuid: Math.random().toString()
+		uuid: uuid()
 	};
 }
 

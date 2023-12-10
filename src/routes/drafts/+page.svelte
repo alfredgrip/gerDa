@@ -39,7 +39,11 @@
 					<a
 						href={`/create/${draft.draftType}`}
 						class="wide button"
-						on:click={() => selectDraft(draft.uuid)}>{draft.title} ({draft.uuid})</a
+						on:click={() => selectDraft(draft.uuid)}
+						><div class="titleUUID">
+							<p style="font-weight: bold;">{draft.title}</p>
+							<p style="font-size: small;">({draft.uuid})</p>
+						</div></a
 					>
 					<button class="red button" on:click={() => removeDraft(draft.uuid)}>ta bort</button>
 				</div>
@@ -58,6 +62,18 @@
 		gap: 0.5rem;
 		justify-content: space-between;
 	}
+
+	.titleUUID {
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.titleUUID p {
+		margin: 0;
+		white-space: initial;
+	}
+
 	.container {
 		display: grid;
 		gap: 0.5rem;
