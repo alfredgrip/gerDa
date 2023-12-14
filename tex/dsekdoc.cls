@@ -191,18 +191,18 @@
 %% Headers and footers
 
 \newpagestyle{main}{
-  \sethead {
-    \parbox{18mm}{\Dseksigil[height=16mm]}
-    \parbox{80mm}{{\textsc{\Dseklongname}} \\
-      {\small\textsc{\tl_use:N \g_dsek_short_title_tl}}}
-  }{}{
-    \parbox{60mm}{\small
-      \hbox{} \hfill{\tl_use:N \g_dsek_meeting_tl} \\
-      \hbox{} \hfill{\tl_use:N \g_dsek_date_tl}}
-  }
-  \setheadrule{0pt}
-  \setfootrule{.4pt}
-  \setfoot{}{\tffamily\thepage\ (\pageref{LastPage})}{}
+\sethead {
+\parbox{18mm}{\Dseksigil[height=16mm]}
+\parbox{80mm}{{\textsc{\Dseklongname}} \\
+{\small\textsc{\tl_use:N \g_dsek_short_title_tl}}}
+}{}{
+\parbox{60mm}{\small
+  \hbox{} \hfill{\tl_use:N \g_dsek_meeting_tl} \\
+  \hbox{} \hfill{\tl_use:N \g_dsek_date_tl}}
+}
+\setheadrule{0pt}
+\setfootrule{.4pt}
+\setfoot{}{\tffamily\thepage\ (\pageref{LastPage})}{}
 }
 \pagestyle{main}
 

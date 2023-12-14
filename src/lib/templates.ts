@@ -21,19 +21,18 @@ const GENERATE_ATTLIST = (clauses: Clause[], numbered = false): string => {
 	);
 };
 
-const GENERATE_AUTHORS = (
-	authors: Author[],
-	signMessage?: string,
-	fallBack = 'För D-sektionen, dag som ovan'
-): string => {
-	const sm = signMessage?.trim().length == 0 ? fallBack : signMessage;
+const GENERATE_AUTHORS = (authors: Author[]): string => {
 	return authors
-		.map(
-			(author, index) =>
-				`  \\signature{${index === 0 ? sm : `\\phantom{${sm}}`}}{${author.name}}{${
-					author.position ?? '\\phantom{placeholder}'
-				}}`
-		)
+		.map((author) => {
+			const sm =
+				author.signmessage.trim().length > 0 ? author.signmessage.trim() : '\\phantom{placeholder}';
+			const signImage: string | undefined = author.signImage?.name;
+			if (signImage) {
+				return `  \\signature[signature=${signImage}]{${sm}}{${author.name}}{${author.position}}`;
+			} else {
+				return `  \\signature{${sm}}{${author.name}}{${author.position}}`;
+			}
+		})
 		.join('');
 };
 
@@ -112,7 +111,6 @@ export const GENERATE_MOTION = (parameters: {
 	clauses: Clause[];
 	numberedClauses: boolean;
 	authors: Author[];
-	signMessage?: string;
 }): string => `
 \\documentclass[motion]{dsekmotion}
 \\usepackage{dsek}
@@ -135,7 +133,7 @@ ${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
 \\medskip
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, 'För D-sektionen, dag som ovan')}
+${GENERATE_AUTHORS(parameters.authors)}
 
 \\end{document}
 `;
@@ -148,7 +146,6 @@ export const GENERATE_PROPOSITION = (parameters: {
 	clauses: Clause[];
 	numberedClauses: boolean;
 	authors: Author[];
-	signMessage?: string;
 }): string => `
 \\documentclass[proposition]{dsekmotion}
 \\usepackage{dsek}
@@ -172,7 +169,7 @@ ${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
 \\medskip
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, 'För D-sektionen, dag som ovan')}
+${GENERATE_AUTHORS(parameters.authors)}
 
 \\end{document}
 `;
@@ -183,7 +180,6 @@ export const GENERATE_ELECTION_PROPOSAL = (parameters: {
 	authors: Author[];
 	whatToWho: WhatToWho[];
 	statistics: Statistics[];
-	signMessage?: string;
 }): string =>
 	`
 \\documentclass{dsekelectionproposal}
@@ -195,7 +191,7 @@ export const GENERATE_ELECTION_PROPOSAL = (parameters: {
  
 ${GENERATE_WHO_SECTION(parameters.whatToWho, parameters.body)}
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, 'För Valberedningen')}
+${GENERATE_AUTHORS(parameters.authors)}
 
 ${GENERATE_STATISTICS_PAGE(parameters.statistics)}
 
@@ -208,7 +204,6 @@ export const GENERATE_CUSTOM_DOCUMENT = (parameters: {
 	meeting: string;
 	body: string;
 	authors: Author[];
-	signMessage?: string;
 }): string => `
 \\documentclass{dsekdoc}
 \\usepackage{dsek}
@@ -224,7 +219,7 @@ ${parameters.body}
 
 \\medskip
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, '')}
+${GENERATE_AUTHORS(parameters.authors)}
 
 \\end{document}
 `;
@@ -272,7 +267,6 @@ export const GENERATE_BOARD_RESPONSE = (parameters: {
 	clauses: Clause[];
 	numberedClauses: boolean;
 	authors: Author[];
-	signMessage?: string;
 }): string => `
 \\documentclass{dsekdoc}
 \\usepackage{dsek}
@@ -294,7 +288,7 @@ ${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
 \\medskip
 
-${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, '')}
+${GENERATE_AUTHORS(parameters.authors)}
 
 \\end{document}
 `;

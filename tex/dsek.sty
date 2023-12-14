@@ -78,8 +78,8 @@
   \includegraphics[ height = \l_dsek_height_dim ] {
     \g_dsek_image_dir_str #1
     \bool_if:NTF \l_dsek_in_color_bool
-      {-color}
-      {-bw}
+    {-color}
+    {-bw}
   }
   \group_end:
 }
@@ -106,8 +106,8 @@
 
 \NewDocumentEnvironment{boldlist}{ m } {
   \begin{itemize}[label=\textbf{ #1 },
-                  labelsep=.5em]
-} {
+      labelsep=.5em]
+    } {
   \end{itemize}
 }
 
@@ -115,21 +115,21 @@
 
 \tl_new:N \g_dsek_att_list_format_tl
 \tl_set:Nn \g_dsek_att_list_format_tl
-   {\stepcounter{DsekAttListItem}
-    {\footnotesize (\arabic{DsekAttListItem})}~\textbf{att}}
+{\stepcounter{DsekAttListItem}
+  {\footnotesize (\arabic{DsekAttListItem})}~\textbf{att}}
 
 \NewDocumentEnvironment{attlist}{} {
   \setcounter{DsekAttListItem}{0}
 
   \begin{itemize}[label={\tl_use:N \g_dsek_att_list_format_tl},
-                  labelsep=.5em]
-} {
+      labelsep=.5em]
+    } {
   \end{itemize}
 }
 
 \NewDocumentEnvironment{attlist*}{} { % Simpler version without numbering
   \begin{boldlist}{att}
-} {
+    } {
   \end{boldlist}
 }
 
@@ -142,7 +142,15 @@
   \dim_gset:Nn \g_dsek_sign_space_height { #1 }
 }
 
+\dim_new:N \g_dsek_sign_space_min_width
+\dim_gset:Nn \g_dsek_sign_space_min_width {40mm}
+
+\NewDocumentCommand{\setsignspaceminwidth}{ m }{
+  \dim_gset:Nn \g_dsek_sign_space_min_width { #1 }
+}
+
 \dim_new:N \l__dsek_sign_width
+\str_new:N \l__dsek_sign_filename
 
 \NewDocumentCommand{\signature}{ o m m m } {
   \group_begin:
@@ -160,20 +168,36 @@
   \dim_set:Nn \l__dsek_sign_width {
     \dim_max:nn {\l_tmpa_dim} {\l__dsek_sign_width}}
 
-  \dim_add:Nn \l__dsek_sign_width {2em}
+  \dim_set:Nn \l__dsek_sign_width {
+    \dim_max:nn {\g_dsek_sign_space_min_width} {\l__dsek_sign_width}}
 
   \keys_define:nn { dsek / signatures } {
     hspace .dim_set:N = \l__dsek_sign_space_height,
-    width  .dim_set:N = \l__dsek_sign_width
+    width  .dim_set:N = \l__dsek_sign_width,
+    signature .str_set:N = \l__dsek_sign_filename
   }
 
   \IfValueT{#1} {\keys_set:nn { dsek / signatures } { #1 }}
 
+  \dim_set_eq:NN \l_tmpa_dim \l__dsek_sign_width
+
+  \dim_add:Nn \l__dsek_sign_width {2em}
+
   \parbox[t]{ \dim_use:N \l__dsek_sign_width }{
     \raggedright #2
-    \vspace{ \dim_use:N \l__dsek_sign_space_height } \\
+    \str_if_empty:NTF \l__dsek_sign_filename {
+      \\ \vbox to \dim_use:N \g_dsek_sign_space_height {\vfil
+        \vfil}
+    } { \\ \vbox to \dim_use:N \g_dsek_sign_space_height {\vfil
+        \includegraphics[keepaspectratio=true,
+          width=\l_tmpa_dim,
+          height=\g_dsek_sign_space_height
+        ] {
+          \tl_use:N \l__dsek_sign_filename
+        }\vfil}
+    }
     #3 \\
-    #4
+    #4 \vspace{\baselineskip}\\
   }
   \group_end:
 }

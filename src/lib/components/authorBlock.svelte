@@ -4,15 +4,17 @@
 	import AddButton from '$lib/components/addButton.svelte';
 	import type { Author } from '$lib/types';
 	import { uuid } from '$lib/utils';
+	import SignMessageUpload from './signMessageUpload.svelte';
 
 	export let authors: Author[] = [];
+	export let signmessage: string;
 
 	if (authors.length === 0) {
-		authors = [{ name: '', position: '', uuid: uuid() }];
+		authors = [{ signmessage: '', name: '', position: '', uuid: uuid() }];
 	}
 
 	function addAuthor() {
-		authors = [...authors, { name: '', position: '', uuid: uuid() }];
+		authors = [...authors, { signmessage: '', name: '', position: '', uuid: uuid() }];
 	}
 
 	function removeAuthor(uuid: string) {
@@ -27,6 +29,14 @@
 		{#each authors as author, i (author.uuid)}
 			<div class="author-div">
 				<div class="inner-author-div">
+					<ResizingTextInput
+						idName={`author-${i.toString()}-signmessage`}
+						bind:value={author.signmessage}
+						placeholder={signmessage}
+						labelName=""
+						required="true"
+					/>
+					<SignMessageUpload {i} />
 					<ResizingTextInput
 						idName={`author-${i.toString()}-name`}
 						bind:value={author.name}

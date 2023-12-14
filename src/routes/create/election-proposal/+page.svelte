@@ -98,14 +98,7 @@
 	<AddButton buttonText="Lägg till förslag" addFunction={addWhatToWho} />
 </label>
 
-<ResizingTextInput
-	idName="signMessage"
-	labelName="Signaturmeddelande"
-	placeholder="För Valberedningen"
-	bind:value={currentDraft.signMessage}
-/>
-
-<AuthorBlock bind:authors={currentDraft.authors} />
+<AuthorBlock bind:authors={currentDraft.authors} signmessage="För Valberedningen, dag som ovan" />
 
 <SaveDraft draftType="election-proposal" bind:currentDraft />
 

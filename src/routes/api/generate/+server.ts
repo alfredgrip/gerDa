@@ -9,7 +9,7 @@ import {
 } from '$lib/templates';
 import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
 import { spawnSync } from 'node:child_process';
-import fs from 'node:fs';
+import fs, { writeFileSync } from 'node:fs';
 
 const extractFormData = (formData: FormData) => {
 	const params: Record<string, string> = {};
@@ -21,6 +21,8 @@ const extractFormData = (formData: FormData) => {
 			params[key] = value?.toString() ?? '';
 		} else if (typeof value === 'string' && !key.endsWith('singlerow')) {
 			params[key] = markdownToLatex(value);
+		} else if (typeof value === 'object' && value instanceof File) {
+			//
 		} else {
 			params[key] = JSON.stringify(value?.toString().split('\n') ?? []);
 		}
@@ -38,22 +40,22 @@ export async function PUT(event) {
 	const formData = extractFormData(await request.formData());
 	switch (formData.get('documentType')) {
 		case 'motion': {
-			return new Response(generateMotionTex(formData));
+			return new Response(await generateMotionTex(formData));
 		}
 		case 'proposition': {
-			return new Response(generatePropositionTex(formData));
+			return new Response(await generatePropositionTex(formData));
 		}
 		case 'election-proposal': {
-			return new Response(generateElectionProposalTex(formData));
+			return new Response(await generateElectionProposalTex(formData));
 		}
 		case 'custom': {
-			return new Response(generateCustomDocumentTex(formData));
+			return new Response(await generateCustomDocumentTex(formData));
 		}
 		case 'requirement-profile': {
 			return new Response(generateRequirementProfileTex(formData));
 		}
 		case 'board-response': {
-			return new Response(generateBoardResponse(formData));
+			return new Response(await generateBoardResponse(formData));
 		}
 		default:
 			throw error(400, 'Invalid document type');
@@ -72,25 +74,25 @@ export async function POST(event) {
 		case 'motion': {
 			const tex = generateMotionTex(formData);
 			console.log('Generated tex:\n' + tex);
-			const filePath = await compileTex(tex, uniqueFileName);
+			const filePath = await compileTex(await tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'proposition': {
 			const tex = generatePropositionTex(formData);
 			console.log('Generated tex:\n' + tex);
-			const filePath = await compileTex(tex, uniqueFileName);
+			const filePath = await compileTex(await tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'election-proposal': {
 			const tex = generateElectionProposalTex(formData);
 			console.log('Generated tex:\n' + tex);
-			const filePath = await compileTex(tex, uniqueFileName);
+			const filePath = await compileTex(await tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'custom': {
 			const tex = generateCustomDocumentTex(formData);
 			console.log('Generated tex:\n' + tex);
-			const filePath = await compileTex(tex, uniqueFileName);
+			const filePath = await compileTex(await tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'requirement-profile': {
@@ -102,7 +104,7 @@ export async function POST(event) {
 		case 'board-response': {
 			const tex = generateBoardResponse(formData);
 			console.log('Generated tex:\n' + tex);
-			const filePath = await compileTex(tex, uniqueFileName);
+			const filePath = await compileTex(await tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		default:
@@ -110,9 +112,9 @@ export async function POST(event) {
 	}
 }
 
-function generateMotionTex(formData: FormData): string {
+async function generateMotionTex(formData: FormData): Promise<string> {
 	const clauses = extractClauses(formData);
-	const authors = extractAuthors(formData);
+	const authors = await extractAuthors(formData);
 	return GENERATE_MOTION({
 		// return GENERATE_MOTION({
 		meeting: formData.get('meeting') as string,
@@ -121,14 +123,13 @@ function generateMotionTex(formData: FormData): string {
 		demand: formData.get('demand') as string,
 		clauses: clauses,
 		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
-		authors: authors,
-		signMessage: formData.get('signMessage') as string
+		authors: authors
 	});
 }
 
-function generatePropositionTex(formData: FormData): string {
+async function generatePropositionTex(formData: FormData): Promise<string> {
 	const clauses = extractClauses(formData);
-	const authors = extractAuthors(formData);
+	const authors = await extractAuthors(formData);
 	return GENERATE_PROPOSITION({
 		meeting: formData.get('meeting') as string,
 		title: formData.get('title') as string,
@@ -136,13 +137,12 @@ function generatePropositionTex(formData: FormData): string {
 		demand: formData.get('demand') as string,
 		clauses: clauses,
 		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
-		authors: authors,
-		signMessage: formData.get('signMessage') as string
+		authors: authors
 	});
 }
 
-function generateElectionProposalTex(formData: FormData): string {
-	const authors = extractAuthors(formData);
+async function generateElectionProposalTex(formData: FormData): Promise<string> {
+	const authors = await extractAuthors(formData);
 	const whatToWho = extractWhatToWho(formData);
 	const statistics = extractStatistics(formData);
 	return GENERATE_ELECTION_PROPOSAL({
@@ -150,23 +150,18 @@ function generateElectionProposalTex(formData: FormData): string {
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		authors: authors,
 		whatToWho: whatToWho,
-		statistics: statistics,
-		signMessage:
-			formData.get('signMessage')?.toString().trim().length == 0
-				? 'För Valberedningen'
-				: (formData.get('signMessage') as string)
+		statistics: statistics
 	});
 }
 
-function generateCustomDocumentTex(formData: FormData): string {
-	const authors = extractAuthors(formData);
+async function generateCustomDocumentTex(formData: FormData): Promise<string> {
+	const authors = await extractAuthors(formData);
 	return GENERATE_CUSTOM_DOCUMENT({
 		title: formData.get('title') as string,
 		shortTitle: formData.get('shortTitle') as string,
 		meeting: formData.get('meeting') as string,
 		body: formData.get('body') as string,
-		authors: authors,
-		signMessage: formData.get('signMessage') as string
+		authors: authors
 	});
 }
 
@@ -181,7 +176,7 @@ function generateRequirementProfileTex(formData: FormData): string {
 	});
 }
 
-function generateBoardResponse(formData: FormData): string {
+async function generateBoardResponse(formData: FormData): Promise<string> {
 	const clauses = extractClauses(formData);
 	return GENERATE_BOARD_RESPONSE({
 		meeting: formData.get('meeting') as string,
@@ -190,8 +185,7 @@ function generateBoardResponse(formData: FormData): string {
 		demand: formData.get('demand') as string,
 		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
 		clauses: clauses,
-		authors: extractAuthors(formData),
-		signMessage: formData.get('signMessage') as string
+		authors: await extractAuthors(formData)
 	});
 }
 
@@ -235,14 +229,29 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	return `output/${fileName}.pdf`;
 }
 
-function extractAuthors(formData: FormData): Author[] {
+async function extractAuthors(formData: FormData): Promise<Author[]> {
 	const authors: Author[] = [];
+	const regex = /((jpg)|(jpeg)|(png))$/i;
 	let i = 0;
 	while (i < 100) {
+		const signmessage = formData.get(`author-${i.toString()}-signmessage`) as string;
+		const signImage = formData.get(`author-${i.toString()}-signimage`) as File | null;
 		const name = formData.get(`author-${i.toString()}-name`) as string;
 		const position = (formData.get(`author-${i.toString()}-position`) ?? '') as string;
+
 		if (name) {
-			authors.push({ name, position, uuid: '' });
+			if (signImage?.name) {
+				if (signImage.size > 1000000) {
+					throw error(400, 'The image is too large');
+				}
+				if (signImage.type.match(regex) === null) {
+					throw error(400, 'The image is not a valid image');
+				}
+				writeFileSync(`uploads/${signImage.name}`, Buffer.from(await signImage.arrayBuffer()));
+				authors.push({ signmessage, name, position, uuid: '', signImage });
+			} else {
+				authors.push({ signmessage, name, position, uuid: '' });
+			}
 		} else {
 			break;
 		}

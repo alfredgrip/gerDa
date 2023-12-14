@@ -12,6 +12,8 @@ export type Clause = {
 };
 
 export type Author = {
+	signmessage: string;
+	signImage?: File;
 	name: string;
 	position: string;
 	uuid: string;

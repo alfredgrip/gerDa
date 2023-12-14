@@ -44,13 +44,6 @@
 	bind:value={currentDraft.body}
 />
 
-<ResizingTextInput
-	idName="signMessage"
-	labelName="Signaturmeddelande"
-	placeholder="För D-sektionen, dag som ovan"
-	bind:value={currentDraft.signMessage}
-/>
-
-<AuthorBlock bind:authors={currentDraft.authors} />
+<AuthorBlock bind:authors={currentDraft.authors} signmessage="För D-sektionen, dag som ovan" />
 
 <SaveDraft draftType="custom" bind:currentDraft />
