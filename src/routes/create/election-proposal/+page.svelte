@@ -82,7 +82,7 @@
 					idName={`statistics-${i.toString()}-interval`}
 					labelName=""
 					required="true"
-					placeholder="Hur många sökte? Ange i intervall om storlek 5 (ex. 5-10)"
+					placeholder="Hur många sökte? Ange i intervall om storlek 5 (ex. 5-9)"
 					bind:value={item.numberOfApplicants}
 				/>
 			{/if}
@@ -96,6 +96,17 @@
 		</div>
 	{/each}
 	<AddButton buttonText="Lägg till förslag" addFunction={addWhatToWho} />
+	{#if currentDraft.includeStatistics}
+		<br />
+		<ResizingTextInput
+			idName="totalStat"
+			labelName="Totalt antal sökande"
+			explaination="Om du vill kan du inkludera totalt antal sökande. Detta är inget krav enligt policy, men
+			används då och då"
+			placeholder="Ex. 10-14"
+			bind:value={currentDraft.totalStat}
+		/>
+	{/if}
 </label>
 
 <ResizingTextInput

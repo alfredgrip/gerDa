@@ -145,6 +145,7 @@ function generateElectionProposalTex(formData: FormData): string {
 		authors: authors,
 		whatToWho: whatToWho,
 		statistics: statistics,
+		totalStat: formData.get('totalStat') as string,
 		signMessage:
 			formData.get('signMessage')?.toString().trim().length == 0
 				? 'För Valberedningen'

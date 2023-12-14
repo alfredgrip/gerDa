@@ -22,6 +22,7 @@ export interface Draft {
 	whatToWho: WhatToWho[];
 	draftType: DocumentType;
 	includeStatistics: boolean;
+	totalStat: string;
 	numberedClauses: boolean;
 }
 

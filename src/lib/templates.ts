@@ -181,6 +181,7 @@ export const GENERATE_ELECTION_PROPOSAL = (parameters: {
 	authors: Author[];
 	whatToWho: WhatToWho[];
 	statistics: Statistics[];
+	totalStat?: string;
 	signMessage?: string;
 }): string =>
 	`
@@ -196,6 +197,12 @@ ${GENERATE_WHO_SECTION(parameters.whatToWho, parameters.body)}
 ${GENERATE_AUTHORS(parameters.authors, parameters.signMessage, 'För Valberedningen')}
 
 ${GENERATE_STATISTICS_PAGE(parameters.statistics)}
+
+${
+	parameters.totalStat?.trim().length
+		? 'Totalt antal som genomgick valprocessen: ' + parameters.totalStat
+		: ''
+}
 
 \\end{document}
 `;
