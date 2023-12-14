@@ -71,37 +71,31 @@ export async function POST(event) {
 	switch (formData.get('documentType')) {
 		case 'motion': {
 			const tex = generateMotionTex(formData);
-			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'proposition': {
 			const tex = generatePropositionTex(formData);
-			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'election-proposal': {
 			const tex = generateElectionProposalTex(formData);
-			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'custom': {
 			const tex = generateCustomDocumentTex(formData);
-			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'requirement-profile': {
 			const tex = generateRequirementProfileTex(formData);
-			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'board-response': {
 			const tex = generateBoardResponse(formData);
-			console.log('Generated tex:\n' + tex);
 			const filePath = await compileTex(tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
@@ -312,16 +306,13 @@ function markdownToLatex(md: string): string {
 	// For example when including math equations
 	const uniqueFileName = `markdown-tmp-${Date.now()}`;
 	// create a temporary file
-	console.log('Writing markdown to file');
+	//console.log('Writing markdown to file');
 	fs.mkdirSync('uploads', { recursive: true });
 	fs.writeFileSync(`uploads/${uniqueFileName}.md`, md);
 	// convert markdown to tex
-	console.log('Converting markdown to tex with ');
-	console.log(spawnSync('which pandoc', { shell: true }).stdout.toString());
 	const tex = spawnSync(`pandoc uploads/${uniqueFileName}.md -f markdown -t latex`, {
 		shell: true
 	}).stdout.toString();
-	console.log('Generated tex from markdown:\n' + tex);
 	// remove temporary file
 	spawnSync(`rm uploads/${uniqueFileName}.md`, { shell: true });
 	return tex;
