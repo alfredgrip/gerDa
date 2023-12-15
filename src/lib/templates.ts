@@ -86,7 +86,6 @@ const GENERATE_REQUIREMENTS = (requirements: string[]): string => {
 	if (requirements.length <= 0) {
 		return '';
 	}
-	console.log(requirements);
 	const prefix = '\\subsection*{Krav}\n\\begin{itemize}\n';
 	const suffix = '\n\\end{itemize}';
 	return prefix + requirements.map((requirement) => `\\item ${requirement}`).join('\n') + suffix;
@@ -97,7 +96,6 @@ const GENERATE_MERITS = (merits: string[]): string => {
 	if (merits.length <= 0) {
 		return '';
 	}
-	console.log(merits);
 	const prefix = '\\subsection*{Meriterande}\\begin{itemize}';
 	const suffix = '\\end{itemize}';
 	return prefix + merits.map((merit) => `\\item ${merit}`).join('\n') + suffix;

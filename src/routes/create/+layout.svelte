@@ -16,7 +16,7 @@
 
 	onMount(() => {
 		const form = document.querySelector('form');
-		if (form == null) throw new Error('Form is null');
+		if (form == null) throw error(500, 'Form is null');
 		form.addEventListener('keypress', function (e) {
 			if (e.key === 'Enter' && !(e.target instanceof HTMLTextAreaElement)) {
 				e.preventDefault();
