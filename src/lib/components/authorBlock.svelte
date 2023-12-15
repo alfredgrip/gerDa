@@ -25,7 +25,6 @@
 <!-- svelte-ignore a11y-label-has-associated-control -->
 <div class="author-wrapper">
 	<label>
-		Författare
 		{#each authors as author, i (author.uuid)}
 			<div class="author-div">
 				<div class="inner-author-div">
@@ -33,22 +32,23 @@
 						idName={`author-${i.toString()}-signmessage`}
 						bind:value={author.signmessage}
 						placeholder={signmessage}
-						labelName=""
+						labelName="Signaturmeddelande"
 						required="true"
 					/>
 					<SignMessageUpload {i} />
 					<ResizingTextInput
 						idName={`author-${i.toString()}-name`}
 						bind:value={author.name}
-						placeholder="Namn"
-						labelName=""
+						placeholder="Råsa Pantern"
+						labelName="Namn"
 						required="true"
 					/>
 					<ResizingTextInput
 						idName={`author-${i.toString()}-position`}
 						bind:value={author.position}
-						placeholder="Post (frivillig)"
-						labelName=""
+						placeholder="Ordförande"
+						labelName="Post"
+						explaination="Kan utelämnas eller helt enkelt vara 'Sektionsmedlem'"
 					/>
 				</div>
 				{#if i !== 0}

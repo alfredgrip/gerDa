@@ -5,7 +5,8 @@
 	let input: HTMLInputElement;
 </script>
 
-<label for="file">Signaturbild</label>
+<label for="file">Bild på signatur</label>
+<span><small>Behövs inte, men ser stiligt ut</small></span>
 <div>
 	<input
 		type="file"
@@ -31,7 +32,6 @@
 
 <style>
 	button {
-		/* fix color */
 		align-self: flex-end;
 		background-color: rgb(209, 84, 84);
 		border-radius: 0.5rem;
