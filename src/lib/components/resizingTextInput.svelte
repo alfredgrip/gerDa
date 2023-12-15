@@ -12,7 +12,7 @@
 
 	onMount(() => {
 		const input = document.getElementById(idName) as HTMLInputElement;
-		if (input == null) throw error(500);
+		if (input == null) error(500);
 		input.addEventListener('input', () => {
 			input.style.height = 'auto';
 			input.style.height = `calc(${input.scrollHeight}px - 1rem)`;

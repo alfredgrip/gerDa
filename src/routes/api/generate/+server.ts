@@ -56,7 +56,7 @@ export async function PUT(event) {
 			return new Response(generateBoardResponse(formData));
 		}
 		default:
-			throw error(400, 'Invalid document type');
+			error(400, 'Invalid document type');
 	}
 }
 
@@ -100,7 +100,7 @@ export async function POST(event) {
 			return new Response(filePath.replace('output/', ''));
 		}
 		default:
-			throw error(400, 'Invalid document type');
+			error(400, 'Invalid document type');
 	}
 }
 
