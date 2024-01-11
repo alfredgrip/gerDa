@@ -3,8 +3,9 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
+		"compile-tex": "tectonic -X compile GUIDE.tex -Z search-path=dsekdocs && mv GUIDE.pdf static/",
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "npm run compile-tex && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
