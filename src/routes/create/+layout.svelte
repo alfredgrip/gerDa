@@ -16,7 +16,7 @@
 
 	onMount(() => {
 		const form = document.querySelector('form');
-		if (form == null) throw error(500, 'Form is null');
+		if (form == null) error(500, 'Form is null');
 		form.addEventListener('keypress', function (e) {
 			if (e.key === 'Enter' && !(e.target instanceof HTMLTextAreaElement)) {
 				e.preventDefault();
@@ -28,7 +28,7 @@
 		if ((event.ctrlKey || event.metaKey) && event.key === 's') {
 			event.preventDefault();
 			let form = document.querySelector('form');
-			if (form == null) throw error(500, 'Form is null');
+			if (form == null) error(500, 'Form is null');
 			handleSubmit({ currentTarget: form as HTMLFormElement });
 		}
 	}
@@ -36,7 +36,7 @@
 	async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElement }) {
 		const data = new FormData(event.currentTarget);
 		let pdfEmbed = document.getElementById('pdf-embed');
-		if (pdfEmbed == null) throw error(500, 'pdfEmbed is null');
+		if (pdfEmbed == null) error(500, 'pdfEmbed is null');
 		promise = fetch('/api/generate', {
 			method: 'POST',
 			body: data
@@ -45,12 +45,12 @@
 
 	async function downloadPdf() {
 		const pdfEmbed = document.getElementById('pdf-embed');
-		if (pdfEmbed == null) throw error(500, 'pdfEmbed is null');
+		if (pdfEmbed == null) error(500, 'pdfEmbed is null');
 		const src = (pdfEmbed as HTMLIFrameElement).src;
 		const element = document.createElement('a');
 		element.setAttribute('href', src);
 		let titleInput = document.querySelector('textarea[name="title"]');
-		if (titleInput == null) throw error(500, 'titleInput is null');
+		if (titleInput == null) error(500, 'titleInput is null');
 		const title = (titleInput as HTMLTextAreaElement).value.length
 			? (titleInput as HTMLTextAreaElement).value
 			: 'generatedDocument';
@@ -63,7 +63,7 @@
 
 	async function downloadAsTeX() {
 		const form = document.querySelector('form');
-		if (form == null) throw error(500, 'Form is null');
+		if (form == null) error(500, 'Form is null');
 		const data = new FormData(form);
 		const response = await fetch('/api/generate', {
 			method: 'PUT',

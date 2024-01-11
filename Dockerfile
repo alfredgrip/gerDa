@@ -38,12 +38,12 @@ ENV TZ=Etc/UTC
 WORKDIR /app
 COPY . .
 
-RUN wget https://github.com/Dsek-LTH/dsekdocs/archive/refs/heads/main.zip
-RUN unzip main.zip
-RUN mkdir -p tex
-RUN mv dsekdocs-main/* tex/
+# RUN wget https://github.com/Dsek-LTH/dsekdocs/archive/refs/heads/main.zip
+# RUN unzip main.zip
+# RUN mkdir -p tex
+# RUN mv dsekdocs-main/* tex/
 
-RUN tectonic -X compile GUIDE.tex -Z search-path=tex -Z continue-on-errors
+RUN tectonic -X compile GUIDE.tex -Z search-path=dsekdocs -Z continue-on-errors
 RUN mv GUIDE.pdf static/GUIDE.pdf
 
 COPY package*.json .

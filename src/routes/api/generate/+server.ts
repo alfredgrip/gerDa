@@ -58,7 +58,7 @@ export async function PUT(event) {
 			return new Response(await generateBoardResponse(formData));
 		}
 		default:
-			throw error(400, 'Invalid document type');
+			error(400, 'Invalid document type');
 	}
 }
 
@@ -102,7 +102,7 @@ export async function POST(event) {
 			return new Response(filePath.replace('output/', ''));
 		}
 		default:
-			throw error(400, 'Invalid document type');
+			error(400, 'Invalid document type');
 	}
 }
 
@@ -199,7 +199,7 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	console.log('Compiling tex with ');
 	console.log(spawnSync('which tectonic', { shell: true }).stdout.toString());
 	const command = spawnSync(
-		`tectonic -X compile "uploads/${fileName}.tex" -Z search-path=tex -Z continue-on-errors`,
+		`tectonic -X compile "uploads/${fileName}.tex" -Z search-path=dsekdocs -Z continue-on-errors`,
 		{
 			shell: true
 		}
