@@ -28,7 +28,7 @@ const GENERATE_AUTHORS = (authors: Author[]): string => {
 				author.signmessage.trim().length > 0 ? author.signmessage.trim() : '\\phantom{placeholder}';
 			const signImage: string | undefined = author.signImage?.name;
 			if (signImage) {
-				return `  \\signature[signature=${signImage}]{${sm}}{${author.name}}{${author.position}}`;
+				return `  \\signature[signfile=${signImage}]{${sm}}{${author.name}}{${author.position}}`;
 			} else {
 				return `  \\signature{${sm}}{${author.name}}{${author.position}}`;
 			}
