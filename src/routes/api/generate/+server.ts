@@ -205,7 +205,7 @@ async function compileTex(tex: string, fileName: string): Promise<string> {
 	console.log('Compiling tex with ');
 	console.log(spawnSync('which tectonic', { shell: true }).stdout.toString());
 	const command = spawnSync(
-		`tectonic -X compile "uploads/${fileName}.tex" -Z search-path=tex -Z continue-on-errors`,
+		`tectonic -X compile "uploads/${fileName}.tex" -Z search-path=dsekdocs -Z continue-on-errors`,
 		{
 			shell: true
 		}

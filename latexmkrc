@@ -1,11 +1,11 @@
 $pdf_mode = 1;
 $pdflatex = 'lualatex -interaction=nonstopmode';
 
-ensure_path( 'TEXINPUTS', './tex//' );
+ensure_path( 'TEXINPUTS', './dsekdocs//' );
 ensure_path( 'BSTINPUTS', './bst//' );
-ensure_path( 'T1FONTS', './tex/fonts/type1//' );
-ensure_path( 'AFMFONTS', './tex/fonts/afm//' );
-ensure_path( 'TEXFONTMAPS', './tex/fonts/map//' );
-ensure_path( 'TFMFONTS', './tex/fonts/tfm//' );
-ensure_path( 'VFFONTS', './tex/fonts/vf//' );
-ensure_path( 'ENCFONTS', './tex/fonts/enc//' );
+ensure_path( 'T1FONTS', './dsekdocs/fonts/type1//' );
+ensure_path( 'AFMFONTS', './dsekdocs/fonts/afm//' );
+ensure_path( 'TEXFONTMAPS', './dsekdocs/fonts/map//' );
+ensure_path( 'TFMFONTS', './dsekdocs/fonts/tfm//' );
+ensure_path( 'VFFONTS', './dsekdocs/fonts/vf//' );
+ensure_path( 'ENCFONTS', './dsekdocs/fonts/enc//' );

@@ -1,0 +1,3 @@
+[submodule "dsekdocs"]
+	path = dsekdocs
+	url = git@github.com:Dsek-LTH/dsekdocs.git
