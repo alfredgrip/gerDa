@@ -44,6 +44,6 @@
 	bind:value={currentDraft.body}
 />
 
-<AuthorBlock bind:authors={currentDraft.authors} signmessage="För D-sektionen, dag som ovan" />
+<AuthorBlock bind:authors={currentDraft.authors} signmessage="Lund, dag som ovan" />
 
 <SaveDraft draftType="custom" bind:currentDraft />

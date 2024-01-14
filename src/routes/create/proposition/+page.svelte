@@ -53,6 +53,6 @@
 	bind:numberedClauses={currentDraft.numberedClauses}
 />
 
-<AuthorBlock bind:authors={currentDraft.authors} signmessage="För D-sektionen, dag som ovan" />
+<AuthorBlock bind:authors={currentDraft.authors} signmessage="Lund, dag som ovan" />
 
 <SaveDraft draftType="proposition" bind:currentDraft />

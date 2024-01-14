@@ -16,5 +16,10 @@ export const emptyDraft: Draft = {
 	whatToWho: [],
 	draftType: 'motion',
 	includeStatistics: false,
-	numberedClauses: false
+	numberedClauses: false,
+	meetingType: '',
+	meetingDate: '',
+	meetingPlace: '',
+	adjournmentDate: '',
+	adjournmentPlace: ''
 };

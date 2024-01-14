@@ -30,7 +30,8 @@ export function separateDraftsByType(drafts: Draft[]) {
 		'board-response': [],
 		'election-proposal': [],
 		'requirement-profile': [],
-		custom: []
+		custom: [],
+		notice: []
 	};
 
 	for (const draft of drafts) {

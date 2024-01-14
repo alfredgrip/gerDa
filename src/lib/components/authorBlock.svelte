@@ -28,28 +28,30 @@
 		{#each authors as author, i (author.uuid)}
 			<div class="author-div">
 				<div class="inner-author-div">
-					<ResizingTextInput
-						idName={`author-${i.toString()}-signmessage`}
-						bind:value={author.signmessage}
-						placeholder={signmessage}
-						labelName="Signaturmeddelande"
-						required="true"
-					/>
+					<div class="author-text-inputs">
+						<ResizingTextInput
+							idName={`author-${i.toString()}-signmessage`}
+							bind:value={author.signmessage}
+							placeholder={signmessage}
+							labelName="Signaturmeddelande"
+							required="true"
+						/>
+						<ResizingTextInput
+							idName={`author-${i.toString()}-name`}
+							bind:value={author.name}
+							placeholder="Råsa Pantern"
+							labelName="Namn"
+							required="true"
+						/>
+						<ResizingTextInput
+							idName={`author-${i.toString()}-position`}
+							bind:value={author.position}
+							placeholder="Ordförande"
+							labelName="Post"
+							explaination="Kan utelämnas eller helt enkelt vara 'Sektionsmedlem'"
+						/>
+					</div>
 					<SignMessageUpload {i} />
-					<ResizingTextInput
-						idName={`author-${i.toString()}-name`}
-						bind:value={author.name}
-						placeholder="Råsa Pantern"
-						labelName="Namn"
-						required="true"
-					/>
-					<ResizingTextInput
-						idName={`author-${i.toString()}-position`}
-						bind:value={author.position}
-						placeholder="Ordförande"
-						labelName="Post"
-						explaination="Kan utelämnas eller helt enkelt vara 'Sektionsmedlem'"
-					/>
 				</div>
 				{#if i !== 0}
 					<RemoveButton
@@ -81,5 +83,17 @@
 		display: flex;
 		flex-direction: column;
 		/* gap: 1rem; */
+	}
+
+	.author-text-inputs {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1rem;
+	}
+
+	@media only screen and (max-width: 600px) {
+		.author-text-inputs {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

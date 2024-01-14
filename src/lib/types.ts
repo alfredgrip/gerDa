@@ -4,7 +4,8 @@ export type DocumentType =
 	| 'election-proposal'
 	| 'custom'
 	| 'requirement-profile'
-	| 'board-response';
+	| 'board-response'
+	| 'notice';
 
 export type Clause = {
 	toClause: string;
@@ -50,3 +51,9 @@ export interface PropositionParams extends BasicParams {
 	documentType: 'proposition';
 	clauses: Clause[];
 }
+
+export type AgendaItem = {
+	title: string;
+	type?: string;
+	attatchments?: string[];
+};

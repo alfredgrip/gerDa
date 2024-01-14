@@ -11,7 +11,8 @@
 		['/create/proposition', 'en proposition'],
 		['/create/custom', 'ett eget dokument'],
 		['/create/requirement-profile', 'en kravprofil'],
-		['/create/board-response', 'styrelsens svar']
+		['/create/board-response', 'styrelsens svar'],
+		['/create/notice', 'en kallelse']
 	]);
 
 	onMount(() => {

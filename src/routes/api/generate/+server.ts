@@ -5,9 +5,10 @@ import {
 	GENERATE_PROPOSITION,
 	GENERATE_CUSTOM_DOCUMENT,
 	GENERATE_REQUIREMENT_PROFILE,
-	GENERATE_BOARD_RESPONSE
+	GENERATE_BOARD_RESPONSE,
+	GENERATE_NOTICE
 } from '$lib/templates';
-import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
+import type { AgendaItem, Author, Clause, Statistics, WhatToWho } from '$lib/types';
 import { spawnSync } from 'node:child_process';
 import fs, { writeFileSync } from 'node:fs';
 
@@ -20,7 +21,7 @@ const extractFormData = (formData: FormData) => {
 		if (key === 'documentType') {
 			params[key] = value?.toString() ?? '';
 		} else if (typeof value === 'string' && !key.endsWith('singlerow')) {
-			params[key] = markdownToLatex(value);
+			params[key] = markdownToLatex(value).trim();
 		} else if (typeof value === 'object' && value instanceof File) {
 			//
 		} else {
@@ -55,7 +56,10 @@ export async function PUT(event) {
 			return new Response(generateRequirementProfileTex(formData));
 		}
 		case 'board-response': {
-			return new Response(await generateBoardResponse(formData));
+			return new Response(await generateBoardResponseTex(formData));
+		}
+		case 'notice': {
+			return new Response(await generateNoticeTex(formData));
 		}
 		default:
 			error(400, 'Invalid document type');
@@ -97,7 +101,12 @@ export async function POST(event) {
 			return new Response(filePath.replace('output/', ''));
 		}
 		case 'board-response': {
-			const tex = generateBoardResponse(formData);
+			const tex = generateBoardResponseTex(formData);
+			const filePath = await compileTex(await tex, uniqueFileName);
+			return new Response(filePath.replace('output/', ''));
+		}
+		case 'notice': {
+			const tex = generateNoticeTex(formData);
 			const filePath = await compileTex(await tex, uniqueFileName);
 			return new Response(filePath.replace('output/', ''));
 		}
@@ -116,7 +125,7 @@ async function generateMotionTex(formData: FormData): Promise<string> {
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		demand: formData.get('demand') as string,
 		clauses: clauses,
-		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
+		numberedClauses: formData.get('numberedClauses')?.toString() === 'on',
 		authors: authors
 	});
 }
@@ -130,7 +139,7 @@ async function generatePropositionTex(formData: FormData): Promise<string> {
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		demand: formData.get('demand') as string,
 		clauses: clauses,
-		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
+		numberedClauses: formData.get('numberedClauses')?.toString() === 'on',
 		authors: authors
 	});
 }
@@ -170,15 +179,37 @@ function generateRequirementProfileTex(formData: FormData): string {
 	});
 }
 
-async function generateBoardResponse(formData: FormData): Promise<string> {
+async function generateBoardResponseTex(formData: FormData): Promise<string> {
 	const clauses = extractClauses(formData);
 	return GENERATE_BOARD_RESPONSE({
 		meeting: formData.get('meeting') as string,
 		title: formData.get('title') as string,
 		body: formData.get('body') as string,
 		demand: formData.get('demand') as string,
-		numberedClauses: formData.get('numberedClauses')?.toString().trim() === 'on',
+		numberedClauses: formData.get('numberedClauses')?.toString() === 'on',
 		clauses: clauses,
+		authors: await extractAuthors(formData)
+	});
+}
+
+async function generateNoticeTex(formData: FormData): Promise<string> {
+	const meetingDateStr = formData.get('meetingDate') as string;
+	console.log(meetingDateStr);
+	const meetingDate = new Date(meetingDateStr);
+	const adjournmentDateStr = formData.get('adjournmentDate') as string | null;
+	const adjournmentDate = adjournmentDateStr ? new Date(adjournmentDateStr) : null;
+	const agenda = extractAgenda(formData);
+	console.log(agenda);
+
+	return GENERATE_NOTICE({
+		meeting: formData.get('meeting') as string,
+		meetingType: formData.get('meetingType') as string,
+		meetingDate: meetingDate,
+		meetingPlace: formData.get('meetingPlace') as string,
+		adjournmentDate: adjournmentDate,
+		adjournmentPlace: formData.get('adjournmentPlace') as string,
+		body: formData.get('body') as string,
+		agenda: agenda.length > 0 ? agenda : null,
 		authors: await extractAuthors(formData)
 	});
 }
@@ -261,7 +292,7 @@ function extractClauses(formData: FormData): Clause[] {
 		const toClause = formData.get(`to-clause-${i.toString()}`) as string;
 		const description = formData.get(`to-clause-${i.toString()}-description`) as string | null;
 		if (toClause) {
-			clauses.push({ toClause, description: description?.trim() === '' ? null : description });
+			clauses.push({ toClause, description: description === '' ? null : description });
 		} else {
 			break;
 		}
@@ -306,6 +337,28 @@ function extractStatistics(formData: FormData): Statistics[] {
 		i++;
 	}
 	return statistics;
+}
+
+function extractAgenda(formData: FormData): AgendaItem[] {
+	const items: AgendaItem[] = [];
+	let i = 0;
+	while (i < 100) {
+		const title = formData.get(`agenda-item-${i.toString()}-title`) as string;
+		const type = formData.get(`agenda-item-${i.toString()}-type`) as string;
+		const attachments = formData.get(`agenda-item-${i.toString()}-attachments`) as string;
+		console.log(title, type, attachments);
+		if (title) {
+			items.push({
+				title: title,
+				type: type === '' ? undefined : type,
+				attatchments: attachments === '' ? undefined : attachments.split(';').filter((s) => s)
+			});
+		} else {
+			break;
+		}
+		i++;
+	}
+	return items;
 }
 
 function markdownToLatex(md: string): string {

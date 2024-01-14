@@ -1,7 +1,7 @@
-import type { Author, Clause, Statistics, WhatToWho } from '$lib/types';
+import type { AgendaItem, Author, Clause, Statistics, WhatToWho } from '$lib/types';
 
 const GENERATE_ATTLIST = (clauses: Clause[], numbered = false): string => {
-	clauses = clauses.filter((clause) => clause.toClause.trim().length > 0);
+	clauses = clauses.filter((clause) => clause.toClause.length > 0);
 	if (clauses.length <= 0) {
 		return '';
 	}
@@ -11,7 +11,7 @@ const GENERATE_ATTLIST = (clauses: Clause[], numbered = false): string => {
 		prefix +
 		clauses
 			.map((clause) =>
-				clause.description != null && clause.description.trim().length > 0
+				clause.description != null && clause.description.length > 0
 					? `  \\item{{${clause.toClause}}} \\begin{description} \\item {${clause.description}} \\end{description}`
 					: `  \\item{{${clause.toClause}}}`
 			)
@@ -22,18 +22,23 @@ const GENERATE_ATTLIST = (clauses: Clause[], numbered = false): string => {
 };
 
 const GENERATE_AUTHORS = (authors: Author[]): string => {
-	return authors
-		.map((author) => {
-			const sm =
-				author.signmessage.trim().length > 0 ? author.signmessage.trim() : '\\phantom{placeholder}';
-			const signImage: string | undefined = author.signImage?.name;
-			if (signImage) {
-				return `  \\signature[signfile=${signImage}]{${sm}}{${author.name}}{${author.position}}`;
-			} else {
-				return `  \\signature{${sm}}{${author.name}}{${author.position}}`;
-			}
-		})
-		.join('');
+	const authorList = authors.map((author) => {
+		const sm = author.signmessage.length > 0 ? author.signmessage : '\\phantom{placeholder}';
+		const signImage: string | undefined = author.signImage?.name;
+		if (signImage) {
+			return `\\signature[signfile=${signImage}]{${sm}}{${author.name}}{${author.position}}`;
+		} else {
+			return `\\signature{${sm}}{${author.name}}{${author.position}}`;
+		}
+	});
+	// every third author should be on a new line
+	// makes alignment look better
+	for (let i = 0; i < authorList.length; i++) {
+		if (i % 3 == 0) {
+			authorList[i] = '\n' + authorList[i];
+		}
+	}
+	return authorList.join('\n');
 };
 
 // Not used right now, but might be useful in the future
@@ -86,7 +91,7 @@ const GENERATE_REQUIREMENTS = (requirements: string[]): string => {
 	if (requirements.length <= 0) {
 		return '';
 	}
-	const prefix = '\\subsection*{Krav}\n\\begin{itemize}\n';
+	const prefix = '\\section*{Krav}\n\\begin{itemize}\n';
 	const suffix = '\n\\end{itemize}';
 	return prefix + requirements.map((requirement) => `\\item ${requirement}`).join('\n') + suffix;
 };
@@ -96,9 +101,77 @@ const GENERATE_MERITS = (merits: string[]): string => {
 	if (merits.length <= 0) {
 		return '';
 	}
-	const prefix = '\\subsection*{Meriterande}\\begin{itemize}';
+	const prefix = '\\section*{Meriterande}\\begin{itemize}';
 	const suffix = '\\end{itemize}';
 	return prefix + merits.map((merit) => `\\item ${merit}`).join('\n') + suffix;
+};
+
+const GENERATE_TIME_AND_PLACE = (
+	meetingDate: Date,
+	meetingPlace: string,
+	adjournmentDate: Date | null,
+	adjournmentPlace: string | null
+): string => {
+	const prefix = '\\section*{Tid och plats}';
+	const suffix = '\n';
+	const adjournment = adjournmentDate
+		? `
+\\textbf{Ajourneringstid:} ${adjournmentDate.toLocaleDateString('sv-SE', {
+				weekday: 'long',
+				day: 'numeric',
+				month: 'long'
+		  })} kl. ${adjournmentDate.toLocaleTimeString('sv-SE', {
+				hour: 'numeric',
+				minute: 'numeric'
+		  })}
+
+\\textbf{Ajourneringsplats:} ${adjournmentPlace}`
+		: '';
+
+	return (
+		prefix +
+		`
+\\textbf{Tid:} ${meetingDate.toLocaleDateString('sv-SE', {
+			weekday: 'long',
+			day: 'numeric',
+			month: 'long'
+		})} kl. ${meetingDate.toLocaleTimeString('sv-SE', {
+			hour: 'numeric',
+			minute: 'numeric'
+		})}
+
+\\textbf{Plats:} ${meetingPlace}
+
+${adjournment}
+` +
+		suffix
+	);
+};
+
+const GENERATE_AGENDA = (agenda: AgendaItem[]): string => {
+	const prefix = '\\section*{Föredragningslista}';
+	const suffix = '\n';
+	let attachmentCounter = 1;
+	return (
+		prefix +
+		`
+\\begin{agenda}
+${agenda
+	.map(
+		(item) =>
+			`  \\issue{${item.title}}${item.type ? `[${item.type}]` : '[]'}${
+				item.attatchments?.length
+					? '[' +
+					  item.attatchments.map((a) => `\\href{${a}}{${attachmentCounter++}}`).join(', ') +
+					  ']'
+					: ''
+			}`
+	)
+	.join('\n')}
+\\end{agenda}
+` +
+		suffix
+	);
 };
 
 export const GENERATE_MOTION = (parameters: {
@@ -117,9 +190,11 @@ export const GENERATE_MOTION = (parameters: {
 
 \\begin{document}
 \\settitle{${parameters.title}}
-\\setauthor{${parameters.authors[0].name}}
+\\setauthor{${parameters.authors[0]?.name ?? ''}}
 \\setdate{\\today}
 \\setmeeting{${parameters.meeting}}
+
+\\maketitle
 
 ${parameters.body}
 
@@ -152,10 +227,12 @@ export const GENERATE_PROPOSITION = (parameters: {
 
 \\begin{document}
 \\settitle{${parameters.title}}
-\\setauthor{${parameters.authors[0].name}}
+\\setauthor{${parameters.authors[0]?.name ?? ''}}
 \\setdate{\\today}
 \\setshorttitle{Proposition}
 \\setmeeting{${parameters.meeting}}
+
+\\maketitle
 
 ${parameters.body}
 
@@ -182,10 +259,12 @@ export const GENERATE_ELECTION_PROPOSAL = (parameters: {
 	`
 \\documentclass{dsekelectionproposal}
 \\usepackage{dsek}
-\\setauthor{${parameters.authors[0].name}}
+\\setauthor{${parameters.authors[0]?.name ?? ''}}
 \\setdate{\\today}
 \\setmeeting{${parameters.meeting}}
 \\begin{document}
+
+\\maketitle
  
 ${GENERATE_WHO_SECTION(parameters.whatToWho, parameters.body)}
 
@@ -207,11 +286,12 @@ export const GENERATE_CUSTOM_DOCUMENT = (parameters: {
 \\usepackage{dsek}
 \\settitle{${parameters.title}}
 \\setshorttitle{${parameters.shortTitle}}
-\\setauthor{${parameters.authors[0].name}}
+\\setauthor{${parameters.authors[0]?.name ?? ''}}
 \\setdate{\\today}
 \\setmeeting{${parameters.meeting}}
 \\begin{document}
-\\section*{\\usetitle}
+
+\\maketitle
 
 ${parameters.body}
 
@@ -238,7 +318,7 @@ export const GENERATE_REQUIREMENT_PROFILE = (parameters: {
 \\setdate{${parameters.year}}
 \\begin{document}
 
-\\section*{Kravprofil:~${parameters.position}}
+\\maketitle
 
 ${parameters.description ?? ''}
 
@@ -270,11 +350,12 @@ export const GENERATE_BOARD_RESPONSE = (parameters: {
 \\usepackage{dsek}
 \\settitle{Styrelsens svar: ${parameters.title}}
 \\setshorttitle{Styrelsens svar}
-\\setauthor{${parameters.authors[0].name}}
+\\setauthor{${parameters.authors[0]?.name ?? ''}}
 \\setdate{\\today}
 \\setmeeting{${parameters.meeting}}
 \\begin{document}
-\\section*{\\usetitle}
+
+\\maketitle
 
 ${parameters.body}
 
@@ -285,6 +366,46 @@ ${parameters.demand}
 ${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
 
 \\medskip
+
+${GENERATE_AUTHORS(parameters.authors)}
+
+\\end{document}
+`;
+
+export const GENERATE_NOTICE = (parameters: {
+	meeting: string;
+	meetingType: string;
+	meetingPlace: string;
+	meetingDate: Date;
+	adjournmentDate: Date | null;
+	adjournmentPlace: string | null;
+	agenda: Array<AgendaItem> | null;
+	body: string;
+	authors: Author[];
+}): string => `
+\\documentclass{dseknotice}
+\\usepackage{dsek}
+\\settitle{Kallelse till ${parameters.meetingType} ${parameters.meeting}}
+\\setshorttitle{Kallelse}
+\\setauthor{${parameters.authors[0]?.name ?? ''}}
+\\setdate{\\today}
+\\setmeeting{${parameters.meeting}}
+\\begin{document}
+
+\\maketitle
+
+${GENERATE_TIME_AND_PLACE(
+	parameters.meetingDate,
+	parameters.meetingPlace,
+	parameters.adjournmentDate,
+	parameters.adjournmentPlace
+)}
+
+\\medskip
+
+${parameters.body ? parameters.body + ' \n\\medskip' : ''}
+
+${parameters.agenda ? GENERATE_AGENDA(parameters.agenda) : ''}
 
 ${GENERATE_AUTHORS(parameters.authors)}
 

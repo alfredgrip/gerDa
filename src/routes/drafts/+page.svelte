@@ -32,7 +32,7 @@
 <div class="container">
 	<h1>Utkast</h1>
 	{#each draftRoutes as route}
-		{#if draftsByType[route].length > 0}
+		{#if draftsByType[route]?.length > 0}
 			<h2>{draftTitles[route]}</h2>
 			{#each draftsByType[route] as draft (draft.uuid)}
 				<div class="draft">

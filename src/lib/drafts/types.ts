@@ -12,6 +12,11 @@ export interface Draft {
 	shortTitle: string;
 	body: string;
 	meeting: string;
+	meetingType: string;
+	meetingDate: string;
+	meetingPlace: string;
+	adjournmentDate: string;
+	adjournmentPlace: string;
 	demand: string;
 	signMessage: string;
 	requirements: string;
@@ -31,6 +36,7 @@ export const draftRoutes: DocumentType[] = [
 	'board-response',
 	'election-proposal',
 	'requirement-profile',
+	'notice',
 	'custom'
 ];
 
@@ -40,5 +46,6 @@ export const draftTitles: Record<DocumentType, string> = {
 	'board-response': 'Styrelsens svar',
 	'election-proposal': '"Valberedningens förslag"-handling',
 	'requirement-profile': 'Kravprofil',
+	notice: 'Kallelse',
 	custom: 'Eget dokument'
 };

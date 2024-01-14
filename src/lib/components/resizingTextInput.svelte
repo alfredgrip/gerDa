@@ -9,6 +9,7 @@
 	export let numRows: string = '1';
 	export let explaination: string | null = null;
 	export let value = '';
+	export let width: string = 'auto';
 
 	onMount(() => {
 		const input = document.getElementById(idName) as HTMLInputElement;
@@ -21,15 +22,9 @@
 	});
 </script>
 
-<section>
+<section style={`width: ${width}`}>
 	<label>
-		{#if explaination !== null}
-			{labelName}
-			<span><small>{explaination}</small></span>
-		{:else}
-			{labelName}
-		{/if}
-
+		{labelName}
 		{#if required === 'true'}
 			<textarea
 				{...$$restProps}
@@ -50,6 +45,9 @@
 				bind:value
 			/>
 		{/if}
+		{#if explaination !== null}
+			<span><small>{explaination}</small></span>
+		{/if}
 	</label>
 </section>
 
@@ -66,5 +64,6 @@
 		border-radius: 0.5rem;
 		padding: 0.5rem;
 		overflow: hidden;
+		width: auto;
 	}
 </style>
