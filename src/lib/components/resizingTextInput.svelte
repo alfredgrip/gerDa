@@ -22,7 +22,7 @@
 	});
 </script>
 
-<section style={`width: ${width}`}>
+<section style={`width: ${width}; overflow-wrap: break-word;`}>
 	<label>
 		{labelName}
 		{#if required === 'true'}
