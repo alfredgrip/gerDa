@@ -12,7 +12,7 @@ const GENERATE_ATTLIST = (clauses: Clause[], numbered = false): string => {
 		clauses
 			.map((clause) =>
 				clause.description != null && clause.description.length > 0
-					? `  \\item{{${clause.toClause}}} \\begin{description} \\item {${clause.description}} \\end{description}`
+					? `  \\item{{${clause.toClause}}} \\begin{description} \\item \\textit{${clause.description}} \\end{description}`
 					: `  \\item{{${clause.toClause}}}`
 			)
 			.join('\n') +
