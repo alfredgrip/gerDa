@@ -5,9 +5,9 @@
 	let input: HTMLInputElement;
 </script>
 
-<label for="file">Bild på signatur</label>
-<span><small>Behövs inte, men ser stiligt ut</small></span>
 <div>
+	<label for="file">Bild på signatur</label>
+	<span><small>Behövs inte, men ser stiligt ut</small></span>
 	<input
 		type="file"
 		id={`author-${i.toString()}-signimage`}
@@ -49,5 +49,7 @@
 
 	div {
 		margin: 0.5rem 0;
+		display: flex;
+		flex-direction: column;
 	}
 </style>

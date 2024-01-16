@@ -29,13 +29,16 @@
 			<div class="author-div">
 				<div class="inner-author-div">
 					<div class="author-text-inputs">
-						<ResizingTextInput
-							idName={`author-${i.toString()}-signmessage`}
-							bind:value={author.signmessage}
-							placeholder={signmessage}
-							labelName="Signaturmeddelande"
-							required="true"
-						/>
+						<div>
+							<ResizingTextInput
+								idName={`author-${i.toString()}-signmessage`}
+								bind:value={author.signmessage}
+								placeholder={signmessage}
+								labelName="Signaturmeddelande"
+								required="true"
+							/>
+							<SignMessageUpload {i} />
+						</div>
 						<ResizingTextInput
 							idName={`author-${i.toString()}-name`}
 							bind:value={author.name}
@@ -51,7 +54,6 @@
 							explaination="Kan utelämnas eller helt enkelt vara 'Sektionsmedlem'"
 						/>
 					</div>
-					<SignMessageUpload {i} />
 				</div>
 				{#if i !== 0}
 					<RemoveButton
