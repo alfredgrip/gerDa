@@ -30,24 +30,22 @@
 
 <DocumentTypeInput documentType="election-proposal" />
 
-<div id="title-meeting">
-	<ResizingTextInput
-		idName="meeting"
-		labelName="Möte"
-		required="true"
-		placeholder="Ex. HTM-val, S02, VTM1"
-		bind:value={currentDraft.meeting}
-	/>
-</div>
-<!-- <ResizingTextInput
-	idName="body"
-	type="textArea"
-	labelName="Brödtext"
-	id="body"
-	numRows="4"
-	placeholder="(Frivillig) Här kan du eventuellt skriva om hur valberedningen har arbetat med förslaget."
-/> -->
-<!-- svelte-ignore a11y-label-has-associated-control -->
+<ResizingTextInput
+	explaination="Ex. ''Valberedningens förslag inför HTM-val'' eller ''Pepparvalberedningens förslag till Peppare''"
+	idName="title"
+	labelName="Titel"
+	required="true"
+	bind:value={currentDraft.title}
+/>
+
+<ResizingTextInput
+	idName="meeting"
+	labelName="Möte"
+	required="true"
+	placeholder="Ex. HTM-val, S02, VTM1"
+	bind:value={currentDraft.meeting}
+/>
+
 <label>
 	Förslag
 	<div>
@@ -57,7 +55,7 @@
 			name="isStatistics"
 			bind:checked={currentDraft.includeStatistics}
 		/>
-		<label><small>Inkludera statistik?</small></label><br /><small
+		<label for="isStatistics"><small>Inkludera statistik?</small></label><br /><small
 			>Om valet hade en stängd nomineringslista ska statistik inkluderas, annars ej</small
 		>
 	</div>
@@ -101,11 +99,3 @@
 <AuthorBlock bind:authors={currentDraft.authors} signmessage="För Valberedningen, dag som ovan" />
 
 <SaveDraft draftType="election-proposal" bind:currentDraft />
-
-<style>
-	/* div {
-		display: flex;
-		flex-direction: column;
-		margin: 0.5rem 0;
-	} */
-</style>

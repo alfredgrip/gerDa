@@ -149,6 +149,7 @@ async function generateElectionProposalTex(formData: FormData): Promise<string> 
 	const whatToWho = extractWhatToWho(formData);
 	const statistics = extractStatistics(formData);
 	return GENERATE_ELECTION_PROPOSAL({
+		title: formData.get('title') as string,
 		meeting: formData.get('meeting') as string,
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		authors: authors,

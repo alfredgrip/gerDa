@@ -250,6 +250,7 @@ ${GENERATE_AUTHORS(parameters.authors)}
 `;
 
 export const GENERATE_ELECTION_PROPOSAL = (parameters: {
+	title: string;
 	meeting: string;
 	body?: string;
 	authors: Author[];
@@ -262,6 +263,8 @@ export const GENERATE_ELECTION_PROPOSAL = (parameters: {
 \\setauthor{${parameters.authors[0]?.name ?? ''}}
 \\setdate{\\today}
 \\setmeeting{${parameters.meeting}}
+\\settitle{${parameters.title}}
+
 \\begin{document}
 
 \\maketitle
