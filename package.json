@@ -5,13 +5,13 @@
 	"scripts": {
 		"compile-tex": "tectonic -X compile GUIDE.tex -Z search-path=dsekdocs && mv GUIDE.pdf static/",
 		"dev": "vite dev",
-		"build": "npm run compile-tex && vite build",
+		"build": "npm run update-tex && npm run compile-tex && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"update-tex": "cd dsekdocs && git pull && cd ..",
+		"update-tex": "git submodule init && git submodule update && git pull",
 		"start": "ORIGIN=http://localhost:3000 node fileServer.js"
 	},
 	"devDependencies": {
