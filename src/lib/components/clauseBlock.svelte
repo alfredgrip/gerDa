@@ -5,7 +5,6 @@
 	import type { Clause } from '$lib/drafts/types';
 
 	export let clauses: Clause[] = [];
-	export let numberedClauses: boolean = false;
 
 	if (clauses.length === 0) {
 		clauses = [{ name: '', description: '', uuid: Math.random().toString() }];
@@ -23,10 +22,6 @@
 <div class="clause-wrapper">
 	<label>
 		Att-satser
-		<div>
-			<input type="checkbox" name="numberedClauses" bind:checked={numberedClauses} />
-			<label><small>Numrerade att-satser?</small></label>
-		</div>
 		{#each clauses as clause, i (clause.uuid)}
 			<div class="clause-div">
 				<div class="inner-clause-div">

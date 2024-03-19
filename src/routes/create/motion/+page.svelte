@@ -45,10 +45,7 @@
 	bind:value={currentDraft.demand}
 />
 
-<ClauseBlock
-	bind:clauses={currentDraft.clauses}
-	bind:numberedClauses={currentDraft.numberedClauses}
-/>
+<ClauseBlock bind:clauses={currentDraft.clauses} />
 
 <AuthorBlock bind:authors={currentDraft.authors} signmessage="Lund, dag som ovan" />
 

@@ -27,7 +27,6 @@ export interface Draft {
 	whatToWho: WhatToWho[];
 	draftType: DocumentType;
 	includeStatistics: boolean;
-	numberedClauses: boolean;
 }
 
 export const draftRoutes: DocumentType[] = [

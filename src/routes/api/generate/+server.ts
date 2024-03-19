@@ -125,7 +125,6 @@ async function generateMotionTex(formData: FormData): Promise<string> {
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		demand: formData.get('demand') as string,
 		clauses: clauses,
-		numberedClauses: formData.get('numberedClauses')?.toString() === 'on',
 		authors: authors
 	});
 }
@@ -139,7 +138,6 @@ async function generatePropositionTex(formData: FormData): Promise<string> {
 		body: formData.get('body') as string, //.replace(/\n/g, '\\\\'),
 		demand: formData.get('demand') as string,
 		clauses: clauses,
-		numberedClauses: formData.get('numberedClauses')?.toString() === 'on',
 		authors: authors
 	});
 }
@@ -187,7 +185,6 @@ async function generateBoardResponseTex(formData: FormData): Promise<string> {
 		title: formData.get('title') as string,
 		body: formData.get('body') as string,
 		demand: formData.get('demand') as string,
-		numberedClauses: formData.get('numberedClauses')?.toString() === 'on',
 		clauses: clauses,
 		authors: await extractAuthors(formData)
 	});

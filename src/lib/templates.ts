@@ -1,12 +1,12 @@
 import type { AgendaItem, Author, Clause, Statistics, WhatToWho } from '$lib/types';
 
-const GENERATE_ATTLIST = (clauses: Clause[], numbered = false): string => {
+const GENERATE_ATTLIST = (clauses: Clause[]): string => {
 	clauses = clauses.filter((clause) => clause.toClause.length > 0);
 	if (clauses.length <= 0) {
 		return '';
 	}
-	const prefix = (numbered ? '\\begin{attlist}' : '\\begin{attlist*}') + '\n';
-	const suffix = (numbered ? '\\end{attlist}' : '\\end{attlist*}') + '\n';
+	const prefix = '\\begin{attlist}\n';
+	const suffix = '\\end{attlist}\n';
 	return (
 		prefix +
 		clauses
@@ -180,7 +180,6 @@ export const GENERATE_MOTION = (parameters: {
 	body: string;
 	demand: string;
 	clauses: Clause[];
-	numberedClauses: boolean;
 	authors: Author[];
 }): string => `
 \\documentclass[motion]{dsekmotion}
@@ -202,7 +201,7 @@ ${parameters.body}
 
 ${parameters.demand}
 
-${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
+${GENERATE_ATTLIST(parameters.clauses)}
 
 \\medskip
 
@@ -217,7 +216,6 @@ export const GENERATE_PROPOSITION = (parameters: {
 	body: string;
 	demand: string;
 	clauses: Clause[];
-	numberedClauses: boolean;
 	authors: Author[];
 }): string => `
 \\documentclass[proposition]{dsekmotion}
@@ -240,7 +238,7 @@ ${parameters.body}
 
 ${parameters.demand}
 
-${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
+${GENERATE_ATTLIST(parameters.clauses)}
 
 \\medskip
 
@@ -346,7 +344,6 @@ export const GENERATE_BOARD_RESPONSE = (parameters: {
 	body: string;
 	demand: string;
 	clauses: Clause[];
-	numberedClauses: boolean;
 	authors: Author[];
 }): string => `
 \\documentclass{dsekdoc}
@@ -366,7 +363,7 @@ ${parameters.body}
 
 ${parameters.demand}
 
-${GENERATE_ATTLIST(parameters.clauses, parameters.numberedClauses)}
+${GENERATE_ATTLIST(parameters.clauses)}
 
 \\medskip
 
