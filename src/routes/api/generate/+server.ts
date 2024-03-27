@@ -257,13 +257,13 @@ async function extractAuthors(formData: FormData): Promise<Author[]> {
 	const regex = /((jpg)|(jpeg)|(png))$/i;
 	let i = 0;
 	while (i < 100) {
-		const signmessage = formData.get(`author-${i.toString()}-signmessage`) as string;
+		const signmessage = formData.get(`author-${i.toString()}-signmessage`) as string | null;
 		const signImage = formData.get(`author-${i.toString()}-signimage`) as File | null;
-		const name = formData.get(`author-${i.toString()}-name`) as string;
-		const position = (formData.get(`author-${i.toString()}-position`) ?? '') as string;
+		const name = formData.get(`author-${i.toString()}-name`) as string | null;
+		const position = (formData.get(`author-${i.toString()}-position`) ?? '') as string | null;
 
 		if (name) {
-			if (signImage?.name) {
+			if (signImage?.name && signImage?.size) {
 				if (signImage.size > 1000000) {
 					throw error(400, 'The image is too large');
 				}
@@ -271,9 +271,15 @@ async function extractAuthors(formData: FormData): Promise<Author[]> {
 					throw error(400, 'The image is not a valid image');
 				}
 				writeFileSync(`uploads/${signImage.name}`, Buffer.from(await signImage.arrayBuffer()));
-				authors.push({ signmessage, name, position, uuid: '', signImage });
+				authors.push({
+					signmessage: signmessage ?? '',
+					name,
+					position: position ?? '',
+					uuid: '',
+					signImage
+				});
 			} else {
-				authors.push({ signmessage, name, position, uuid: '' });
+				authors.push({ signmessage: signmessage ?? '', name, position: position ?? '', uuid: '' });
 			}
 		} else {
 			break;
