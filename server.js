@@ -4,12 +4,17 @@ import express from 'express';
 
 const app = express();
 
-const outputPath = 'output';
+const outputPath = 'output/pdf';
 
 // add a route that lives separately from the SvelteKit app
-app.get(`/${outputPath}/*`, (req, res) => {
-	const fileName = req.url.split('/').pop();
-	res.sendFile(`/${outputPath}/` + decodeURI(fileName), { root: '.' });
+app.get('/output/pdf/:fileName', (req, res) => {
+	const fullPath = `${outputPath}/${req.params.fileName}`;
+	res.sendFile(fullPath, { root: '.' }, (err) => {
+		if (err) {
+			console.error('Failed to send file:', err);
+			res.status(err.status || 500).send('Error serving file.');
+		}
+	});
 });
 
 app.use(express.static(outputPath));

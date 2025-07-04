@@ -1,5 +1,6 @@
-<svelte:head>
-	<title>Gerda</title>
-</svelte:head>
+<script>
+	let { children } = $props();
+	import '../app.css';
+</script>
 
-<slot />
+{@render children()}

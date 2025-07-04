@@ -1,69 +1,60 @@
 <script lang="ts">
-	import { error } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
-	export let labelName: string;
-	export let idName: string;
-	export let required: 'true' | 'false' = 'false';
-	export let placeholder: string = '';
-	export let numRows: string = '1';
-	export let explaination: string | null = null;
-	export let value = '';
-	export let width: string = 'auto';
+	let textareaElement: HTMLTextAreaElement;
+
+	interface Props {
+		name: string;
+		label?: string;
+		value: string | null | undefined;
+		required?: true | false;
+		placeholder?: string;
+		numRows?: number;
+		explanation?: string;
+		errors?: string[];
+	}
+
+	let {
+		name,
+		label,
+		value = $bindable(),
+		required: isRequired,
+		placeholder,
+		numRows,
+		explanation,
+		errors,
+		...rest
+	}: Props = $props();
 
 	onMount(() => {
-		const input = document.getElementById(idName) as HTMLInputElement;
-		if (input == null) error(500);
-		input.addEventListener('input', () => {
-			input.style.height = 'auto';
-			input.style.height = `calc(${input.scrollHeight}px - 1rem)`;
+		textareaElement.addEventListener('input', () => {
+			textareaElement.style.height = 'auto';
+			textareaElement.style.height = textareaElement.scrollHeight + 'px';
 		});
-		input.dispatchEvent(new Event('input'));
+		textareaElement.dispatchEvent(new Event('input'));
 	});
 </script>
 
-<section style={`width: ${width}; overflow-wrap: break-word;`}>
-	<label>
-		{labelName}
-		{#if required === 'true'}
-			<textarea
-				{...$$restProps}
-				name={idName}
-				required
-				{placeholder}
-				id={idName}
-				rows={parseInt(numRows)}
-				bind:value
-			/>
-		{:else}
-			<textarea
-				{...$$restProps}
-				name={idName}
-				{placeholder}
-				id={idName}
-				rows={parseInt(numRows)}
-				bind:value
-			/>
-		{/if}
-		{#if explaination !== null}
-			<span><small>{explaination}</small></span>
+<section class="wrap-break-word">
+	<!-- style={`width: ${width}; overflow-wrap: break-word;`} -->
+	<label for={name} class="flex flex-col">
+		{label}
+		<textarea
+			{name}
+			required={Boolean(isRequired).valueOf()}
+			{placeholder}
+			rows={numRows}
+			bind:value
+			bind:this={textareaElement}
+			class="w-full resize-none overflow-hidden rounded-md border p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+			{...rest}
+			aria-invalid={errors ? 'true' : undefined}
+		></textarea>
+		{#if explanation !== null}
+			<small class="text-xs">
+				<span>{explanation}</span>
+			</small>
 		{/if}
 	</label>
+	{#if errors}<span class="invalid">{errors}</span>{/if}
 </section>
-
-<style>
-	label {
-		display: flex;
-		flex-direction: column;
-	}
-
-	textarea {
-		height: auto;
-		resize: none;
-		border: 1px solid rgb(209, 209, 209);
-		border-radius: 0.5rem;
-		padding: 0.5rem;
-		overflow: hidden;
-		width: auto;
-	}
-</style>

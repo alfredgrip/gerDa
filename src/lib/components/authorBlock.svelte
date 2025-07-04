@@ -1,101 +1,60 @@
 <script lang="ts">
-	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
-	import RemoveButton from '$lib/components/removeButton.svelte';
-	import AddButton from '$lib/components/addButton.svelte';
-	import type { Author } from '$lib/types';
-	import { uuid } from '$lib/utils';
-	import SignMessageUpload from './signMessageUpload.svelte';
+	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
+	import SignImageUpload from '$lib/components/SignImageUpload.svelte';
+	import { getAuthorContext } from '$lib/state/authorState.svelte';
 
-	export let authors: Author[] = [];
-	export let signmessage: string;
-
-	if (authors.length === 0) {
-		authors = [{ signmessage: '', name: '', position: '', uuid: uuid() }];
-	}
-
-	function addAuthor() {
-		authors = [...authors, { signmessage: '', name: '', position: '', uuid: uuid() }];
-	}
-
-	function removeAuthor(uuid: string) {
-		authors = authors.filter((author) => author.uuid !== uuid);
-	}
+	let authorContext = getAuthorContext();
 </script>
 
-<!-- svelte-ignore a11y-label-has-associated-control -->
-<div class="author-wrapper">
+<div>
 	<label>
-		{#each authors as author, i (author.uuid)}
-			<div class="author-div">
-				<div class="inner-author-div">
-					<div class="author-text-inputs">
+		{#each authorContext.authors as a, i}
+			<div>
+				<div>
+					<div>
 						<div>
 							<ResizingTextInput
-								idName={`author-${i.toString()}-signmessage`}
-								bind:value={author.signmessage}
-								placeholder={signmessage}
-								labelName="Signaturmeddelande"
-								required="true"
+								name={`author_${i.toString()}_signMessage`}
+								bind:value={a.signMessage}
+								placeholder={'Lund, dag som ovan'}
+								label="Signaturmeddelande"
+								required
 							/>
-							<SignMessageUpload {i} />
+							<SignImageUpload id={i} />
 						</div>
 						<ResizingTextInput
-							idName={`author-${i.toString()}-name`}
-							bind:value={author.name}
+							name={`author_${i.toString()}_name`}
+							bind:value={a.name}
 							placeholder="Råsa Pantern"
-							labelName="Namn"
-							required="true"
+							label="Namn"
+							required
 						/>
 						<ResizingTextInput
-							idName={`author-${i.toString()}-position`}
-							bind:value={author.position}
+							name={`author_${i.toString()}_position`}
+							bind:value={a.position}
 							placeholder="Ordförande"
-							labelName="Post"
-							explaination="Kan utelämnas eller helt enkelt vara 'Sektionsmedlem'"
+							label="Post"
+							explanation="Kan utelämnas eller helt enkelt vara 'Sektionsmedlem'"
 						/>
 					</div>
 				</div>
 				{#if i !== 0}
-					<RemoveButton
-						buttonText={`Ta bort författare ${(i + 1).toString()}`}
-						uuid={author.uuid}
-						removeFunction={removeAuthor}
-					/>
+					<button
+						type="button"
+						onclick={() => authorContext.removeAuthor(i)}
+						class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+					>
+						Ta bort författare {(i + 1).toString()}
+					</button>
 				{/if}
 			</div>
 		{/each}
-		<AddButton buttonText="Lägg till författare" addFunction={addAuthor} />
+		<button
+			type="button"
+			onclick={() => authorContext.addAuthor()}
+			class="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+		>
+			Lägg till författare
+		</button>
 	</label>
 </div>
-
-<style>
-	.author-wrapper {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	.author-div {
-		display: flex;
-		flex-direction: column;
-		margin: 0.5rem 0;
-	}
-
-	.inner-author-div {
-		display: flex;
-		flex-direction: column;
-		/* gap: 1rem; */
-	}
-
-	.author-text-inputs {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1rem;
-	}
-
-	@media only screen and (max-width: 600px) {
-		.author-text-inputs {
-			grid-template-columns: 1fr;
-		}
-	}
-</style>

@@ -1,73 +1,45 @@
 <script lang="ts">
-	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
-	import RemoveButton from '$lib/components/removeButton.svelte';
-	import AddButton from '$lib/components/addButton.svelte';
-	import type { Clause } from '$lib/drafts/types';
+	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
+	import { getClauseContext } from '$lib/state/clauseState.svelte';
 
-	export let clauses: Clause[] = [];
-
-	if (clauses.length === 0) {
-		clauses = [{ name: '', description: '', uuid: Math.random().toString() }];
-	}
-
-	function addClause() {
-		clauses = [...clauses, { name: '', description: '', uuid: Math.random().toString() }];
-	}
-	function removeClause(uuid: string) {
-		clauses = clauses.filter((clause) => clause.uuid !== uuid);
-	}
+	let clauseState = getClauseContext();
 </script>
 
-<!-- svelte-ignore a11y-label-has-associated-control -->
-<div class="clause-wrapper">
+<div>
 	<label>
 		Att-satser
-		{#each clauses as clause, i (clause.uuid)}
-			<div class="clause-div">
-				<div class="inner-clause-div">
+		{#each clauseState.clauses as c, i}
+			<div>
+				<div>
 					<ResizingTextInput
-						idName={`to-clause-${i.toString()}`}
-						bind:value={clause.name}
-						labelName=""
-						required="true"
+						name={`clause_${i.toString()}_toClause`}
+						bind:value={c.toClause}
+						required={true}
 						placeholder="sjunga mer..."
 					/>
 					<ResizingTextInput
-						idName={`to-clause-${i.toString()}-description`}
-						bind:value={clause.description}
+						name={`toClause_${i.toString()}_description`}
+						bind:value={c.description}
 						placeholder="Beskrivning (frivillig)"
-						labelName=""
 					/>
 				</div>
 				{#if i !== 0}
-					<RemoveButton
-						buttonText={`Ta bort att-sats ${(i + 1).toString()}`}
-						uuid={clause.uuid}
-						removeFunction={removeClause}
-					/>
+					<button
+						type="button"
+						onclick={() => clauseState.removeClause(i)}
+						class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+					>
+						Ta bort att-sats {(i + 1).toString()}
+					</button>
 				{/if}
 			</div>
 		{/each}
-		<AddButton buttonText="Lägg till att-sats" addFunction={addClause} />
+		<button
+			type="button"
+			onclick={() => clauseState.addClause()}
+			class="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+		>
+			Lägg till att-sats
+		</button>
 	</label>
 </div>
-
-<style>
-	.clause-wrapper {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	.clause-div {
-		display: flex;
-		flex-direction: column;
-		margin: 0.5rem 0;
-	}
-
-	.inner-clause-div {
-		display: flex;
-		flex-direction: column;
-		/* gap: 1rem; */
-	}
-</style>

@@ -1,55 +1,46 @@
 <script lang="ts">
-	import AuthorBlock from '$lib/components/authorBlock.svelte';
-	import ClauseBlock from '$lib/components/clauseBlock.svelte';
-	import DocumentTypeInput from '$lib/components/documentTypeInput.svelte';
-	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
-	import SaveDraft from '$lib/components/saveDraft.svelte';
+	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
+	import ClauseBlock from '$lib/components/ClauseBlock.svelte';
+	import DocumentTypeInput from '$lib/components/DocumentTypeInput.svelte';
+	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
+	import { getFormContext } from '$lib/state/formState.svelte';
 
-	import { importDraft } from '$lib/drafts/functions';
-	import { selectedDraft } from '$lib/drafts/store';
-	import type { Draft } from '$lib/drafts/types';
-
-	console.log($selectedDraft);
-
-	let currentDraft: Draft = importDraft('proposition', $selectedDraft);
+	let formState = getFormContext();
 </script>
 
 <DocumentTypeInput documentType="proposition" />
-
 <ResizingTextInput
-	required="true"
-	idName="title"
-	labelName="Titel"
+	name="title"
+	required={true}
+	label="Titel"
 	placeholder="Titeln på propositionen"
-	bind:value={currentDraft.title}
+	bind:value={formState.title}
 />
 
 <ResizingTextInput
-	idName="meeting"
-	labelName="Möte"
-	required="true"
+	name="meeting"
+	label="Möte"
+	required={true}
 	placeholder="Ex. HTM-val, S02, VTM1"
-	bind:value={currentDraft.meeting}
+	bind:value={formState.meeting}
 />
 
 <ResizingTextInput
-	idName="body"
-	labelName="Brödtext"
-	numRows="8"
-	placeholder="Styrelsen tycker att det sjungs alldeles för lite på sektionen. Därför vill vi att sektionen ska..."
-	bind:value={currentDraft.body}
+	name="body"
+	label="Brödtext"
+	numRows={8}
+	placeholder="Styrelsen tycker att det sjungs alldeles för lite på sektionen. Därför vill styrelsen att sektionen ska..."
+	bind:value={formState.body}
 />
 
 <ResizingTextInput
-	idName="demand"
-	labelName="Krav"
+	name="demand"
+	label="Krav"
 	placeholder="Undertecknad yrkar att mötet må besluta"
-	explaination="Kan utelämnas om det framgår i brödtexten"
-	bind:value={currentDraft.demand}
+	explanation="Kan utelämnas om det framgår i brödtexten"
+	bind:value={formState.demand}
 />
 
-<ClauseBlock bind:clauses={currentDraft.clauses} />
+<ClauseBlock />
 
-<AuthorBlock bind:authors={currentDraft.authors} signmessage="Lund, dag som ovan" />
-
-<SaveDraft draftType="proposition" bind:currentDraft />
+<AuthorBlock />
