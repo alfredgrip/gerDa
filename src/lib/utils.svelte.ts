@@ -1,5 +1,5 @@
 import { compileTex, markdownToLatex } from '$lib/compile';
-import type { AnySchema } from '$lib/schemas';
+import { DOCUMENT_CLASSES, type AnySchema, type DocumentClass } from '$lib/schemas';
 import { generateLaTeX } from '$lib/templates';
 import { unlink, writeFile } from 'fs/promises';
 
@@ -10,19 +10,17 @@ export const submitOnSave = (e: KeyboardEvent, form: HTMLFormElement) => {
 	}
 };
 
-export const generateFileName = (documentType: string, title: string): string => {
+export const generateFileName = (formData: AnySchema): string => {
+	const title = ('title' in formData && formData.title) || 'untitled';
 	const sanitizedTitle = title.replace(/[^a-z0-9_\-.]/gi, '_');
 	const date = new Date().toISOString().slice(0, 10);
 	const id = crypto.randomUUID().slice(0, 8); // Shorten the UUID for the filename
-	return `${documentType}-${sanitizedTitle}-${date}-${id}`;
+	return `${formData.documentClass}-${sanitizedTitle}-${date}-${id}`;
 };
 
-export const isDocumentType = (o: unknown): o is DocumentType => {
-	return (
-		typeof o === 'string' &&
-		// @ts-expect-error this is fine
-		DOCUMENT_TYPES.includes(o)
-	);
+export const isDocumentClass = (o: unknown): o is DocumentClass => {
+	// @ts-expect-error this is safe
+	return DOCUMENT_CLASSES.includes(o);
 };
 
 export async function handleMarkdown(formData: AnySchema): Promise<void> {
@@ -34,10 +32,10 @@ export async function handleMarkdown(formData: AnySchema): Promise<void> {
 	}
 }
 
-export async function finalize(formData: AnySchema): Promise<string> {
+export async function handleCompileRequest(formData: AnySchema): Promise<string> {
 	await handleMarkdown(formData);
 	console.log('Finalizing form data:', formData);
-	const fileName = generateFileName(formData.documentType, formData.title);
+	const fileName = generateFileName(formData);
 	const fileNames = await writeImageFiles(formData);
 	const tex = generateLaTeX(formData);
 	const filePath = await compileTex(tex, fileName);
@@ -46,6 +44,9 @@ export async function finalize(formData: AnySchema): Promise<string> {
 }
 
 async function writeImageFiles(formdata: AnySchema) {
+	if (!('authors' in formdata) || !Array.isArray(formdata.authors)) {
+		return [];
+	}
 	const fileNames: string[] = [];
 	for (const author of formdata.authors) {
 		if (author.signImage) {

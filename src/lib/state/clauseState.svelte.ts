@@ -3,7 +3,7 @@ import { getContext, setContext } from 'svelte';
 
 class ClauseState implements ClauseSchema {
 	toClause: string = $state('');
-	description: string = $state('');
+	description?: string | null = $state(null);
 }
 
 class ClausesState {
@@ -15,6 +15,13 @@ class ClausesState {
 
 	removeClause(index: number) {
 		this.clauses = this.clauses.filter((_, i) => i !== index);
+	}
+
+	getFields() {
+		return this.clauses.map((clause) => ({
+			toClause: clause.toClause,
+			description: clause.description
+		}));
 	}
 }
 

@@ -5,7 +5,7 @@ class AuthorState implements AuthorSchema {
 	name: string = $state('');
 	position: string = $state('');
 	signMessage: string = $state('');
-	signImage: File | null = $state(null);
+	signImage?: File | null = $state(null);
 }
 
 export class AuthorsState {
@@ -17,6 +17,15 @@ export class AuthorsState {
 
 	removeAuthor(index: number) {
 		this.authors = this.authors.filter((_, i) => i !== index);
+	}
+
+	getFields() {
+		return this.authors.map((author) => ({
+			name: author.name,
+			position: author.position,
+			signMessage: author.signMessage
+			// signImage: author.signImage don't include in fields, as it is a file
+		}));
 	}
 }
 

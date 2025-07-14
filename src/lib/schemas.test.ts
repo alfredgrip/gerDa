@@ -3,7 +3,7 @@ import { expect, test } from 'vitest';
 
 test('validate function', () => {
 	const validData = {
-		documentType: 'motion',
+		documentClass: 'motion',
 		title: 'Test Motion',
 		meeting: '2023-10-01',
 		body: 'Jag tycker det sjungs alldeles för lite på sektionen.',
@@ -19,7 +19,7 @@ test('validate function', () => {
 	};
 
 	const noAuthors = {
-		documentType: 'motion',
+		documentClass: 'motion',
 		title: 'Test Motion',
 		meeting: '2023-10-01',
 		body: 'Jag tycker det sjungs alldeles för lite på sektionen.',
@@ -29,7 +29,7 @@ test('validate function', () => {
 	};
 
 	const noClauses = {
-		documentType: 'motion',
+		documentClass: 'motion',
 		title: 'Test Motion',
 		meeting: '2023-10-01',
 		body: 'Jag tycker det sjungs alldeles för lite på sektionen.',

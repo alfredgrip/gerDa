@@ -1,22 +1,28 @@
 <script lang="ts">
 	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
-	import ClauseBlock from '$lib/components/ClauseBlock.svelte';
 	import DocumentClassInput from '$lib/components/DocumentClassInput.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
 	import { getFormContext } from '$lib/state/formState.svelte';
 
 	let formState = getFormContext();
-	formState.documentClass = 'motion';
+	formState.documentClass = 'custom';
 </script>
 
-<DocumentClassInput bind:documentClass={formState.documentClass} />
+<DocumentClassInput documentClass={formState.documentClass} />
 
 <ResizingTextInput
 	name="title"
 	required={true}
 	label="Titel"
-	placeholder="Titeln på motionen"
+	placeholder="Titeln på dokumentet"
 	bind:value={formState.title}
+/>
+
+<ResizingTextInput
+	name="shortTitle"
+	label="Kort titel"
+	placeholder="Ex. Bilaga, Dokument"
+	bind:value={formState.shortTitle}
 />
 
 <ResizingTextInput
@@ -31,18 +37,8 @@
 	name="body"
 	label="Brödtext"
 	numRows={8}
-	placeholder="Jag tycker att det sjungs alldeles för lite på sektionen. Därför vill jag att sektionen ska..."
+	placeholder="Beskrivning av dokumentet"
 	bind:value={formState.body}
 />
-
-<ResizingTextInput
-	name="demand"
-	label="Krav"
-	placeholder="Undertecknad yrkar att mötet må besluta"
-	explanation="Kan utelämnas om det framgår i brödtexten"
-	bind:value={formState.demand}
-/>
-
-<ClauseBlock />
 
 <AuthorBlock />

@@ -1,14 +1,16 @@
 <script lang="ts">
 	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
 	import ClauseBlock from '$lib/components/ClauseBlock.svelte';
-	import DocumentTypeInput from '$lib/components/DocumentTypeInput.svelte';
+	import DocumentClassInput from '$lib/components/DocumentClassInput.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
 	import { getFormContext } from '$lib/state/formState.svelte';
 
 	let formState = getFormContext();
+	formState.documentClass = 'proposition';
 </script>
 
-<DocumentTypeInput documentType="proposition" />
+<DocumentClassInput bind:documentClass={formState.documentClass} />
+
 <ResizingTextInput
 	name="title"
 	required={true}

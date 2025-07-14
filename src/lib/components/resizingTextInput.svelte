@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { AllFieldsSchema } from '$lib/schemas';
 	import { onMount } from 'svelte';
 
 	let textareaElement: HTMLTextAreaElement;
 
 	interface Props {
-		name: string;
+		name: keyof AllFieldsSchema | (string & {}); // https://medium.com/@florian.schindler_47749/typescript-hacks-1-string-suggestions-58806363afeb
 		label?: string;
 		value: string | null | undefined;
 		required?: true | false;

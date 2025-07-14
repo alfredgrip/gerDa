@@ -6,16 +6,16 @@
 	import { getFormContext } from '$lib/state/formState.svelte';
 
 	let formState = getFormContext();
-	formState.documentClass = 'motion';
+	formState.documentClass = 'styrelsens-svar';
 </script>
 
 <DocumentClassInput bind:documentClass={formState.documentClass} />
 
 <ResizingTextInput
-	name="title"
 	required={true}
-	label="Titel"
-	placeholder="Titeln på motionen"
+	name="title"
+	label="Titeln på motionen som ska besvaras"
+	placeholder="Sjung mer!"
 	bind:value={formState.title}
 />
 
@@ -31,7 +31,7 @@
 	name="body"
 	label="Brödtext"
 	numRows={8}
-	placeholder="Jag tycker att det sjungs alldeles för lite på sektionen. Därför vill jag att sektionen ska..."
+	placeholder="Styrelsen tycker också att det sjungs alldeles för lite på sektionen. Därför vill styrelsen att sektionen ska..."
 	bind:value={formState.body}
 />
 

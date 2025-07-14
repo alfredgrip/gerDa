@@ -1,75 +1,78 @@
 import {
+	customSchema,
+	kallelseSchema,
+	kravprofilSchema,
 	motionSchema,
 	propositionSchema,
+	styrelsensSvarSchema,
+	valförslagSchema,
 	validate,
 	type AuthorSchema,
-	type ClauseSchema
+	type ClauseSchema,
+	type DocumentClass
 } from '$lib/schemas';
 import { generateLaTeX } from '$lib/templates';
-import { finalize } from '$lib/utils.svelte';
+import { handleCompileRequest, isDocumentClass } from '$lib/utils.svelte';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
-	compile: async (event) => {
+	compile: async (event): Promise<{ result?: string; error?: string }> => {
 		const formData = Object.fromEntries(await event.request.formData());
 		preprocessFormData(formData);
-		const documentType = formData.documentType?.toString();
-		let result;
-		switch (documentType) {
-			case 'motion': {
-				result = validate(formData, motionSchema);
-				if (!result.ok) {
-					console.error('Invalid motion data:', result.errors);
-					return { error: 'Invalid motion data: ' + result.errors.join(', ') };
-				} else {
-					console.log('Valid motion data:', result.value);
-					return { result: await finalize(result.value) };
-				}
-			}
-			case 'proposition': {
-				result = validate(formData, propositionSchema);
-				if (!result.ok) {
-					console.error('Invalid proposition data:', result.errors);
-					return { error: 'Invalid proposition data: ' + result.errors.join(', ') };
-				} else {
-					console.log('Valid proposition data:', result.value);
-					return { result: await finalize(result.value) };
-				}
-			}
-			default:
-				return { error: `Unknown document type: ${documentType}` };
+		console.log('Compile action called with formData:', formData);
+		const documentClass = formData.documentClass;
+		if (!isDocumentClass(documentClass)) {
+			console.error('Unknown document class:', documentClass);
+			return { error: `Unknown document class: ${documentClass}` };
+		}
+		const result = switchOnDocumentClass(documentClass, formData);
+		if (!result.ok) {
+			console.error(`Invalid ${documentClass} data:`, result.errors);
+			return { error: `Invalid ${documentClass} data: ` + result.errors.join(', ') };
+		} else {
+			console.log(`Valid ${documentClass} data:`, result.value);
+			return { result: await handleCompileRequest(result.value) };
 		}
 	},
-	getTeX: async (event) => {
+	getTeX: async (event): Promise<{ result?: string; error?: string }> => {
 		console.log('getTeX action called');
 		const formData = Object.fromEntries(await event.request.formData());
 		preprocessFormData(formData);
-		const documentType = formData.documentType?.toString();
-		let result;
-		switch (documentType) {
-			case 'motion': {
-				result = validate(formData, motionSchema);
-				if (!result.ok) {
-					console.error('Invalid motion data:', result.errors);
-					return { error: 'Invalid motion data: ' + result.errors.join(', ') };
-				} else {
-					console.log('Valid motion data:', result.value);
-					return { result: generateLaTeX(result.value) };
-				}
-			}
-			case 'proposition': {
-				result = validate(formData, propositionSchema);
-				if (!result.ok) {
-					console.error('Invalid proposition data:', result.errors);
-					return { error: 'Invalid proposition data: ' + result.errors.join(', ') };
-				} else {
-					console.log('Valid proposition data:', result.value);
-					return { result: generateLaTeX(result.value) };
-				}
-			}
-			default:
-				return { error: `Unknown document type: ${documentType}` };
+		const documentClass = formData.documentClass;
+		if (!isDocumentClass(documentClass)) {
+			console.error('Unknown document class:', documentClass);
+			return { error: `Unknown document class: ${documentClass}` };
 		}
+		const result = switchOnDocumentClass(documentClass, formData);
+		if (!result.ok) {
+			console.error(`Invalid ${documentClass} data:`, result.errors);
+			return { error: `Invalid ${documentClass} data: ` + result.errors.join(', ') };
+		} else {
+			console.log(`Valid ${documentClass} data:`, result.value);
+			return { result: generateLaTeX(result.value) };
+		}
+	}
+};
+
+const switchOnDocumentClass = (
+	documentClass: DocumentClass,
+	processedFormData: Record<string, unknown>
+) => {
+	switch (documentClass) {
+		case 'motion':
+			return validate(processedFormData, motionSchema);
+		case 'proposition':
+			return validate(processedFormData, propositionSchema);
+		case 'styrelsens-svar':
+			return validate(processedFormData, styrelsensSvarSchema);
+		case 'kallelse':
+			return validate(processedFormData, kallelseSchema);
+		case 'kravprofil':
+			return validate(processedFormData, kravprofilSchema);
+		case 'valförslag':
+			return validate(processedFormData, valförslagSchema);
+		case 'custom':
+			return validate(processedFormData, customSchema);
 	}
 };
 
@@ -80,6 +83,10 @@ const preprocessFormData = (formData: Record<string, unknown>): void => {
 	const clauses: ClauseSchema[] = extractClauses(formData);
 	formData.authors = authors;
 	formData.clauses = clauses;
+	// Dates should be converted from strings to Date objects
+	if (formData.meetingDate && typeof formData.meetingDate === 'string') {
+		formData.meetingDate = new Date(formData.meetingDate);
+	}
 };
 
 const extractAuthors = (formData: Record<string, unknown>): AuthorSchema[] => {

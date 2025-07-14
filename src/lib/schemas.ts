@@ -1,3 +1,14 @@
+export const DOCUMENT_CLASSES = [
+	'motion',
+	'proposition',
+	'styrelsens-svar',
+	'kallelse',
+	'kravprofil',
+	'valförslag',
+	'custom'
+] as const;
+export type DocumentClass = (typeof DOCUMENT_CLASSES)[number];
+
 const authorSchema = {
 	name: isString,
 	position: isString,
@@ -14,7 +25,7 @@ const clauseSchema = {
 export type ClauseSchema = InferSchema<typeof clauseSchema>;
 
 export const motionSchema = {
-	documentType: literal('motion'),
+	documentClass: literal('motion'),
 	title: isString,
 	meeting: isString,
 	body: isString,
@@ -25,7 +36,7 @@ export const motionSchema = {
 export type MotionSchema = InferSchema<typeof motionSchema>;
 
 export const propositionSchema = {
-	documentType: literal('proposition'),
+	documentClass: literal('proposition'),
 	title: isString,
 	meeting: isString,
 	body: isString,
@@ -35,20 +46,90 @@ export const propositionSchema = {
 };
 export type PropositionSchema = InferSchema<typeof propositionSchema>;
 
-// -----------------------------------------------------------------------------
+export const styrelsensSvarSchema = {
+	documentClass: literal('styrelsens-svar'),
+	title: isString,
+	meeting: isString,
+	body: isString,
+	demand: nullable(isString),
+	clauses: nonEmptyArrayOf(isClause),
+	authors: nonEmptyArrayOf(isAuthor)
+};
+export type StyrelsensSvarSchema = InferSchema<typeof styrelsensSvarSchema>;
 
-export const DOCUMENT_TYPES = [
-	'motion',
-	'proposition',
-	'valförslag',
-	'kravprofil',
-	'styrelsensSvar',
-	'kallelse',
-	'custom'
-] as const;
-export type DocumentType = (typeof DOCUMENT_TYPES)[number];
+export const kallelseSchema = {
+	documentClass: literal('kallelse'),
+	meeting: isString,
+	meetingType: isString,
+	meetingPlace: isString,
+	meetingDate: isDate,
+	adjournmentDate: nullable(isDate),
+	adjournmentPlace: nullable(isString),
+	agenda: arrayOf(isAgendaItem),
+	body: isString,
+	authors: nonEmptyArrayOf(isAuthor)
+};
+export type KallelseSchema = InferSchema<typeof kallelseSchema>;
 
-export type AnySchema = MotionSchema | PropositionSchema;
+export const kravprofilSchema = {
+	documentClass: literal('kravprofil'),
+	meeting: isString,
+	position: isString,
+	year: isString,
+	description: nullable(isString),
+	requirements: nonEmptyArrayOf(isString),
+	merits: arrayOf(isString)
+};
+export type KravprofilSchema = InferSchema<typeof kravprofilSchema>;
+
+export const valförslagSchema = {
+	documentClass: literal('valförslag'),
+	title: isString,
+	meeting: isString,
+	body: isString,
+	proposals: nonEmptyArrayOf(isProposal),
+	statistics: nonEmptyArrayOf(isStatistics),
+	authors: nonEmptyArrayOf(isAuthor)
+};
+export type ValförslagSchema = InferSchema<typeof valförslagSchema>;
+
+export const customSchema = {
+	documentClass: literal('custom'),
+	title: isString,
+	shortTitle: isString,
+	meeting: isString,
+	body: isString,
+	authors: nonEmptyArrayOf(isAuthor)
+};
+export type CustomSchema = InferSchema<typeof customSchema>;
+
+export type AnySchema =
+	| MotionSchema
+	| PropositionSchema
+	| StyrelsensSvarSchema
+	| KallelseSchema
+	| KravprofilSchema
+	| ValförslagSchema
+	| CustomSchema;
+
+export type AllFieldsSchema = {
+	documentClass: DocumentClass;
+	title: string;
+	shortTitle: string;
+	meeting: string;
+	meetingType: string;
+	meetingPlace: string;
+	meetingDate: Date;
+	adjournmentDate: Date | null;
+	adjournmentPlace: string | null;
+	agenda: AgendaItemSchema[];
+	year: string;
+	body: string;
+	demand: string;
+	clauses: ClauseSchema[];
+	authors: AuthorSchema[];
+	position: string;
+};
 
 // -----------------------------------------------------------------------------
 
@@ -79,6 +160,7 @@ type _SplitOptional<O extends Record<string, any>> =
 
 type ValidationResult<T> = { ok: true; value: T } | { ok: false; errors: string[] };
 
+// makes Date and File look ugly, but overall looks better
 type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
@@ -101,9 +183,50 @@ function isString(v: unknown): v is string {
 	return typeof v === 'string';
 }
 
+function isDate(v: unknown): v is Date {
+	return v instanceof Date && !isNaN(v.getTime());
+}
+
 function isFile(v: unknown): v is File {
 	return v instanceof File;
 }
+
+function isAgendaItem(v: unknown): v is { title: string; type?: string; attachment?: string[] } {
+	return (
+		typeof v === 'object' &&
+		v !== null &&
+		typeof (v as { title?: unknown }).title === 'string' &&
+		((v as { type?: unknown }).type === undefined ||
+			typeof (v as { type: unknown }).type === 'string') &&
+		((v as { attachment?: unknown }).attachment === undefined ||
+			(Array.isArray((v as { attachment: unknown }).attachment) &&
+				// @ts-expect-error validation
+				(v as { attachment: unknown }).attachment.every((item) => typeof item === 'string')))
+	);
+}
+export type AgendaItemSchema = InferSchema<typeof isAgendaItem>;
+
+function isProposal(v: unknown): v is { what: string; who: string[] } {
+	return (
+		typeof v === 'object' &&
+		v !== null &&
+		typeof (v as { what?: unknown }).what === 'string' &&
+		Array.isArray((v as { who?: unknown }).who) &&
+		// @ts-expect-error validation
+		(v as { who: unknown }).who.every((item) => typeof item === 'string')
+	);
+}
+export type ProposalSchema = InferSchema<typeof isProposal>;
+
+function isStatistics(v: unknown): v is { what: string; interval: string } {
+	return (
+		typeof v === 'object' &&
+		v !== null &&
+		typeof (v as { what?: unknown }).what === 'string' &&
+		typeof (v as { interval?: unknown }).interval === 'string'
+	);
+}
+export type StatisticsSchema = InferSchema<typeof isStatistics>;
 
 function arrayOf<T>(elem: Validator<T>, min = 0): Validator<T[]> {
 	return function arrayValidator(x: unknown): x is T[] {

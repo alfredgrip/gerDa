@@ -1,17 +1,38 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import PDFViewer from '$lib/components/PDFViewer.svelte';
+	import SaveDraftButton from '$lib/components/SaveDraftButton.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
-	import { setAuthorContext } from '$lib/state/authorState.svelte';
-	import { setClauseContext } from '$lib/state/clauseState.svelte';
-	import { setFormContext } from '$lib/state/formState.svelte';
+	import { getAuthorContext } from '$lib/state/authorState.svelte';
+	import { getClauseContext } from '$lib/state/clauseState.svelte';
+	import { getFormContext } from '$lib/state/formState.svelte';
+	import { getLocalStorageDrafts } from '$lib/state/localDraftsState.svelte';
+	import { onMount } from 'svelte';
 
 	let { children } = $props();
-	let formState = setFormContext();
-	let authorState = setAuthorContext();
-	let clauseState = setClauseContext();
+	let formState = getFormContext();
+	let authorState = getAuthorContext();
+	let clauseState = getClauseContext();
+	let localDrafts = getLocalStorageDrafts();
 
 	let formElement: HTMLFormElement;
+
+	onMount(() => {
+		const localDrafts = getLocalStorageDrafts();
+		if (!localDrafts.currentDraftId) return null;
+
+		const currentDraft = localDrafts.getDraft(localDrafts.currentDraftId);
+		if (!currentDraft) return null;
+
+		if (currentDraft) {
+			formState.title = currentDraft.title || '';
+			formState.meeting = currentDraft.meeting || '';
+			formState.body = currentDraft.body || '';
+			formState.demand = currentDraft.demand || '';
+			authorState.authors = currentDraft.authors || [{ name: '', position: '', signMessage: '' }];
+			clauseState.clauses = currentDraft.clauses || [{ toClause: '' }];
+		}
+	});
 </script>
 
 <svelte:window
@@ -37,7 +58,7 @@
 					case '?/compile': {
 						formState.isCompiling = true;
 						// After submitting the form, this function will execute
-						return async ({ update, result, action }) => {
+						return async ({ update, result }) => {
 							update({ reset: false });
 							formState.isCompiling = false;
 							if (result.type === 'success') {
@@ -75,6 +96,7 @@
 		>
 			{@render children()}
 			<SubmitButton />
+			<SaveDraftButton />
 		</form>
 	</div>
 	<PDFViewer />
