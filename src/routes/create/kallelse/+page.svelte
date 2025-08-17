@@ -21,7 +21,6 @@
 <DocumentClassInput bind:documentClass={formState.documentClass} />
 
 <ResizingTextInput
-	required={true}
 	name="meeting"
 	label="Möte"
 	placeholder="Ex. S02, HTM-val, VTM1, SRD13"
@@ -72,7 +71,6 @@
 		label="Plats"
 		placeholder="Ex. E:1124, E:A"
 		bind:value={formState.meetingPlace}
-		required={true}
 	/>
 </div>
 

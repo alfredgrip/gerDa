@@ -12,7 +12,6 @@
 <DocumentClassInput bind:documentClass={formState.documentClass} />
 
 <ResizingTextInput
-	required={true}
 	name="title"
 	label="Titeln på motionen som ska besvaras"
 	placeholder="Sjung mer!"
@@ -22,7 +21,6 @@
 <ResizingTextInput
 	name="meeting"
 	label="Möte"
-	required={true}
 	placeholder="Ex. HTM-val, S02, VTM1"
 	bind:value={formState.meeting}
 />

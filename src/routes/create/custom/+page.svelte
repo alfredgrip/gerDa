@@ -12,7 +12,6 @@
 
 <ResizingTextInput
 	name="title"
-	required={true}
 	label="Titel"
 	placeholder="Titeln på dokumentet"
 	bind:value={formState.title}
@@ -28,7 +27,6 @@
 <ResizingTextInput
 	name="meeting"
 	label="Möte"
-	required={true}
 	placeholder="Ex. HTM-val, S02, VTM1"
 	bind:value={formState.meeting}
 />

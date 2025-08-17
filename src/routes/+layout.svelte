@@ -16,4 +16,6 @@
 	let { children } = $props();
 </script>
 
-{@render children()}
+<main style="background-color: #F280A1;">
+	{@render children()}
+</main>

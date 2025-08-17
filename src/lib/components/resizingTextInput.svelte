@@ -8,7 +8,6 @@
 		name: keyof AllFieldsSchema | (string & {}); // https://medium.com/@florian.schindler_47749/typescript-hacks-1-string-suggestions-58806363afeb
 		label?: string;
 		value: string | null | undefined;
-		required?: true | false;
 		placeholder?: string;
 		numRows?: number;
 		explanation?: string;
@@ -19,7 +18,6 @@
 		name,
 		label,
 		value = $bindable(),
-		required: isRequired,
 		placeholder,
 		numRows,
 		explanation,
@@ -42,12 +40,11 @@
 		{label}
 		<textarea
 			{name}
-			required={Boolean(isRequired).valueOf()}
 			{placeholder}
 			rows={numRows}
 			bind:value
 			bind:this={textareaElement}
-			class="w-full resize-none overflow-hidden rounded-md border p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+			class="w-full resize-none overflow-hidden rounded-md border bg-white p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 			{...rest}
 			aria-invalid={errors ? 'true' : undefined}
 		></textarea>

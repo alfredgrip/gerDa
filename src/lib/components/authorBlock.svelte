@@ -7,18 +7,18 @@
 </script>
 
 <div>
+	<b>Författare</b>
 	<label>
 		{#each authorContext.authors as a, i}
-			<div>
-				<div>
-					<div>
+			<div class="flex flex-col items-end gap-2 py-2">
+				<div class="flex w-full flex-row gap-2">
+					<div class="flex-1">
 						<div>
 							<ResizingTextInput
 								name={`author_${i.toString()}_signMessage`}
 								bind:value={a.signMessage}
 								placeholder={'Lund, dag som ovan'}
 								label="Signaturmeddelande"
-								required
 							/>
 							<SignImageUpload id={i} />
 						</div>
@@ -27,7 +27,6 @@
 							bind:value={a.name}
 							placeholder="Råsa Pantern"
 							label="Namn"
-							required
 						/>
 						<ResizingTextInput
 							name={`author_${i.toString()}_position`}

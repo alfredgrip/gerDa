@@ -3,7 +3,7 @@
 	let formState = getFormContext();
 </script>
 
-<div class="flex h-lvh w-full flex-col bg-green-400 p-8">
+<div class="flex min-h-max w-full flex-col bg-red-200 px-6 py-6">
 	{#if formState.isCompiling}
 		<div class="loader self-center"></div>
 	{:else}

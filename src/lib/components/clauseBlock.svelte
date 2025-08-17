@@ -7,14 +7,13 @@
 
 <div>
 	<label>
-		Att-satser
+		<b>Att-satser</b>
 		{#each clauseState.clauses as c, i}
-			<div>
-				<div>
+			<div class="flex flex-col items-end gap-2 py-2">
+				<div class="flex w-full flex-col gap-2">
 					<ResizingTextInput
 						name={`clause_${i.toString()}_toClause`}
 						bind:value={c.toClause}
-						required={true}
 						placeholder="sjunga mer..."
 					/>
 					<ResizingTextInput
