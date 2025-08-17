@@ -1,7 +1,22 @@
 import { compileTex, markdownToLatex } from '$lib/compile';
-import { DOCUMENT_CLASSES, type AnySchema, type DocumentClass } from '$lib/schemas';
+import {
+	customSchema,
+	DOCUMENT_CLASSES,
+	kallelseSchema,
+	kravprofilSchema,
+	motionSchema,
+	propositionSchema,
+	styrelsensSvarSchema,
+	valförslagSchema,
+	validate,
+	type AnySchema,
+	type AuthorSchema,
+	type ClauseSchema,
+	type DocumentClass
+} from '$lib/schemas';
 import { generateLaTeX } from '$lib/templates';
 import { unlink, writeFile } from 'fs/promises';
+import { SvelteDate, SvelteMap } from 'svelte/reactivity';
 
 export const submitOnSave = (e: KeyboardEvent, form: HTMLFormElement) => {
 	if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -13,7 +28,7 @@ export const submitOnSave = (e: KeyboardEvent, form: HTMLFormElement) => {
 export const generateFileName = (formData: AnySchema): string => {
 	const title = ('title' in formData && formData.title) || 'untitled';
 	const sanitizedTitle = title.replace(/[^a-z0-9_\-.]/gi, '_');
-	const date = new Date().toISOString().slice(0, 10);
+	const date = new SvelteDate().toISOString().slice(0, 10);
 	const id = crypto.randomUUID().slice(0, 8); // Shorten the UUID for the filename
 	return `${formData.documentClass}-${sanitizedTitle}-${date}-${id}`;
 };
@@ -71,3 +86,84 @@ async function removeImageFiles(fileNames: string[]) {
 		}
 	}
 }
+
+export const switchOnDocumentClass = (
+	documentClass: DocumentClass,
+	processedFormData: Record<string, unknown>
+) => {
+	switch (documentClass) {
+		case 'motion':
+			return validate(processedFormData, motionSchema);
+		case 'proposition':
+			return validate(processedFormData, propositionSchema);
+		case 'styrelsens-svar':
+			return validate(processedFormData, styrelsensSvarSchema);
+		case 'kallelse':
+			return validate(processedFormData, kallelseSchema);
+		case 'kravprofil':
+			return validate(processedFormData, kravprofilSchema);
+		case 'valförslag':
+			return validate(processedFormData, valförslagSchema);
+		case 'custom':
+			return validate(processedFormData, customSchema);
+	}
+};
+
+export const preprocessFormData = (formData: Record<string, unknown>): void => {
+	// Since authors, clauses and files are objects,
+	// we need to extract them from the formData object.
+	const authors: AuthorSchema[] = extractAuthors(formData);
+	const clauses: ClauseSchema[] = extractClauses(formData);
+	formData.authors = authors;
+	formData.clauses = clauses;
+	// Dates should be converted from strings to Date objects
+	if (formData.meetingDate && typeof formData.meetingDate === 'string') {
+		formData.meetingDate = new SvelteDate(formData.meetingDate);
+	}
+};
+
+const extractAuthors = (formData: Record<string, unknown>): AuthorSchema[] => {
+	const authors: Map<string, Partial<AuthorSchema>> = new SvelteMap();
+	// Iterate over formData entries to find author data
+	for (const [key, value] of Object.entries(formData)) {
+		if (key.startsWith('author_')) {
+			// The ID is the part between 'author_' and the next underscore
+			const parts = key.split('_');
+			const id = parts[1];
+			if (id) {
+				authors.set(id, {
+					...authors.get(id),
+					[parts[2]]: value
+				});
+			}
+		}
+	}
+	return Array.from(authors.values()).map((author) => ({
+		name: author.name?.toString() ?? '',
+		position: author.position?.toString() ?? '',
+		signMessage: author.signMessage?.toString() ?? '',
+		signImage: author.signImage?.size ? author.signImage : undefined
+	}));
+};
+
+const extractClauses = (formData: Record<string, unknown>): ClauseSchema[] => {
+	const clauses: Map<string, Partial<ClauseSchema>> = new SvelteMap();
+	// Iterate over formData entries to find clause data
+	for (const [key, value] of Object.entries(formData)) {
+		if (key.startsWith('clause_')) {
+			// The ID is the part between 'clause_' and the next underscore
+			const parts = key.split('_');
+			const id = parts[1];
+			if (id) {
+				clauses.set(id, {
+					...clauses.get(id),
+					[parts[2]]: value
+				});
+			}
+		}
+	}
+	return Array.from(clauses.values()).map((clause) => ({
+		toClause: clause.toClause?.toString() ?? '',
+		description: clause.description?.toString() ?? ''
+	}));
+};

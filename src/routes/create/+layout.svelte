@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import PDFViewer from '$lib/components/PDFViewer.svelte';
 	import SaveDraftButton from '$lib/components/SaveDraftButton.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
@@ -8,6 +7,7 @@
 	import { getFormContext } from '$lib/state/formState.svelte';
 	import { getLocalStorageDrafts } from '$lib/state/localDraftsState.svelte';
 	import { onMount } from 'svelte';
+	import { compilePdf, generateTeX } from './compile.remote';
 
 	let { children } = $props();
 	let formState = getFormContext();
@@ -33,6 +33,24 @@
 			clauseState.clauses = currentDraft.clauses || [{ toClause: '' }];
 		}
 	});
+
+	const compileEnhance: Parameters<typeof compilePdf.enhance>[0] = async ({
+		form,
+		data,
+		submit
+	}) => {
+		formState.isCompiling = true;
+		await submit()
+			.then(() => {
+				formState.iFrameUrl = compilePdf.result?.filePath || '/GUIDE.pdf';
+			})
+			.catch((error) => {
+				console.error('Error during PDF compilation:', error);
+			})
+			.finally(() => {
+				formState.isCompiling = false;
+			});
+	};
 </script>
 
 <svelte:window
@@ -43,61 +61,53 @@
 		}
 	}}
 />
-
-<div class="flex flex-row">
-	<div class="flex w-full flex-col gap-4 p-8">
-		<form
-			method="POST"
-			action="/create?/compile"
-			use:enhance={({ action }) => {
-				// Before submitting the form...
-				console.log('formState', formState);
-				console.log('authorState', authorState);
-				console.log('clauseState', clauseState);
-				switch (action.search) {
-					case '?/compile': {
-						formState.isCompiling = true;
-						// After submitting the form, this function will execute
-						return async ({ update, result }) => {
-							update({ reset: false });
-							formState.isCompiling = false;
-							if (result.type === 'success') {
-								formState.iFrameUrl = (result.data?.result as any) || '/GUIDE.pdf';
-							} else {
-								console.error('Form submission failed:', result);
-							}
-						};
-					}
-					case '?/getTeX': {
-						// After receiving the response:
-						return async ({ update, result }) => {
-							// The browser should download the TeX file
-							if (result.type !== 'success') {
-								console.error('Failed to get TeX:', result);
-								return;
-							}
-							const blob = new Blob([result?.data?.result as any], { type: 'text/plain' });
-							const url = URL.createObjectURL(blob);
-							const a = document.createElement('a');
-							a.href = url;
-							a.download = `source-${new Date().toLocaleDateString('sv-SE')}.tex`;
-							document.body.appendChild(a);
-							a.click();
-							document.body.removeChild(a);
-							URL.revokeObjectURL(url);
-							formState.isCompiling = false;
-							update({ reset: false });
-						};
-					}
-				}
-			}}
-			enctype="multipart/form-data"
-			bind:this={formElement}
-		>
+<form
+	{...compilePdf.enhance(async ({ form, data, submit }) => {
+		compileEnhance({ form, data, submit });
+	})}
+	enctype="multipart/form-data"
+	bind:this={formElement}
+>
+	<nav class="sticky top-0 flex items-center gap-12 bg-purple-800 px-6 py-3 text-white">
+		<div class="flex w-1/2">
+			<a href="/" class="text-white hover:underline">Hem</a>
+		</div>
+		<div class="flex w-1/2">
+			<button
+				{...compilePdf.enhance(async ({ form, data, submit }) => {
+					compileEnhance({ form, data, submit });
+				})}
+				class="rounded bg-purple-600 hover:bg-purple-700">Kompilera!</button
+			>
+			<button
+				{...generateTeX.buttonProps.enhance(async ({ form, data, submit }) => {
+					await submit()
+						.then(() => {
+							const laTeX = generateTeX.result?.laTeX;
+							if (!laTeX) throw new Error('Failed to generate LaTeX');
+							const anchorElement = document.createElement('a');
+							anchorElement.href = URL.createObjectURL(new Blob([laTeX], { type: 'text/plain' }));
+							anchorElement.download = `${formState.title}-${new Date().toLocaleDateString('sv-SE')}.tex`;
+							document.body.appendChild(anchorElement);
+							anchorElement.click();
+							document.body.removeChild(anchorElement);
+						})
+						.catch((error) => {
+							console.error('Error during TeX generation:', error);
+						});
+				})}
+				class="ml-4 rounded bg-purple-600 hover:bg-purple-700"
+			>
+				Hämta TeX
+			</button>
+		</div>
+	</nav>
+	<div class="flex flex-row">
+		<div class=" flex w-full flex-col gap-4 bg-red-200 px-6 py-3">
 			{@render children()}
-			<SubmitButton />
-			<SaveDraftButton />
-		</form>
+			<!-- <SubmitButton />
+			<SaveDraftButton /> -->
+		</div>
+		<PDFViewer />
 	</div>
-	<PDFViewer />
-</div>
+</form>
