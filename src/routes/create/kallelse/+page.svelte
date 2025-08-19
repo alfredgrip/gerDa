@@ -68,7 +68,6 @@
 			name="meetingDate"
 			bind:value={formState.meetingDate}
 		/>
-		<!-- <DateTimePicker bind:date={formState.meetingDate} name="meetingDate" /> -->
 	</div>
 	<ResizingTextInput
 		name="meetingPlace"
