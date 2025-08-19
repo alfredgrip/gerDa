@@ -97,7 +97,7 @@ ${agenda
 }
 
 function timeAndPlaceTemplate(
-	meetingDate: Date,
+	meetingDate: Date | null | undefined,
 	meetingPlace: string,
 	adjournmentDate: Date | null | undefined,
 	adjournmentPlace: string | null | undefined
@@ -121,11 +121,11 @@ function timeAndPlaceTemplate(
 	return (
 		prefix +
 		`
-\\textbf{Tid:} ${meetingDate.toLocaleDateString('sv-SE', {
+\\textbf{Tid:} ${meetingDate?.toLocaleDateString('sv-SE', {
 			weekday: 'long',
 			day: 'numeric',
 			month: 'long'
-		})} kl. ${meetingDate.toLocaleTimeString('sv-SE', {
+		})} kl. ${meetingDate?.toLocaleTimeString('sv-SE', {
 			hour: 'numeric',
 			minute: 'numeric'
 		})}

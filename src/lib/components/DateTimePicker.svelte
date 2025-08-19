@@ -1,8 +1,10 @@
-<script lang="ts">
+<!-- <script lang="ts">
+	import { SvelteDate } from 'svelte/reactivity';
+
 	interface Props {
 		name: string;
 		label?: string;
-		date: Date;
+		date: SvelteDate;
 	}
 
 	let { date = $bindable(), name, label }: Props = $props();
@@ -14,15 +16,13 @@
 		console.log('DateTimePicker date changed:', date);
 		console.log('Calendar date:', calendarDate);
 	});
+
+	let svelteDate = $state(new SvelteDate());
 </script>
 
-<input type="hidden" {name} value={date.toISOString()} aria-label={label || 'Datum'} />
 <input
 	type="datetime-local"
-	bind:value={calendarDate}
-	aria-label={label || 'Datum'}
-	onchange={() => {
-		date = new Date(calendarDate);
-	}}
+	bind:value={svelteDate}
 	class="w-full rounded-md border p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-/>
+	{name}
+/> -->

@@ -3,7 +3,7 @@
 	let formState = getFormContext();
 </script>
 
-<div class="flex min-h-max w-full flex-col bg-red-200 px-6 py-6">
+<div class="flex min-h-max w-full flex-col px-6 py-6">
 	{#if formState.isCompiling}
 		<div class="loader self-center"></div>
 	{:else}
@@ -14,7 +14,7 @@
 
 <style>
 	.loader {
-		border: 16px solid rgb(255, 241, 241);
+		border: 16px solid rgba(242, 128, 161, 0.5);
 		border-top: 16px solid rgb(153, 102, 204);
 		border-radius: 50%;
 		width: 120px;

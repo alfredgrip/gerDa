@@ -1,6 +1,5 @@
 <script>
 	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
-	import DateTimePicker from '$lib/components/DateTimePicker.svelte';
 	import DocumentClassInput from '$lib/components/DocumentClassInput.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
 	import { getAgendaContext } from '$lib/state/agendaState.svelte';
@@ -27,44 +26,49 @@
 	bind:value={formState.title}
 />
 
-<div>
-	<input
-		type="radio"
-		id="board"
-		name="meetingType"
-		value="styrelsemöte"
-		bind:group={formState.meetingType}
-	/>
-	<label for="board">Styrelsemöte</label>
-	<input
-		type="radio"
-		id="guild"
-		name="meetingType"
-		value="sektionsmöte"
-		bind:group={formState.meetingType}
-	/>
-	<label for="guild">Sektionsmöte</label>
-	<input
-		type="radio"
-		id="srd"
-		name="meetingType"
-		value="studierådsmöte"
-		bind:group={formState.meetingType}
-	/>
-	<label for="srd">Studierådsmöte</label>
+<div class="flex flex-row space-x-4">
+	<div>
+		<input
+			type="radio"
+			id="board"
+			name="meetingType"
+			value="styrelsemöte"
+			bind:group={formState.meetingType}
+		/>
+		<label for="board">Styrelsemöte</label>
+	</div>
+	<div>
+		<input
+			type="radio"
+			id="guild"
+			name="meetingType"
+			value="sektionsmöte"
+			bind:group={formState.meetingType}
+		/>
+		<label for="guild">Sektionsmöte</label>
+	</div>
+	<div>
+		<input
+			type="radio"
+			id="srd"
+			name="meetingType"
+			value="studierådsmöte"
+			bind:group={formState.meetingType}
+		/>
+		<label for="srd">Studierådsmöte</label>
+	</div>
 </div>
 
 <div class="date-place-time">
 	<div class="date-and-time">
 		<label for="date">Datum && Tid</label>
-		<!-- <input
+		<input
 			type="datetime-local"
 			id="meetingDate"
 			name="meetingDate"
 			bind:value={formState.meetingDate}
-			required
-		/> -->
-		<DateTimePicker bind:date={formState.meetingDate} name="meetingDate" />
+		/>
+		<!-- <DateTimePicker bind:date={formState.meetingDate} name="meetingDate" /> -->
 	</div>
 	<ResizingTextInput
 		name="meetingPlace"
@@ -74,7 +78,7 @@
 	/>
 </div>
 
-<!-- <div>
+<div>
 	<input type="checkbox" id="adjourn" name="adjourn" bind:checked={adjourn} />
 	<label for="adjourn">Ajournering?</label>
 	{#if adjourn}
@@ -95,7 +99,6 @@
 				label="Plats"
 				placeholder="Ex. E:1124, E:A"
 				bind:value={formState.adjournmentPlace}
-				required={true}
 			/>
 		</div>
 	{/if}
@@ -126,13 +129,12 @@
 					<p>Åtgärd</p>
 					<p>Bilagor <small>(semikolon-separerad lista)</small></p>
 				</div>
-				{#each agendaItems as agendaItem, i}
+				{#each agendaItems as agendaItem, i (i)}
 					<div class="agenda-div">
 						<div class="inner-agenda-div">
 							<ResizingTextInput
 								name={`agenda-item-${i.toString()}-title`}
 								bind:value={agendaItem.title}
-								required={true}
 								label=""
 								placeholder="OFMÖ"
 							/>
@@ -160,6 +162,6 @@
 			</label>
 		</div>
 	{/if}
-</div> -->
+</div>
 
 <AuthorBlock />

@@ -1,8 +1,8 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { getAuthorContext } from '$lib/state/authorState.svelte';
 	import { getClauseContext } from '$lib/state/clauseState.svelte';
 	import { getFormContext } from '$lib/state/formState.svelte';
-	import { getLocalStorageDrafts, type Draft } from '$lib/state/localDraftsState.svelte';
+	import { getLocalStorageDrafts } from '$lib/state/localDraftsState.svelte';
 
 	let formState = getFormContext();
 	let authorState = getAuthorContext();
@@ -11,12 +11,13 @@
 
 	async function saveDraft() {
 		let draft = localDrafts.getDraft(localDrafts.currentDraftId);
+		console.log('authorState:', authorState);
 		if (draft != null) {
 			// If a draft with the current ID exists, update it
 			localDrafts.updateDraft(draft.id, {
 				...formState.getFields(),
-				...authorState.getFields(),
-				...clauseState.getFields()
+				authors: [...authorState.getFields()],
+				clauses: [...clauseState.getFields()]
 			});
 		} else {
 			// If no draft exists, create a new one
@@ -24,8 +25,8 @@
 				id: crypto.randomUUID(),
 				lastEdit: Date.now(),
 				...formState.getFields(),
-				...authorState.getFields(),
-				...clauseState.getFields()
+				authors: [...authorState.getFields()],
+				clauses: [...clauseState.getFields()]
 			};
 			console.log('Saving draft:', draft);
 			console.log('Stringified draft:', JSON.stringify(draft, null, 2));
@@ -40,4 +41,4 @@
 	onclick={saveDraft}
 >
 	Spara utkast
-</button>
+</button> -->

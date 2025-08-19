@@ -12,7 +12,7 @@
 	<p>No drafts available.</p>
 {:else}
 	<ul>
-		{#each sortedDrafts as draft}
+		{#each sortedDrafts as draft (draft.id)}
 			<li>
 				<button
 					class="focus:ring-opacity-50 rounded-lg bg-white px-4 py-2 text-lg font-bold text-purple-800 hover:bg-purple-200 focus:ring-2 focus:ring-purple-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"

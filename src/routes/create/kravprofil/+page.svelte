@@ -8,8 +8,7 @@
 	// TODO!
 </script>
 
-<!-- <ResizingTextInput
-	required={true}
+<ResizingTextInput
 	name="position"
 	label="Post"
 	placeholder="Ex. Ordförande"
@@ -35,7 +34,6 @@
 <ResizingTextInput
 	name="requirements-singlerow"
 	label="Krav"
-	required={true}
 	explanation="Olika krav separeras med radbrytning"
 	placeholder="Ledarskapsförmåga..."
 	bind:value={formState.requirements}
@@ -47,4 +45,4 @@
 	explanation="Olika meriter separeras med radbrytning"
 	placeholder="Tidigare erfarenhet av..."
 	bind:value={formState.merits}
-/> -->
+/>

@@ -1,5 +1,6 @@
 import type { DocumentClass } from '$lib/schemas';
 import { getContext, setContext } from 'svelte';
+import { SvelteDate } from 'svelte/reactivity';
 
 class FormState {
 	isCompiling: boolean = $state(false);
@@ -12,8 +13,8 @@ class FormState {
 	meeting: string = $state('');
 	meetingType: string = $state('styrelsemöte');
 	meetingPlace: string = $state('');
-	meetingDate: Date = $state(new Date());
-	adjournmentDate: Date | null = $state(null);
+	meetingDate: SvelteDate = $state(new SvelteDate());
+	adjournmentDate: SvelteDate | null = $state(null);
 	adjournmentPlace: string | null = $state(null);
 	body: string = $state('');
 	demand: string = $state('');

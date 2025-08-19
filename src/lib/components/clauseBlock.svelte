@@ -5,40 +5,49 @@
 	let clauseState = getClauseContext();
 </script>
 
-<div>
-	<label>
-		<b>Att-satser</b>
-		{#each clauseState.clauses as c, i}
-			<div class="flex flex-col items-end gap-2 py-2">
-				<div class="flex w-full flex-col gap-2">
-					<ResizingTextInput
-						name={`clause_${i.toString()}_toClause`}
-						bind:value={c.toClause}
-						placeholder="sjunga mer..."
-					/>
-					<ResizingTextInput
-						name={`toClause_${i.toString()}_description`}
-						bind:value={c.description}
-						placeholder="Beskrivning (frivillig)"
-					/>
-				</div>
-				{#if i !== 0}
-					<button
-						type="button"
-						onclick={() => clauseState.removeClause(i)}
-						class="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
-					>
-						Ta bort att-sats {(i + 1).toString()}
-					</button>
-				{/if}
+<div class="space-y-4">
+	<h2 class="text-lg font-semibold text-gray-800">Att-satser</h2>
+
+	{#each clauseState.clauses as c, i (i)}
+		<div class="relative space-y-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+			<!-- Remove button (X) -->
+			{#if i !== 0}
+				<button
+					type="button"
+					onclick={() => clauseState.removeClause(i)}
+					class="absolute top-2 right-2 text-gray-400 hover:text-red-600"
+					aria-label="Ta bort att-sats"
+				>
+					✕
+				</button>
+			{/if}
+
+			<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+				<ResizingTextInput
+					name={`clause_${i}_toClause`}
+					bind:value={c.toClause}
+					placeholder="sjunga mer..."
+					label="Att-sats"
+					class="w-full"
+				/>
+				<ResizingTextInput
+					name={`clause_${i}_description`}
+					bind:value={c.description}
+					placeholder="Beskrivning (frivillig)"
+					label="Beskrivning"
+					class="w-full"
+				/>
 			</div>
-		{/each}
+		</div>
+	{/each}
+
+	<div class="flex justify-end">
 		<button
 			type="button"
 			onclick={() => clauseState.addClause()}
-			class="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+			class="inline-flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-700"
 		>
-			Lägg till att-sats
+			➕ Lägg till att-sats
 		</button>
-	</label>
+	</div>
 </div>

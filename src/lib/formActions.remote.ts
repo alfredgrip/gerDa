@@ -1,11 +1,7 @@
 import { form } from '$app/server';
+import { handleCompileRequest } from '$lib/compile.server';
 import { generateLaTeX } from '$lib/templates';
-import {
-	handleCompileRequest,
-	isDocumentClass,
-	preprocessFormData,
-	switchOnDocumentClass
-} from '$lib/utils.svelte';
+import { isDocumentClass, preprocessFormData, switchOnDocumentClass } from '$lib/utils';
 import { error } from '@sveltejs/kit';
 
 export const compilePdf = form(async (data) => {

@@ -62,10 +62,10 @@ export const kallelseSchema = {
 	meeting: isString,
 	meetingType: isString,
 	meetingPlace: isString,
-	meetingDate: isDate,
+	meetingDate: nullable(isDate),
 	adjournmentDate: nullable(isDate),
 	adjournmentPlace: nullable(isString),
-	agenda: arrayOf(isAgendaItem),
+	agenda: nullable(arrayOf(isAgendaItem)),
 	body: isString,
 	authors: nonEmptyArrayOf(isAuthor)
 };
