@@ -6,17 +6,16 @@
 	let authorContext = getAuthorContext();
 </script>
 
-<div class="space-y-6">
+<div class="space-y-4">
 	<h2 class="text-lg font-semibold text-gray-800">Författare</h2>
 
 	{#each authorContext.authors as a, i (i)}
-		<div class="relative space-y-4 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-			<!-- Remove button (X in corner) -->
+		<div class="relative space-y-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
 			{#if i !== 0}
 				<button
 					type="button"
 					onclick={() => authorContext.removeAuthor(i)}
-					class="absolute top-2 right-2 text-gray-400 hover:text-red-600"
+					class="absolute top-2 right-3 text-gray-400 hover:text-red-600"
 					aria-label="Ta bort författare"
 				>
 					✕

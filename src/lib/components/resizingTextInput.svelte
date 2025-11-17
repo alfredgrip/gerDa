@@ -2,15 +2,6 @@
 	import type { AllFieldsSchema } from '$lib/schemas';
 	import { onMount } from 'svelte';
 
-	let textareaElement: HTMLTextAreaElement;
-
-	function resizeTextarea() {
-		if (textareaElement) {
-			textareaElement.style.height = 'auto';
-			textareaElement.style.height = textareaElement.scrollHeight + 'px';
-		}
-	}
-
 	interface Props {
 		name: keyof AllFieldsSchema | (string & {}); // https://medium.com/@florian.schindler_47749/typescript-hacks-1-string-suggestions-58806363afeb
 		label?: string;
@@ -33,6 +24,15 @@
 		class: clazz,
 		...rest
 	}: Props = $props();
+
+	let textareaElement: HTMLTextAreaElement;
+
+	function resizeTextarea() {
+		if (textareaElement) {
+			textareaElement.style.height = 'auto';
+			textareaElement.style.height = textareaElement.scrollHeight + 'px';
+		}
+	}
 
 	onMount(() => {
 		if (textareaElement) {

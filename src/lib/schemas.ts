@@ -73,7 +73,7 @@ export type KallelseSchema = InferSchema<typeof kallelseSchema>;
 
 export const kravprofilSchema = {
 	documentClass: literal('kravprofil'),
-	meeting: isString,
+	meeting: nullable(isString),
 	position: isString,
 	year: isString,
 	description: nullable(isString),
@@ -129,6 +129,9 @@ export type AllFieldsSchema = {
 	clauses: ClauseSchema[];
 	authors: AuthorSchema[];
 	position: string;
+	requirements: string[];
+	merits: string[];
+	proposals: ProposalSchema[];
 };
 
 // -----------------------------------------------------------------------------
@@ -191,11 +194,12 @@ function isFile(v: unknown): v is File {
 	return v instanceof File;
 }
 
-function isAgendaItem(v: unknown): v is { title: string; type?: string; attachment?: string[] } {
+function isAgendaItem(v: unknown): v is { title?: string; type?: string; attachment?: string[] } {
 	return (
 		typeof v === 'object' &&
 		v !== null &&
-		typeof (v as { title?: unknown }).title === 'string' &&
+		((v as { title?: unknown }).title === undefined ||
+			typeof (v as { title?: unknown }).title === 'string') &&
 		((v as { type?: unknown }).type === undefined ||
 			typeof (v as { type: unknown }).type === 'string') &&
 		((v as { attachment?: unknown }).attachment === undefined ||
@@ -206,11 +210,11 @@ function isAgendaItem(v: unknown): v is { title: string; type?: string; attachme
 }
 export type AgendaItemSchema = InferSchema<typeof isAgendaItem>;
 
-function isProposal(v: unknown): v is { what: string; who: string[] } {
+function isProposal(v: unknown): v is { position: string; who: string[] } {
 	return (
 		typeof v === 'object' &&
 		v !== null &&
-		typeof (v as { what?: unknown }).what === 'string' &&
+		typeof (v as { position?: unknown }).position === 'string' &&
 		Array.isArray((v as { who?: unknown }).who) &&
 		// @ts-expect-error validation
 		(v as { who: unknown }).who.every((item) => typeof item === 'string')

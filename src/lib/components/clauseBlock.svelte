@@ -10,12 +10,11 @@
 
 	{#each clauseState.clauses as c, i (i)}
 		<div class="relative space-y-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-			<!-- Remove button (X) -->
 			{#if i !== 0}
 				<button
 					type="button"
 					onclick={() => clauseState.removeClause(i)}
-					class="absolute top-2 right-2 text-gray-400 hover:text-red-600"
+					class="absolute top-2 right-3 text-gray-400 hover:text-red-600"
 					aria-label="Ta bort att-sats"
 				>
 					✕
@@ -33,8 +32,8 @@
 				<ResizingTextInput
 					name={`clause_${i}_description`}
 					bind:value={c.description}
-					placeholder="Beskrivning (frivillig)"
-					label="Beskrivning"
+					placeholder="sång är bra för..."
+					label="Beskrivning (frivillig)"
 					class="w-full"
 				/>
 			</div>

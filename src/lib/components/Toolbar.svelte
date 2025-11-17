@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { compilePdf, generateTeX } from '$lib/formActions.remote';
 	import { getAuthorContext } from '$lib/state/authorState.svelte';
 	import { getClauseContext } from '$lib/state/clauseState.svelte';
@@ -41,26 +42,7 @@
 			localDrafts.addDraft(draft);
 		}
 	}
-	// const baseBtn = 'rounded p-2 text-white disabled:cursor-not-allowed disabled:opacity-50';
 
-	// const getNaturalDocumentClass = (s: string) => {
-	// 	switch (s) {
-	// 		case 'motion':
-	// 			return 'en motion';
-	// 		case 'proposition':
-	// 			return 'en proposition';
-	// 		case 'styrelsens-svar':
-	// 			return 'ett "styrelsens svar"';
-	// 		case 'kallelse':
-	// 			return 'en kallelse';
-	// 		case 'kravprofil':
-	// 			return 'en kravprofil';
-	// 		case 'valförslag':
-	// 			return 'ett valförslag';
-	// 		case 'custom':
-	// 			return 'ett anpassat dokument';
-	// 	}
-	// };
 	let naturalDocumentClass = $state('');
 	onMount(() => {
 		naturalDocumentClass = getNaturalDocumentClass(formState.documentClass) ?? '';
@@ -68,77 +50,72 @@
 </script>
 
 <nav class="sticky top-0 z-50 border-b border-gray-300 bg-[rgb(248,184,201)] shadow-sm">
-	<div class="flex h-14 w-full items-center px-6">
-		<!-- Left: Back link & document class -->
-		<div class="flex w-1/2 items-center space-x-6">
-			<a href="/" class="flex items-center gap-1 text-black hover:underline"> ← Hem </a>
-			<h3 class="text-md text-gray-800">
-				Skapar: <span class="font-semibold">{naturalDocumentClass}</span>
+	<div class="flex flex-wrap items-center justify-between px-4 py-2 sm:px-6 sm:py-3">
+		<div class="flex min-w-0 flex-1 items-center space-x-3 sm:space-x-6">
+			<a href="/" class="flex items-center p-2 text-xl text-gray-800 hover:underline"> ← </a>
+			<h3 class="truncate text-lg text-gray-800">
+				Skapar: <span class="font-semibold">
+					{getNaturalDocumentClass(page.route.id?.split('/').pop() ?? '')}
+				</span>
 			</h3>
 		</div>
 
-		<!-- Middle: empty space to push buttons to the right -->
+		<div class="mt-2 flex flex-wrap items-center gap-2 sm:mt-0 sm:gap-4">
+			<button
+				{...compilePdf.enhance(async ({ submit }) => {
+					enhanceFunction(submit);
+				})}
+				class="inline-flex flex-1 items-center gap-1 rounded-md bg-green-500 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+			>
+				<span>&#128260;</span> Kompilera
+			</button>
 
-		<!-- Right: Action buttons -->
-		<div class="flex w-1/2 items-center justify-between">
-			<div class="px-6">
-				<button
-					{...compilePdf.enhance(async ({ submit }) => {
-						enhanceFunction(submit);
-					})}
-					class="text-md inline-flex items-center gap-1 rounded-md bg-green-500 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-				>
-					<span>&#128260;</span> Kompilera
-				</button>
+			<button
+				type="button"
+				onclick={() => {
+					const filePath = compilePdf.result?.filePath;
+					if (filePath) {
+						const a = document.createElement('a');
+						a.href = filePath;
+						a.download = 'document.pdf';
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+					}
+				}}
+				disabled={!compilePdf.result?.filePath || formState.isCompiling}
+				class="inline-flex flex-1 items-center gap-1 rounded-md bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+			>
+				<span>&#x2913;</span> Hämta PDF
+			</button>
 
-				<button
-					type="button"
-					onclick={() => {
-						const filePath = compilePdf.result?.filePath;
-						if (filePath) {
+			<button
+				{...generateTeX.buttonProps.enhance(async ({ submit }) => {
+					await submit()
+						.then(() => {
+							const laTeX = generateTeX.result?.laTeX;
+							if (!laTeX) throw new Error('Failed to generate LaTeX');
 							const a = document.createElement('a');
-							a.href = filePath;
-							a.download = 'document.pdf';
+							a.href = URL.createObjectURL(new Blob([laTeX], { type: 'text/plain' }));
+							a.download = `${formState.title}-${new Date().toLocaleDateString('sv-SE')}.tex`;
 							document.body.appendChild(a);
 							a.click();
 							document.body.removeChild(a);
-						}
-					}}
-					disabled={!compilePdf.result?.filePath || formState.isCompiling}
-					class="text-md inline-flex items-center gap-1 rounded-md bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-				>
-					<span>&#x2913;</span> Hämta PDF
-				</button>
-			</div>
-			<div>
-				<button
-					{...generateTeX.buttonProps.enhance(async ({ submit }) => {
-						await submit()
-							.then(() => {
-								const laTeX = generateTeX.result?.laTeX;
-								if (!laTeX) throw new Error('Failed to generate LaTeX');
-								const a = document.createElement('a');
-								a.href = URL.createObjectURL(new Blob([laTeX], { type: 'text/plain' }));
-								a.download = `${formState.title}-${new Date().toLocaleDateString('sv-SE')}.tex`;
-								document.body.appendChild(a);
-								a.click();
-								document.body.removeChild(a);
-							})
-							.catch((error) => console.error('Error during TeX generation:', error));
-					})}
-					class="inline-flex items-center gap-1 rounded-md bg-purple-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-				>
-					Hämta TeX
-				</button>
+						})
+						.catch((error) => console.error('Error during TeX generation:', error));
+				})}
+				class="inline-flex flex-1 items-center gap-1 rounded-md bg-purple-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+			>
+				Hämta TeX
+			</button>
 
-				<button
-					type="button"
-					class="inline-flex items-center gap-1 rounded-md bg-purple-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
-					onclick={saveDraft}
-				>
-					Spara utkast
-				</button>
-			</div>
+			<button
+				type="button"
+				class="inline-flex flex-1 items-center gap-1 rounded-md bg-purple-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+				onclick={saveDraft}
+			>
+				Spara utkast
+			</button>
 		</div>
 	</div>
 </nav>

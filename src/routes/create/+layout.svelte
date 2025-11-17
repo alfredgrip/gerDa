@@ -6,12 +6,14 @@
 	import { getClauseContext } from '$lib/state/clauseState.svelte';
 	import { getFormContext } from '$lib/state/formState.svelte';
 	import { getLocalStorageDrafts } from '$lib/state/localDraftsState.svelte';
+	import { getProposalContext } from '$lib/state/proposalState.svelte';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
 	let formState = getFormContext();
 	let authorState = getAuthorContext();
 	let clauseState = getClauseContext();
+	let proposalState = getProposalContext();
 	// let localDrafts = getLocalStorageDrafts();
 
 	let formElement: HTMLFormElement;
@@ -46,6 +48,7 @@
 			formState.demand = currentDraft.demand || '';
 			authorState.authors = currentDraft.authors || [{ name: '', position: '', signMessage: '' }];
 			clauseState.clauses = currentDraft.clauses || [{ toClause: '' }];
+			proposalState.proposals = currentDraft.proposals || [{ position: '', who: [''] }];
 		}
 	});
 </script>
@@ -68,6 +71,7 @@
 		class="flex flex-1 flex-col"
 	>
 		<Toolbar enhanceFunction={compileEnhance} />
+		<input type="hidden" name="documentClass" bind:value={formState.documentClass} />
 		<div class="flex flex-1 flex-row">
 			<div class="w-full space-y-4 px-6 py-3">
 				{@render children()}

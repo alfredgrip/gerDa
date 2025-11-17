@@ -20,6 +20,7 @@ class FormState {
 	demand: string = $state('');
 	requirements: string = $state('');
 	merits: string = $state('');
+	proposalWhos: string = $state('');
 
 	getFields() {
 		return {

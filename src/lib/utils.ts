@@ -8,6 +8,7 @@ import {
 	styrelsensSvarSchema,
 	valförslagSchema,
 	validate,
+	type AgendaItemSchema,
 	type AnySchema,
 	type AuthorSchema,
 	type ClauseSchema,
@@ -73,11 +74,19 @@ export const preprocessFormData = (formData: Record<string, unknown>): void => {
 	// we need to extract them from the formData object.
 	const authors: AuthorSchema[] = extractAuthors(formData);
 	const clauses: ClauseSchema[] = extractClauses(formData);
+	const agenda: AgendaItemSchema[] = extractAgenda(formData);
 	formData.authors = authors;
 	formData.clauses = clauses;
+	formData.agenda = agenda;
 	// Dates should be converted from strings to Date objects
 	if (formData.meetingDate && typeof formData.meetingDate === 'string') {
 		formData.meetingDate = new Date(formData.meetingDate);
+	}
+	// Inputs like merits and requirements in 'valförslag' are sent as JSON strings
+	for (const [key, value] of Object.entries(formData)) {
+		if (key.endsWith('-JSON') && typeof value === 'string' && value) {
+			formData[key.replace('-JSON', '')] = JSON.parse(value);
+		}
 	}
 };
 
@@ -124,5 +133,27 @@ const extractClauses = (formData: Record<string, unknown>): ClauseSchema[] => {
 	return Array.from(clauses.values()).map((clause) => ({
 		toClause: clause.toClause?.toString() ?? '',
 		description: clause.description?.toString() ?? ''
+	}));
+};
+
+const extractAgenda = (formData: Record<string, unknown>): AgendaItemSchema[] => {
+	const agendaItems: Map<string, Partial<AgendaItemSchema>> = new Map();
+	// Iterate over formData entries to find agenda item data
+	for (const [key, value] of Object.entries(formData)) {
+		if (key.startsWith('agendaItem_')) {
+			const parts = key.split('_');
+			const id = parts[1];
+			if (id) {
+				agendaItems.set(id, {
+					...agendaItems.get(id),
+					[parts[2]]: value
+				});
+			}
+		}
+	}
+	return Array.from(agendaItems.values()).map((item) => ({
+		title: item.title?.toString() ?? '',
+		type: item.type?.toString() ?? '',
+		attachment: Array.isArray(item.attachment) ? item.attachment : []
 	}));
 };

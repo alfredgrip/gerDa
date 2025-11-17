@@ -3,8 +3,8 @@ import { getContext, setContext } from 'svelte';
 
 class AgendaItemState implements AgendaItemSchema {
 	title: string = $state('');
-	type?: string | undefined;
-	attachments?: string | undefined;
+	type?: string | undefined = $state();
+	attachments?: string | undefined = $state();
 }
 
 class AgendaState {
@@ -15,6 +15,7 @@ class AgendaState {
 	}
 
 	removeItem(index: number) {
+		console.log('Removing agenda item at index:', index);
 		this.items = this.items.filter((_, i) => i !== index);
 	}
 

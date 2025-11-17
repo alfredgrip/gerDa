@@ -6,8 +6,8 @@ import { error } from '@sveltejs/kit';
 
 export const compilePdf = form(async (data) => {
 	const formData = Object.fromEntries(data);
+	console.log(formData);
 	preprocessFormData(formData);
-	// console.log(formData);
 	const documentClass = formData.documentClass;
 	if (!isDocumentClass(documentClass)) {
 		console.error('Unknown document class:', documentClass);

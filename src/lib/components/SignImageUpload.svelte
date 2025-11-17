@@ -27,7 +27,6 @@
 </script>
 
 <div class="flex flex-col gap-1">
-	<!-- Upload button (only visible if no file) -->
 	{#if !file}
 		<div>
 			<label
