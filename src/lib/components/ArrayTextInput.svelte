@@ -7,7 +7,7 @@
 		value: string[] | null | undefined;
 		label?: string;
 		placeholder?: string;
-		separator: string; // Can be ",", "|", "/", etc.
+		separator: string;
 		explanation?: string;
 		errors?: string[];
 		class?: string;
@@ -27,20 +27,14 @@
 	let textareaElement: HTMLTextAreaElement | undefined = $state();
 	let internalString = $state('');
 
-	/**
-	 * Helper to escape special regex characters and build the pattern.
-	 * This creates a character class like [,\n] or [|\n]
-	 */
 	const getRegex = () => {
 		const escaped = separator.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 		return new RegExp(`[${escaped}\\n]`);
 	};
 
-	// 1. Sync External Array -> Internal Textarea
 	$effect(() => {
 		const joined = (value ?? []).join(`${separator} `);
 
-		// Clean the internal string using the same logic to see if they actually match
 		const cleanInternal = internalString
 			.split(getRegex())
 			.map((s) => s.trim())
@@ -52,12 +46,10 @@
 		}
 	});
 
-	// 2. Handle User Typing
 	function handleInput(e: Event & { currentTarget: HTMLTextAreaElement }) {
 		const raw = e.currentTarget.value;
 		internalString = raw;
 
-		// Split by the custom separator OR the newline
 		value = raw
 			.split(getRegex())
 			.map((s) => s.trim())
@@ -97,7 +89,7 @@
 			oninput={handleInput}
 			{placeholder}
 			class="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
-			style="height: auto; min-height: 42px;"
+			style="height: auto;"
 		></textarea>
 
 		{#if explanation}

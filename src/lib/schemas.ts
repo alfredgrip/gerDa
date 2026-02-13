@@ -21,7 +21,7 @@ export const authorSchema = v.object({
 	name: v.string(),
 	position: v.string(),
 	signMessage: v.string(),
-	signImage: v.fallback(v.union([v.instance(File), v.literal(false)]), false)
+	signImage: v.optional(v.union([v.instance(File), v.literal(false)]), false)
 });
 
 export type AuthorSchema = v.InferOutput<typeof authorSchema>;
@@ -38,40 +38,32 @@ export const motionSchema = v.object({
 	title: v.string(),
 	meeting: v.string(),
 	body: v.string(),
-	demand: v.string(),
-	clauses: v.pipe(v.array(clauseSchema), v.minLength(1)),
-	authors: v.pipe(v.array(authorSchema), v.minLength(1))
+	demand: v.optional(v.string(), ''),
+	clauses: v.array(clauseSchema),
+	authors: v.array(authorSchema)
 });
 
 export type MotionSchema = v.InferOutput<typeof motionSchema>;
 
 export const propositionSchema = v.object({
 	documentClass: v.literal('proposition'),
-	title: v.fallback(v.string(), ''),
-	meeting: v.fallback(v.string(), ''),
-	body: v.fallback(v.string(), ''),
-	demand: v.fallback(v.string(), ''),
-	clauses: v.fallback(v.pipe(v.array(clauseSchema), v.minLength(1)), [
-		{ toClause: '', description: '' }
-	]),
-	authors: v.fallback(v.pipe(v.array(authorSchema), v.minLength(1)), [
-		{ name: '', position: '', signMessage: '', signImage: false }
-	])
+	title: v.string(),
+	meeting: v.string(),
+	body: v.string(),
+	demand: v.optional(v.string(), ''),
+	clauses: v.array(clauseSchema),
+	authors: v.array(authorSchema)
 });
 export type PropositionSchema = v.InferOutput<typeof propositionSchema>;
 
 export const styrelsensSvarSchema = v.object({
 	documentClass: v.literal('styrelsens-svar'),
-	title: v.fallback(v.string(), ''),
-	meeting: v.fallback(v.string(), ''),
-	body: v.fallback(v.string(), ''),
-	demand: v.fallback(v.string(), ''),
-	clauses: v.fallback(v.pipe(v.array(clauseSchema), v.minLength(1)), [
-		{ toClause: '', description: '' }
-	]),
-	authors: v.fallback(v.pipe(v.array(authorSchema), v.minLength(1)), [
-		{ name: '', position: '', signMessage: '', signImage: false }
-	])
+	title: v.string(),
+	meeting: v.string(),
+	body: v.string(),
+	demand: v.optional(v.string(), ''),
+	clauses: v.array(clauseSchema),
+	authors: v.array(authorSchema)
 });
 export type StyrelsensSvarSchema = v.InferOutput<typeof styrelsensSvarSchema>;
 
@@ -84,34 +76,27 @@ const agendaItemSchema = v.object({
 export type AgendaItemSchema = v.InferOutput<typeof agendaItemSchema>;
 
 export const kallelseSchema = v.object({
-	title: v.fallback(v.string(), ''),
 	documentClass: v.literal('kallelse'),
-	meeting: v.fallback(v.string(), ''),
-	meetingType: v.fallback(v.string(), ''),
-	meetingPlace: v.fallback(v.string(), ''),
-	meetingDate: v.fallback(v.union([v.pipe(v.string(), v.isoDateTime()), v.literal(false)]), false),
-	adjournmentDate: v.fallback(
-		v.union([v.pipe(v.string(), v.isoDateTime()), v.literal(false)]),
-		false
-	),
-	adjournmentPlace: v.fallback(v.string(), ''),
-	agenda: v.array(agendaItemSchema),
-	body: v.fallback(v.string(), ''),
-	authors: v.fallback(v.pipe(v.array(authorSchema), v.minLength(1)), [
-		{ name: '', position: '', signMessage: '', signImage: false }
-	])
+	title: v.string(),
+	meeting: v.string(),
+	meetingType: v.string(),
+	meetingPlace: v.string(),
+	meetingDate: v.union([v.pipe(v.string(), v.isoDateTime()), v.literal('')]),
+	adjournmentDate: v.optional(v.union([v.pipe(v.string(), v.isoDateTime()), v.literal('')]), ''),
+	adjournmentPlace: v.optional(v.string(), ''),
+	agenda: v.optional(v.array(agendaItemSchema), []),
+	body: v.optional(v.string(), ''),
+	authors: v.array(authorSchema)
 });
 export type KallelseSchema = v.InferOutput<typeof kallelseSchema>;
 
 export const kravprofilSchema = v.object({
 	documentClass: v.literal('kravprofil'),
-	title: v.fallback(v.string(), ''),
-	meeting: v.fallback(v.string(), ''),
-	position: v.fallback(v.string(), ''),
-	description: v.fallback(v.string(), ''),
-	year: v.fallback(v.string(), ''),
-	body: v.fallback(v.string(), ''),
-	requirements: v.pipe(v.array(v.string()), v.minLength(1)),
+	title: v.string(),
+	position: v.string(),
+	description: v.string(),
+	year: v.string(),
+	requirements: v.array(v.string()),
 	merits: v.array(v.string())
 });
 export type KravprofilSchema = v.InferOutput<typeof kravprofilSchema>;
@@ -119,7 +104,7 @@ export type KravprofilSchema = v.InferOutput<typeof kravprofilSchema>;
 export const proposalSchema = v.object({
 	position: v.string(),
 	who: v.array(v.string()),
-	statistics: v.fallback(v.string(), '')
+	statistics: v.optional(v.string(), '')
 });
 export type ProposalSchema = v.InferOutput<typeof proposalSchema>;
 
@@ -128,36 +113,30 @@ export const valförslagSchema = v.object({
 	title: v.string(),
 	meeting: v.string(),
 	body: v.string(),
-	demand: v.fallback(v.string(), ''),
-	proposals: v.pipe(v.array(proposalSchema)),
+	demand: v.optional(v.string(), ''),
+	proposals: v.array(proposalSchema),
 	groupMotivation: v.optional(v.string()),
-	authors: v.fallback(v.pipe(v.array(authorSchema), v.minLength(1)), [
-		{ name: '', position: '', signMessage: '', signImage: false }
-	]),
-	clauses: v.pipe(v.array(clauseSchema))
+	authors: v.array(authorSchema),
+	clauses: v.array(clauseSchema)
 });
 export type ValförslagSchema = v.InferOutput<typeof valförslagSchema>;
 
 export const handlingSchema = v.object({
 	documentClass: v.literal('handling'),
-	title: v.fallback(v.string(), ''),
-	meeting: v.fallback(v.string(), ''),
-	body: v.fallback(v.string(), ''),
-	authors: v.fallback(v.pipe(v.array(authorSchema), v.minLength(1)), [
-		{ name: '', position: '', signMessage: '', signImage: false }
-	])
+	title: v.string(),
+	meeting: v.string(),
+	body: v.string(),
+	authors: v.array(authorSchema)
 });
 export type HandlingSchema = v.InferOutput<typeof handlingSchema>;
 
 export const customSchema = v.object({
 	documentClass: v.literal('custom'),
-	title: v.fallback(v.string(), ''),
-	shortTitle: v.fallback(v.string(), ''),
-	meeting: v.fallback(v.string(), ''),
-	body: v.fallback(v.string(), ''),
-	authors: v.fallback(v.pipe(v.array(authorSchema), v.minLength(1)), [
-		{ name: '', position: '', signMessage: '', signImage: false }
-	])
+	title: v.string(),
+	shortTitle: v.string(),
+	meeting: v.string(),
+	body: v.string(),
+	authors: v.array(authorSchema)
 });
 export type CustomSchema = v.InferOutput<typeof customSchema>;
 
@@ -188,8 +167,8 @@ export type AllFieldsSchema = {
 	meeting: string;
 	meetingType: string;
 	meetingPlace: string;
-	meetingDate: Date;
-	adjournmentDate: Date | false;
+	meetingDate: Date | '';
+	adjournmentDate: Date | '';
 	adjournmentPlace: string | null;
 	agenda: AgendaItemSchema[];
 	year: string;
@@ -197,6 +176,7 @@ export type AllFieldsSchema = {
 	demand: string;
 	clauses: ClauseSchema[];
 	authors: AuthorSchema[];
+	position: string;
 	requirements: string[];
 	merits: string[];
 	proposals: ProposalSchema[];

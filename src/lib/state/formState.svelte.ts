@@ -1,7 +1,6 @@
 import type { AllFieldsSchema } from '$lib/schemas';
-import { SvelteDate } from 'svelte/reactivity';
 
-export const formState = $state<AllFieldsSchema>({
+const EMPTY_FORM_STATE: AllFieldsSchema = {
 	documentClass: 'motion',
 	title: '',
 	shortTitle: '',
@@ -9,11 +8,12 @@ export const formState = $state<AllFieldsSchema>({
 	meeting: '',
 	meetingType: 'styrelsemöte',
 	meetingPlace: '',
-	meetingDate: new SvelteDate(),
-	adjournmentDate: false,
+	meetingDate: new Date(),
+	adjournmentDate: '',
 	adjournmentPlace: null,
 	body: '',
 	demand: '',
+	position: '',
 	requirements: [],
 	merits: [],
 	authors: [{ name: '', position: '', signMessage: '', signImage: false }],
@@ -21,26 +21,10 @@ export const formState = $state<AllFieldsSchema>({
 	agenda: [],
 	proposals: [{ position: '', who: [], statistics: '' }],
 	groupMotivation: ''
-});
+};
+
+export const formState = $state<AllFieldsSchema>(JSON.parse(JSON.stringify(EMPTY_FORM_STATE)));
 
 export const resetFormState = () => {
-	formState.documentClass = 'motion';
-	formState.title = '';
-	formState.shortTitle = '';
-	formState.year = '';
-	formState.meeting = '';
-	formState.meetingType = 'styrelsemöte';
-	formState.meetingPlace = '';
-	formState.meetingDate = new SvelteDate();
-	formState.adjournmentDate = false;
-	formState.adjournmentPlace = null;
-	formState.body = '';
-	formState.demand = '';
-	formState.requirements = [];
-	formState.merits = [];
-	formState.authors = [{ name: '', position: '', signMessage: '', signImage: false }];
-	formState.clauses = [{ toClause: '', description: '' }];
-	formState.agenda = [];
-	formState.proposals = [];
-	formState.groupMotivation = '';
+	Object.assign(formState, JSON.parse(JSON.stringify(EMPTY_FORM_STATE)));
 };

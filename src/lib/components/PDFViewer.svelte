@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pdfViewerUrl, isCompiling } from '$lib/state/appState.svelte';
+	import { isCompiling, pdfViewerUrl } from '$lib/state/appState.svelte';
 </script>
 
 <div class="flex h-150 w-full flex-col px-6 lg:h-full">

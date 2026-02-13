@@ -1,9 +1,9 @@
 <script lang="ts">
 	import AddButton from '$lib/components/AddButton.svelte';
+	import ArrayTextInput from '$lib/components/ArrayTextInput.svelte';
 	import DeleteButton from '$lib/components/DeleteButton.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
 	import { formState } from '$lib/state/formState.svelte';
-	import ArrayTextInput from './ArrayTextInput.svelte';
 
 	let includeStatistics = $state(false);
 
@@ -26,6 +26,10 @@
 			bind:checked={includeStatistics}
 		/>
 		<label for="includeStatistics" class="text-sm font-medium">Inkludera statistik</label>
+		<p class="text-xs font-medium text-gray-500">
+			Om valet beretts med en stängd nomineringslista ska statistik över sökintervall inkluderas,
+			annars ej. Detta definieras i "Policy för val"
+		</p>
 	</div>
 
 	{#each formState.proposals as p, i (i)}
@@ -59,10 +63,10 @@ Cookie Monster`.trim()}
 					<ResizingTextInput
 						name={`proposals[${i}].statistics`}
 						bind:value={p.statistics}
-						label="Statistik (frivillig)"
+						label="Sökintervall"
 						placeholder="5-10"
 						class="w-full"
-						explanation="Intervallet måste vara av storlek 5 där det första är 0-5. Giltiga intervall är alltså 0-5, 5-10, 10-15 osv. Detta definieras i 'Policy för val'"
+						explanation={`Intervallet måste vara av storlek 5 där det första är 0-5. Giltiga intervall är alltså 0-5, 5-10, 10-15 osv. Detta definieras i "Policy för val"`}
 					/>
 				{:else}
 					<input type="hidden" name={`proposals[${i}].statistics`} value="" />

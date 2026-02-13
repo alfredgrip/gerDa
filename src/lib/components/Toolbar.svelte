@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
-	import { gerdaForm, latexForm } from '$lib/form.remote';
-	import type { RequestSchema } from '$lib/schemas';
+	import { gerdaForm } from '$lib/form.remote';
 	import { dirty, isCompiling, pdfViewerUrl } from '$lib/state/appState.svelte';
 	import { formState } from '$lib/state/formState.svelte';
 	import { draftStore } from '$lib/state/localDraftsState.svelte';
 	import { getNaturalDocumentClass } from '$lib/utils';
+	import type { RemoteFormInput } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
-	import { fade, fly } from 'svelte/transition';
-
 	interface Props {
 		formElement: HTMLFormElement;
-		enhanceFunction: (submit: () => Promise<void>, data: RequestSchema) => Promise<void>;
+		enhanceFunction: (submit: () => Promise<void>, data: RemoteFormInput) => Promise<void>;
 	}
 	let { formElement, enhanceFunction }: Props = $props();
 
@@ -91,7 +89,7 @@
 				})}
 				bind:this={compileButton}
 				disabled={isCompiling.get()}
-				class="group inline-flex flex-1 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 font-medium text-white shadow-sm ring-offset-1 transition-all hover:bg-emerald-700 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
+				class="group inline-flex flex-1 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 font-medium text-white shadow-sm transition-all hover:bg-emerald-700 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
 			>
 				<span
 					class={isCompiling.get() ? 'animate-spin' : 'transition-transform group-hover:rotate-45'}
@@ -106,7 +104,7 @@
 				type="button"
 				onclick={downloadPdf}
 				disabled={isCompiling.get()}
-				class="inline-flex flex-1 items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm ring-offset-1 transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+				class="inline-flex flex-1 items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
 			>
 				<span class="transition-transform group-hover:-translate-y-0.5">⬇️</span> Hämta PDF
 			</button>
@@ -115,7 +113,7 @@
 				name="output"
 				value="latex"
 				disabled={isCompiling.get()}
-				class="inline-flex flex-1 items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm ring-offset-1 transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+				class="inline-flex flex-1 items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
 				bind:this={latexButton}
 			>
 				<span class="transition-transform group-hover:-translate-y-0.5">⬇️</span> Hämta TeX
@@ -125,7 +123,7 @@
 				type="button"
 				onclick={saveDraft}
 				disabled={isCompiling.get()}
-				class="group inline-flex flex-1 items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm ring-offset-1 transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
+				class="group inline-flex flex-1 items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
 			>
 				<span class="transition-transform group-hover:-translate-y-0.5">💾</span>
 				<span>Spara utkast</span>

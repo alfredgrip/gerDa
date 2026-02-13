@@ -5,7 +5,6 @@
 	import DeleteButton from '$lib/components/DeleteButton.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
 	import { formState } from '$lib/state/formState.svelte';
-	import { untrack } from 'svelte';
 
 	let adjourn = $state(false);
 	let includeAgenda = $state(false);
@@ -21,12 +20,6 @@
 			addAgendaItem();
 		}
 	});
-
-	let agendaAttachmentsRaw = $derived.by(() =>
-		formState.agenda.map((agendaItem) => agendaItem.attachments.join(';'))
-	);
-
-	$inspect(formState);
 </script>
 
 <input type="hidden" name="title" value={`Kallelse till ${formState.meetingType || 'möte'}`} />
@@ -119,7 +112,13 @@
 />
 
 <div>
-	<input type="checkbox" id="includeAgenda" name="includeAgenda" bind:checked={includeAgenda} />
+	<input
+		type="checkbox"
+		id="includeAgenda"
+		name="includeAgenda"
+		class="accent-dsek text-sm font-medium"
+		bind:checked={includeAgenda}
+	/>
 	<label for="includeAgenda" class="text-sm font-medium">Inkludera föredragningslista?</label>
 	<p class="text-xs font-medium text-gray-500">
 		Föredragningslista ska finnas med vid kallelse av styrelsemöte men inte sektionsmöte

@@ -8,14 +8,14 @@
 	import { pdfViewerUrl, isCompiling } from '$lib/state/appState.svelte';
 	import { formState, resetFormState } from '$lib/state/formState.svelte';
 	import { draftStore } from '$lib/state/localDraftsState.svelte';
-	import { error } from '@sveltejs/kit';
+	import { error, type RemoteFormInput } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
 
 	let formElement: HTMLFormElement;
 
-	const compileEnhance = async (submit: () => Promise<void>, data: RequestSchema) => {
+	const compileEnhance = async (submit: () => Promise<void>, data: RemoteFormInput) => {
 		isCompiling.set(data.output === 'pdf');
 		await submit()
 			.then(() => {
