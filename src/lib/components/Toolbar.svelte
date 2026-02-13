@@ -8,6 +8,7 @@
 	import { draftStore } from '$lib/state/localDraftsState.svelte';
 	import { getNaturalDocumentClass } from '$lib/utils';
 	import { onMount } from 'svelte';
+	import { fade, fly } from 'svelte/transition';
 
 	interface Props {
 		formElement: HTMLFormElement;
@@ -18,28 +19,46 @@
 	let compileButton: HTMLButtonElement;
 	let latexButton: HTMLButtonElement;
 
-	async function saveDraft() {
-		let draft = draftStore.getDraft(draftStore.currentDraftId);
-		if (draft != null) {
-			draftStore.updateDraft(draft.id, {
-				...formState
-			});
-		} else {
-			draftStore.addDraft({ ...formState });
-		}
-		dirty.set(false);
-	}
-
-	let naturalDocumentClass = $state('');
-	onMount(() => {
-		naturalDocumentClass = getNaturalDocumentClass(formState.documentClass) ?? '';
-	});
-
 	let isMacOS = $derived.by(() => {
 		if (!browser) return false;
 		return window.navigator.userAgent
 			? window.navigator.userAgent.toLowerCase().includes('mac os')
 			: /Mac/i.test(window.navigator.userAgent);
+	});
+
+	let saveSuccess = $state(false);
+
+	async function saveDraft() {
+		let draft = draftStore.getDraft(draftStore.currentDraftId);
+		if (draft != null) {
+			draftStore.updateDraft(draft.id, { ...formState });
+		} else {
+			draftStore.addDraft({ ...formState });
+		}
+		dirty.set(false);
+
+		// Trigger Success Animation
+		saveSuccess = true;
+		setTimeout(() => {
+			saveSuccess = false;
+		}, 2000); // Reset after 2 seconds
+	}
+
+	function downloadPdf() {
+		const filePath = pdfViewerUrl.get();
+		if (filePath) {
+			const a = document.createElement('a');
+			a.href = filePath;
+			a.download = 'document.pdf';
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+		}
+	}
+
+	let naturalDocumentClass = $state('');
+	onMount(() => {
+		naturalDocumentClass = getNaturalDocumentClass(formState.documentClass) ?? '';
 	});
 </script>
 
@@ -70,48 +89,46 @@
 				{...gerdaForm.for('compileButton').enhance(async ({ submit, data }) => {
 					enhanceFunction(submit, data);
 				})}
-				class="inline-flex flex-1 items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
 				bind:this={compileButton}
 				disabled={isCompiling.get()}
+				class="group inline-flex flex-1 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 font-medium text-white shadow-sm ring-offset-1 transition-all hover:bg-emerald-700 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
 			>
-				<span>⚙️</span> Kompilera ({isMacOS ? '⌘' : 'Ctrl'} + S)
+				<span
+					class={isCompiling.get() ? 'animate-spin' : 'transition-transform group-hover:rotate-45'}
+				>
+					⚙️
+				</span>
+				<span>Kompilera</span>
+				<span class="hidden text-xs opacity-80 lg:inline">({isMacOS ? '⌘' : 'Ctrl'} + S)</span>
 			</button>
 
 			<button
 				type="button"
-				onclick={() => {
-					const filePath = pdfViewerUrl.get();
-					if (filePath) {
-						const a = document.createElement('a');
-						a.href = filePath;
-						a.download = 'document.pdf';
-						document.body.appendChild(a);
-						a.click();
-						document.body.removeChild(a);
-					}
-				}}
+				onclick={downloadPdf}
 				disabled={isCompiling.get()}
-				class="inline-flex flex-1 items-center gap-1 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+				class="inline-flex flex-1 items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm ring-offset-1 transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
 			>
-				<span>⬇️</span> Hämta PDF
+				<span class="transition-transform group-hover:-translate-y-0.5">⬇️</span> Hämta PDF
 			</button>
 
 			<button
 				name="output"
 				value="latex"
-				class="inline-flex flex-1 items-center gap-1 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
-				bind:this={latexButton}
 				disabled={isCompiling.get()}
+				class="inline-flex flex-1 items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm ring-offset-1 transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
+				bind:this={latexButton}
 			>
-				<span>⬇️</span> Hämta TeX
+				<span class="transition-transform group-hover:-translate-y-0.5">⬇️</span> Hämta TeX
 			</button>
 
 			<button
 				type="button"
-				class="inline-flex flex-1 items-center gap-1 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
 				onclick={saveDraft}
+				disabled={isCompiling.get()}
+				class="group inline-flex flex-1 items-center gap-1.5 rounded-lg bg-blue-500 px-3 py-1.5 font-medium text-white shadow-sm ring-offset-1 transition-all hover:bg-blue-600 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
 			>
-				<span>💾</span> Spara utkast
+				<span class="transition-transform group-hover:-translate-y-0.5">💾</span>
+				<span>Spara utkast</span>
 			</button>
 		</div>
 	</div>
