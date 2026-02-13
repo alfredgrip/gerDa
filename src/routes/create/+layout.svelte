@@ -1,56 +1,65 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import NavigationGuard from '$lib/components/NavigationGuard.svelte';
 	import PDFViewer from '$lib/components/PDFViewer.svelte';
 	import Toolbar from '$lib/components/Toolbar.svelte';
-	import { compilePdf } from '$lib/formActions.remote';
-	import { getAuthorContext } from '$lib/state/authorState.svelte';
-	import { getClauseContext } from '$lib/state/clauseState.svelte';
-	import { getFormContext } from '$lib/state/formState.svelte';
-	import { getLocalStorageDrafts } from '$lib/state/localDraftsState.svelte';
-	import { getProposalContext } from '$lib/state/proposalState.svelte';
+	import { gerdaForm } from '$lib/form.remote';
+	import { isDocumentClass, type RequestSchema } from '$lib/schemas';
+	import { iFrameUrl, isCompiling, output } from '$lib/state/appState.svelte';
+	import { formState, resetFormState } from '$lib/state/formState.svelte';
+	import { draftStore } from '$lib/state/localDraftsState.svelte';
+	import { error } from '@sveltejs/kit';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
-	let formState = getFormContext();
-	let authorState = getAuthorContext();
-	let clauseState = getClauseContext();
-	let proposalState = getProposalContext();
-	// let localDrafts = getLocalStorageDrafts();
+
+	let outputFormat = $derived(output.get());
 
 	let formElement: HTMLFormElement;
 
 	const compileEnhance = async (submit: () => Promise<void>) => {
-		formState.isCompiling = true;
+		isCompiling.set(true);
 		await submit()
 			.then(() => {
-				formState.iFrameUrl = compilePdf.result?.filePath || '/GUIDE.pdf';
+				iFrameUrl.set(gerdaForm.result?.filePath || '/GUIDE.pdf');
 			})
 			.catch((error) => {
 				console.error('Error during PDF compilation:', error);
-				formState.iFrameUrl = '/error';
+				iFrameUrl.set('/error');
 			})
 			.finally(() => {
-				formState.isCompiling = false;
+				isCompiling.set(false);
 			});
 	};
 
 	onMount(() => {
-		const localDrafts = getLocalStorageDrafts();
-		console.log(localDrafts);
-		if (!localDrafts.currentDraftId) return null;
+		iFrameUrl.set('/GUIDE.pdf');
 
-		const currentDraft = localDrafts.getDraft(localDrafts.currentDraftId);
-		if (!currentDraft) return null;
+		const currentDraftId = draftStore.currentDraftId;
+		if (currentDraftId) {
+			const draft = draftStore.getDraft(currentDraftId);
+			if (draft) {
+				Object.assign(formState, draft);
+			}
+		} else {
+			resetFormState();
+		}
+		return () => {
+			// reset draftId when leaving page
+			draftStore.currentDraftId = null;
+		};
+	});
 
-		if (currentDraft) {
-			formState.title = currentDraft.title || '';
-			formState.meeting = currentDraft.meeting || '';
-			formState.body = currentDraft.body || '';
-			formState.demand = currentDraft.demand || '';
-			authorState.authors = currentDraft.authors || [{ name: '', position: '', signMessage: '' }];
-			clauseState.clauses = currentDraft.clauses || [{ toClause: '' }];
-			proposalState.proposals = currentDraft.proposals || [{ position: '', who: [''] }];
+	$effect(() => {
+		const documentClassInUrl = decodeURI(page.url.pathname.split('/')[2]);
+		if (documentClassInUrl && isDocumentClass(documentClassInUrl)) {
+			formState.documentClass = documentClassInUrl;
+		} else {
+			error(404, 'Dokumentklassen finns inte');
 		}
 	});
+
+	$inspect(formState);
 </script>
 
 <svelte:window
@@ -61,9 +70,12 @@
 		}
 	}}
 />
+
+<NavigationGuard />
+
 <main class="flex min-h-screen flex-col">
 	<form
-		{...compilePdf.enhance(async ({ submit }) => {
+		{...gerdaForm.for('root').enhance(async ({ submit }) => {
 			compileEnhance(submit);
 		})}
 		enctype="multipart/form-data"
@@ -71,12 +83,18 @@
 		class="flex flex-1 flex-col"
 	>
 		<Toolbar enhanceFunction={compileEnhance} />
-		<input type="hidden" name="documentClass" bind:value={formState.documentClass} />
-		<div class="flex flex-1 flex-row">
-			<div class="w-full space-y-4 px-6 py-3">
+
+		<input type="hidden" name="documentClass" value={formState.documentClass} />
+		<input type="hidden" name="output" bind:value={outputFormat} />
+
+		<div class="flex min-h-0 flex-1 flex-col gap-y-8 py-3 lg:flex-row">
+			<div class="flex w-full flex-col gap-y-4 px-6 lg:overflow-y-auto">
 				{@render children()}
 			</div>
-			<PDFViewer />
+
+			<div class="w-full lg:sticky lg:top-20 lg:h-[calc(100vh-120px)]">
+				<PDFViewer />
+			</div>
 		</div>
 	</form>
 </main>

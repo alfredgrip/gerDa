@@ -1,38 +1,48 @@
 <script lang="ts">
+	import AddButton from '$lib/components/AddButton.svelte';
+	import DeleteButton from '$lib/components/DeleteButton.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
-	import { getClauseContext } from '$lib/state/clauseState.svelte';
+	import { formState } from '$lib/state/formState.svelte';
 
-	let clauseState = getClauseContext();
+	interface Props {
+		clausePlaceHolder?: string;
+		descriptionPlaceHolder?: string;
+	}
+
+	let {
+		clausePlaceHolder = 'sjunga mer...',
+		descriptionPlaceHolder = 'sång är bra för...'
+	}: Props = $props();
+
+	function removeClause(idx: number) {
+		formState.clauses = formState.clauses.filter((_, i) => idx != i);
+	}
+	function addClause() {
+		formState.clauses.push({ toClause: '', description: '' });
+	}
 </script>
 
 <div class="space-y-4">
-	<h2 class="text-lg font-semibold text-gray-800">Att-satser</h2>
+	<h2 class="text-lg font-semibold">Att-satser</h2>
 
-	{#each clauseState.clauses as c, i (i)}
-		<div class="relative space-y-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+	{#each formState.clauses as c, i (i)}
+		<div class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
 			{#if i !== 0}
-				<button
-					type="button"
-					onclick={() => clauseState.removeClause(i)}
-					class="absolute top-2 right-3 text-gray-400 hover:text-red-600"
-					aria-label="Ta bort att-sats"
-				>
-					✕
-				</button>
+				<DeleteButton onclick={() => removeClause(i)} aria-label="Ta bort att-sats" />
 			{/if}
 
 			<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
 				<ResizingTextInput
-					name={`clause_${i}_toClause`}
+					name={`clauses[${i}].toClause`}
 					bind:value={c.toClause}
-					placeholder="sjunga mer..."
+					placeholder={clausePlaceHolder}
 					label="Att-sats"
 					class="w-full"
 				/>
 				<ResizingTextInput
-					name={`clause_${i}_description`}
+					name={`clauses[${i}].description`}
 					bind:value={c.description}
-					placeholder="sång är bra för..."
+					placeholder={descriptionPlaceHolder}
 					label="Beskrivning (frivillig)"
 					class="w-full"
 				/>
@@ -41,12 +51,10 @@
 	{/each}
 
 	<div class="flex justify-end">
-		<button
-			type="button"
-			onclick={() => clauseState.addClause()}
-			class="inline-flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-700"
-		>
-			➕ Lägg till att-sats
-		</button>
+		<AddButton
+			onclick={addClause}
+			buttonText="➕ Lägg till att-sats"
+			aria-label="Lägg till att-sats"
+		/>
 	</div>
 </div>

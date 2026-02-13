@@ -1,13 +1,17 @@
 <script lang="ts">
-	import { getFormContext } from '$lib/state/formState.svelte';
-	let formState = getFormContext();
+	import { iFrameUrl, isCompiling } from '$lib/state/appState.svelte';
 </script>
 
-<div class="flex min-h-max w-full flex-col px-6 py-6">
-	{#if formState.isCompiling}
-		<div class="loader self-center"></div>
+<div class="flex h-150 w-full flex-col px-6 lg:h-full">
+	{#if isCompiling.get()}
+		<div class="flex flex-1 items-center justify-center">
+			<div class="loader"></div>
+		</div>
 	{:else}
-		<iframe src={`${formState.iFrameUrl}#pagemode=none`} class="h-full w-full" title="Generated PDF"
+		<iframe
+			src={`${iFrameUrl.get()}#pagemode=none`}
+			class="w-full flex-1 rounded-lg shadow-inner"
+			title="Generated PDF"
 		></iframe>
 	{/if}
 </div>

@@ -2,10 +2,7 @@
 	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
 	import ClauseBlock from '$lib/components/ClauseBlock.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
-	import { getFormContext } from '$lib/state/formState.svelte';
-
-	let formState = getFormContext();
-	formState.documentClass = 'proposition';
+	import { formState } from '$lib/state/formState.svelte';
 </script>
 
 <ResizingTextInput

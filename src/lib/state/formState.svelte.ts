@@ -1,43 +1,73 @@
-import type { DocumentClass } from '$lib/schemas';
-import { getContext, setContext } from 'svelte';
+import type {
+	DocumentClass,
+	AuthorSchema,
+	ClauseSchema,
+	AgendaItemSchema,
+	ProposalSchema
+} from '$lib/schemas';
 import { SvelteDate } from 'svelte/reactivity';
 
-class FormState {
-	isCompiling: boolean = $state(false);
-	iFrameUrl: string = $state('/GUIDE.pdf');
-
-	documentClass: DocumentClass = $state('motion');
-	title: string = $state('');
-	shortTitle: string = $state('');
-	year: string = $state('');
-	meeting: string = $state('');
-	meetingType: string = $state('styrelsemöte');
-	meetingPlace: string = $state('');
-	meetingDate: SvelteDate = $state(new SvelteDate());
-	adjournmentDate: SvelteDate | null = $state(null);
-	adjournmentPlace: string | null = $state(null);
-	body: string = $state('');
-	demand: string = $state('');
-	requirements: string = $state('');
-	merits: string = $state('');
-	proposalWhos: string = $state('');
-
-	getFields() {
-		return {
-			documentClass: this.documentClass,
-			title: this.title,
-			meeting: this.meeting,
-			body: this.body,
-			demand: this.demand
-		};
-	}
+export interface FormState {
+	documentClass: DocumentClass;
+	title: string;
+	shortTitle: string;
+	year: string;
+	meeting: string;
+	meetingType: string;
+	meetingPlace: string;
+	meetingDate: SvelteDate;
+	adjournmentDate: SvelteDate | false;
+	adjournmentPlace: string | null;
+	body: string;
+	demand: string;
+	requirements: string[];
+	merits: string[];
+	authors: AuthorSchema[];
+	clauses: ClauseSchema[];
+	agenda: AgendaItemSchema[];
+	proposals: ProposalSchema[];
+	groupMotivation: string;
 }
 
-const FORM_CONTEXT_KEY = Symbol('formContext');
-export const getFormContext = () => {
-	return getContext<FormState>(FORM_CONTEXT_KEY);
-};
-export const setFormContext = () => {
-	const formState = new FormState();
-	return setContext<FormState>(FORM_CONTEXT_KEY, formState);
+export const formState = $state<FormState>({
+	documentClass: 'motion',
+	title: '',
+	shortTitle: '',
+	year: '',
+	meeting: '',
+	meetingType: 'styrelsemöte',
+	meetingPlace: '',
+	meetingDate: new SvelteDate(),
+	adjournmentDate: false,
+	adjournmentPlace: null,
+	body: '',
+	demand: '',
+	requirements: [],
+	merits: [],
+	authors: [{ name: '', position: '', signMessage: '', signImage: false }],
+	clauses: [{ toClause: '', description: '' }],
+	agenda: [],
+	proposals: [{ position: '', who: [], statistics: '' }],
+	groupMotivation: ''
+});
+
+export const resetFormState = () => {
+	formState.documentClass = 'motion';
+	formState.title = '';
+	formState.shortTitle = '';
+	formState.year = '';
+	formState.meeting = '';
+	formState.meetingType = 'styrelsemöte';
+	formState.meetingPlace = '';
+	formState.meetingDate = new SvelteDate();
+	formState.adjournmentDate = false;
+	formState.adjournmentPlace = null;
+	formState.body = '';
+	formState.demand = '';
+	formState.requirements = [];
+	formState.merits = [];
+	formState.authors = [{ name: '', position: '', signMessage: '', signImage: false }];
+	formState.clauses = [{ toClause: '', description: '' }];
+	formState.agenda = [];
+	formState.proposals = [];
 };

@@ -1,8 +1,8 @@
+import { generateLaTeX } from '$lib/latexTemplates';
 import type { AnySchema } from '$lib/schemas';
-import { generateLaTeX } from '$lib/templates';
 import { generateFileName } from '$lib/utils';
 import { execaCommand } from 'execa';
-import { unlink, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
+import { mkdir, readdir, stat, unlink, writeFile } from 'node:fs/promises';
 import path from 'path';
 
 const TEX_DIR = 'output/tex';
@@ -71,13 +71,17 @@ async function deleteOldestFile(dir: string, keep: number = 10) {
 }
 
 export async function markdownToLatex(markdown: string): Promise<string> {
-	const { stdout } = await execaCommand(`pandoc -f markdown -t latex`, {
+	if (!markdown || markdown.trim().length === 0) {
+		return '';
+	}
+	const { stdout } = await execaCommand('pandoc -f markdown -t latex', {
 		input: markdown
 	});
 	return stdout;
 }
 
 export async function handleCompileRequest(formData: AnySchema): Promise<string> {
+	console.log('Handling compile request with formData:', formData);
 	await handleMarkdown(formData);
 	console.log('Finalizing form data:', formData);
 	const fileName = generateFileName(formData);
@@ -97,12 +101,12 @@ async function handleMarkdown(formData: AnySchema): Promise<void> {
 	}
 }
 
-async function writeImageFiles(formdata: AnySchema) {
-	if (!('authors' in formdata) || !Array.isArray(formdata.authors)) {
+async function writeImageFiles(formData: AnySchema) {
+	if (!('authors' in formData) || !Array.isArray(formData.authors)) {
 		return [];
 	}
 	const fileNames: string[] = [];
-	for (const author of formdata.authors) {
+	for (const author of formData.authors) {
 		if (author.signImage) {
 			const fileName = `output/img/${author.signImage.name}`;
 			await writeFile(fileName, Buffer.from(await author.signImage.arrayBuffer()));

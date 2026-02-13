@@ -1,31 +1,30 @@
 <script lang="ts">
+	import AddButton from '$lib/components/AddButton.svelte';
+	import DeleteButton from '$lib/components/DeleteButton.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
 	import SignImageUpload from '$lib/components/SignImageUpload.svelte';
-	import { getAuthorContext } from '$lib/state/authorState.svelte';
+	import { formState } from '$lib/state/formState.svelte';
 
-	let authorContext = getAuthorContext();
+	function removeAuthor(idx: number) {
+		formState.authors = formState.authors.filter((_, i) => idx != i);
+	}
+	function addAuthor() {
+		formState.authors.push({ name: '', position: '', signMessage: '', signImage: false });
+	}
 </script>
 
 <div class="space-y-4">
-	<h2 class="text-lg font-semibold text-gray-800">Författare</h2>
+	<h2 class="text-lg font-semibold">Författare</h2>
 
-	{#each authorContext.authors as a, i (i)}
-		<div class="relative space-y-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+	{#each formState.authors as a, i (i)}
+		<div class="relative space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
 			{#if i !== 0}
-				<button
-					type="button"
-					onclick={() => authorContext.removeAuthor(i)}
-					class="absolute top-2 right-3 text-gray-400 hover:text-red-600"
-					aria-label="Ta bort författare"
-				>
-					✕
-				</button>
+				<DeleteButton onclick={() => removeAuthor(i)} aria-label="Ta bort författare" />
 			{/if}
 
-			<!-- Row 1: Sign message + Sign image -->
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 				<ResizingTextInput
-					name={`author_${i}_signMessage`}
+					name={`authors[${i}].signMessage`}
 					bind:value={a.signMessage}
 					placeholder="Lund, dag som ovan"
 					label="Signaturmeddelande"
@@ -34,24 +33,21 @@
 				/>
 
 				<div class="flex flex-col gap-1">
-					<label class="mb-0 text-sm font-medium text-gray-700" for={`sign-image-upload-${i}`}
-						>Signaturbild</label
-					>
-					<SignImageUpload id={i} />
+					<label class="mb-0 text-sm font-medium" for={`sign-image-upload-${i}`}>Signatur</label>
+					<SignImageUpload authorIdx={i} />
 				</div>
 			</div>
 
-			<!-- Row 2: Name + Position -->
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 				<ResizingTextInput
-					name={`author_${i}_name`}
+					name={`authors[${i}].name`}
 					bind:value={a.name}
 					placeholder="Råsa Pantern"
 					label="Namn"
 					class="w-full"
 				/>
 				<ResizingTextInput
-					name={`author_${i}_position`}
+					name={`authors[${i}].position`}
 					bind:value={a.position}
 					placeholder="Ordförande"
 					label="Post"
@@ -62,14 +58,11 @@
 		</div>
 	{/each}
 
-	<!-- Add new author button -->
 	<div class="flex justify-end">
-		<button
-			type="button"
-			onclick={() => authorContext.addAuthor()}
-			class="inline-flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-700"
-		>
-			➕ Lägg till författare
-		</button>
+		<AddButton
+			onclick={addAuthor}
+			buttonText="➕ Lägg till författare"
+			aria-label="Lägg till författare"
+		/>
 	</div>
 </div>

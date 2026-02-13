@@ -1,11 +1,9 @@
 <script lang="ts">
 	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
+	import ClauseBlock from '$lib/components/ClauseBlock.svelte';
 	import ProposalBlock from '$lib/components/ProposalBlock.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
-	import { getFormContext } from '$lib/state/formState.svelte';
-
-	let formState = getFormContext();
-	formState.documentClass = 'valförslag';
+	import { formState } from '$lib/state/formState.svelte';
 </script>
 
 <ResizingTextInput
@@ -30,5 +28,22 @@
 />
 
 <ProposalBlock />
+
+<ResizingTextInput
+	name="groupMotivation"
+	label="Gruppmotivering"
+	explanation="Om valet har tagit gruppsammansättning i beaktning ska en gruppmotivering finnas"
+	bind:value={formState.groupMotivation}
+/>
+
+<ResizingTextInput
+	name="demand"
+	label="Krav"
+	placeholder="Undertecknad yrkar att mötet må besluta"
+	explanation="Kanske vill du yrka på att välja in de föreslagna?"
+	bind:value={formState.demand}
+/>
+
+<ClauseBlock clausePlaceHolder="välja in ovanstående till ..." descriptionPlaceHolder="" />
 
 <AuthorBlock />

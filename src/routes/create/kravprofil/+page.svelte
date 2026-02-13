@@ -1,14 +1,14 @@
 <script lang="ts">
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
-	import { getFormContext } from '$lib/state/formState.svelte';
+	import { formState } from '$lib/state/formState.svelte';
 
-	let formState = getFormContext();
 	const year = new Date().getFullYear();
-	formState.documentClass = 'kravprofil';
 
+	let rawRequirements = $state('');
+	let rawMerits = $state('');
 	let parsedRequirements = $derived.by(() =>
 		JSON.stringify(
-			formState.requirements
+			rawRequirements
 				.split('\n')
 				.map((req) => req.trim())
 				.filter(Boolean)
@@ -16,7 +16,7 @@
 	);
 	let parsedMerits = $derived.by(() =>
 		JSON.stringify(
-			formState.merits
+			rawMerits
 				.split('\n')
 				.map((merit) => merit.trim())
 				.filter(Boolean)
@@ -49,19 +49,19 @@
 />
 
 <ResizingTextInput
-	name="requirements"
+	name="requirementsRaw"
 	label="Krav"
 	explanation="Olika krav separeras med radbrytning"
 	placeholder="Ledarskapsförmåga..."
-	bind:value={formState.requirements}
+	bind:value={rawRequirements}
 />
-<input type="hidden" bind:value={parsedRequirements} name="requirements-JSON" />
+<input type="hidden" bind:value={parsedRequirements} name="requirements" />
 
 <ResizingTextInput
-	name="merits"
+	name="meritsRaw"
 	label="Meriterande"
 	explanation="Olika meriter separeras med radbrytning"
 	placeholder="Tidigare erfarenhet av..."
-	bind:value={formState.merits}
+	bind:value={rawMerits}
 />
-<input type="hidden" bind:value={parsedMerits} name="merits-JSON" />
+<input type="hidden" bind:value={parsedMerits} name="merits" />

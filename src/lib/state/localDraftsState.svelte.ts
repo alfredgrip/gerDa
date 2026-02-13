@@ -1,8 +1,9 @@
 // https://www.reddit.com/r/sveltejs/comments/1d43d8p/svelte_5_runes_with_localstorage_thanks_to_joy_of/
 import { browser } from '$app/environment';
-import type { AllFieldsSchema, DocumentClass } from '$lib/schemas';
+import type { DocumentClass } from '$lib/schemas';
+import type { FormState } from './formState.svelte';
 
-export interface Draft extends Partial<AllFieldsSchema> {
+export interface Draft extends Partial<FormState> {
 	id: string;
 	lastEdit: number; // Timestamp of the last edit
 	documentClass: DocumentClass;
@@ -39,8 +40,8 @@ export class LocalDraftsStore {
 		return JSON.parse(item);
 	}
 
-	addDraft(draft: Draft) {
-		this.drafts.push(draft);
+	addDraft(draft: Omit<Draft, 'id' | 'lastEdit'>) {
+		this.drafts.push({ ...draft, id: crypto.randomUUID(), lastEdit: Date.now() });
 	}
 
 	removeDraft(id: string) {
@@ -52,7 +53,7 @@ export class LocalDraftsStore {
 		return this.drafts.find((draft) => draft.id === id);
 	}
 
-	updateDraft(id: string, updatedFields: Partial<Draft>) {
+	updateDraft(id: string, updatedFields: Omit<Partial<Draft>, 'id' | 'lastEdit'>) {
 		const draftIndex = this.drafts.findIndex((draft) => draft.id === id);
 		if (draftIndex !== -1) {
 			this.drafts[draftIndex] = {
@@ -66,6 +67,4 @@ export class LocalDraftsStore {
 	}
 }
 
-export function getLocalStorageDrafts() {
-	return new LocalDraftsStore();
-}
+export const draftStore = new LocalDraftsStore();

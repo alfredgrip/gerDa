@@ -1,65 +1,81 @@
 <script lang="ts">
+	import AddButton from '$lib/components/AddButton.svelte';
+	import DeleteButton from '$lib/components/DeleteButton.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
-	import { getFormContext } from '$lib/state/formState.svelte';
-	import { getProposalContext } from '$lib/state/proposalState.svelte';
+	import { formState } from '$lib/state/formState.svelte';
+	import ArrayTextInput from './ArrayTextInput.svelte';
 
-	let proposalState = getProposalContext();
-	let formState = getFormContext();
+	let includeStatistics = $state(false);
 
-	let rawProposalWhos = $state('');
-	let parsedProposalWhos = $derived.by(() =>
-		JSON.stringify(
-			formState.proposals
-				.split('\n')
-				.map((prop) => prop.trim())
-				.filter(Boolean)
-		)
-	);
+	$effect(() => {
+		if (formState.proposals.length === 0) {
+			formState.proposals.push({ position: '', who: [], statistics: '' });
+		}
+	});
 </script>
 
 <div class="space-y-4">
-	<h2 class="text-lg font-semibold text-gray-800">Förslag</h2>
+	<h2 class="text-lg font-semibold">Förslag</h2>
 
-	{#each proposalState.proposals as p, i (i)}
-		<div class="relative space-y-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+	<div>
+		<input
+			type="checkbox"
+			id="includeStatistics"
+			name="includeStatistics"
+			class="accent-dsek text-sm font-medium"
+			bind:checked={includeStatistics}
+		/>
+		<label for="includeStatistics" class="text-sm font-medium">Inkludera statistik</label>
+	</div>
+
+	{#each formState.proposals as p, i (i)}
+		<div class="relative space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
 			{#if i !== 0}
-				<button
-					type="button"
-					onclick={() => proposalState.removeProposal(i)}
-					class="absolute top-2 right-3 text-gray-400 hover:text-red-600"
+				<DeleteButton
+					onclick={() => formState.proposals.splice(i, 1)}
 					aria-label="Ta bort förslag"
-				>
-					✕
-				</button>
+				/>
 			{/if}
 
-			<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+			<div class="grid grid-rows-1 gap-3">
 				<ResizingTextInput
-					name={`proposal_${i}_position`}
+					name={`proposals[${i}].position`}
 					bind:value={p.position}
-					placeholder="sjunga mer..."
 					label="Post"
 					class="w-full"
 				/>
-				<ResizingTextInput
-					name={`proposal_${i}_who`}
-					bind:value={rawProposalWhos}
-					placeholder="sång är bra för..."
-					label="Beskrivning (frivillig)"
+				<ArrayTextInput
+					name={`proposals[${i}].who`}
+					bind:value={p.who}
+					placeholder={`
+					Råsa Pantern
+Cookie Monster`.trim()}
+					label="Vem/Vilka"
 					class="w-full"
+					separator="\n"
+					explanation="Separera med ny rad"
 				/>
-				<input type="hidden" name={`proposal_${i}_who`} bind:value={p.who} />
+				{#if includeStatistics}
+					<ResizingTextInput
+						name={`proposals[${i}].statistics`}
+						bind:value={p.statistics}
+						label="Statistik (frivillig)"
+						placeholder="5-10"
+						class="w-full"
+						explanation="Intervallet måste vara av storlek 5 där det första är 0-5. Giltiga intervall är alltså 0-5, 5-10, 10-15 osv. Detta definieras i 'Policy för val'"
+					/>
+				{:else}
+					<input type="hidden" name={`proposals[${i}].statistics`} value="" />
+				{/if}
 			</div>
 		</div>
 	{/each}
 
 	<div class="flex justify-end">
-		<button
-			type="button"
-			onclick={() => proposalState.addProposal()}
-			class="inline-flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-700"
-		>
-			➕ Lägg till förslag
-		</button>
+		<AddButton
+			onclick={() => formState.proposals.push({ position: '', who: [], statistics: '' })}
+			buttonText="➕ Lägg till förslag"
+			aria-label="Lägg till förslag"
+		/>
 	</div>
 </div>

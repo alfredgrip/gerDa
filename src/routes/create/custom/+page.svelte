@@ -1,10 +1,7 @@
 <script lang="ts">
 	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
-	import { getFormContext } from '$lib/state/formState.svelte';
-
-	let formState = getFormContext();
-	formState.documentClass = 'custom';
+	import { formState } from '$lib/state/formState.svelte';
 </script>
 
 <ResizingTextInput

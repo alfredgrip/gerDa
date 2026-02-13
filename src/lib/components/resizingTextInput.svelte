@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { AllFieldsSchema } from '$lib/schemas';
+	import { dirty } from '$lib/state/appState.svelte';
 	import { onMount } from 'svelte';
 
 	interface Props {
 		name: keyof AllFieldsSchema | (string & {}); // https://medium.com/@florian.schindler_47749/typescript-hacks-1-string-suggestions-58806363afeb
 		label?: string;
-		value: string | null | undefined;
+		value: string | number | null | undefined;
 		placeholder?: string;
 		numRows?: number;
 		explanation?: string;
@@ -43,7 +44,7 @@
 </script>
 
 <section class={`flex flex-col ${clazz}`}>
-	<label for={name} class="flex flex-col gap-1 text-sm font-medium text-gray-700">
+	<label for={name} class="flex flex-col gap-1 text-sm font-medium">
 		{#if label}
 			<span>{label}</span>
 		{/if}
@@ -54,15 +55,18 @@
 			rows={numRows}
 			bind:value
 			bind:this={textareaElement}
-			class="w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+			class="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
 			style="height: auto;"
-			oninput={resizeTextarea}
+			oninput={() => {
+				resizeTextarea();
+				dirty.set(true);
+			}}
 			{...rest}
 			aria-invalid={errors ? 'true' : undefined}
 		></textarea>
 
 		{#if explanation}
-			<small class="text-xs text-gray-500">{explanation}</small>
+			<small class="text-xs text-gray-600">{explanation}</small>
 		{/if}
 	</label>
 

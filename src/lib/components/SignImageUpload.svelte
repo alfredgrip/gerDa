@@ -1,37 +1,55 @@
 <script lang="ts">
-	import { getAuthorContext } from '$lib/state/authorState.svelte';
+	import { formState } from '$lib/state/formState.svelte';
 
 	interface Props {
-		id: number;
+		authorIdx: number;
 	}
-	let { id }: Props = $props();
 
+	let { authorIdx }: Props = $props();
 	let fileInput: HTMLInputElement;
-	let authorState = getAuthorContext();
 
-	let file: File | null = $derived(authorState.authors.at(id)?.signImage || null);
+	let authors = $derived(formState.authors);
+
+	let file = $derived(
+		authors[authorIdx]?.signImage instanceof File ? authors[authorIdx].signImage : null
+	);
 
 	function handleFileChange(e: Event) {
 		const target = e.target as HTMLInputElement;
-		file = target.files?.[0] || null;
-		if (file) {
-			authorState.authors[id].signImage = file;
+		const newFile = target.files?.[0];
+
+		if (newFile) {
+			authors[authorIdx].signImage = newFile;
 		}
 	}
 
 	function clearFile() {
 		if (fileInput) fileInput.value = '';
-		file = null;
-		authorState.authors[id].signImage = null;
+		authors[authorIdx].signImage = false;
 	}
+
+	let blobUrl = $state('');
+
+	$effect(() => {
+		if (file) {
+			const url = URL.createObjectURL(file);
+			blobUrl = url;
+			return () => {
+				clearFile();
+				URL.revokeObjectURL(url);
+			};
+		} else {
+			blobUrl = '';
+		}
+	});
 </script>
 
 <div class="flex flex-col gap-1">
 	{#if !file}
 		<div>
 			<label
-				for={`author_${id}_signImage`}
-				class="inline-flex cursor-pointer items-center gap-2 rounded-md bg-blue-500 px-3 py-1.5 text-sm font-medium text-white shadow hover:bg-blue-700"
+				for={`authors[${authorIdx}].signImage`}
+				class="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-1.5 text-sm font-medium text-white shadow hover:bg-blue-700"
 			>
 				📁 Ladda upp bild
 			</label>
@@ -40,26 +58,21 @@
 
 	<input
 		type="file"
-		id={`author_${id}_signImage`}
-		name={`author_${id}_signImage`}
+		id={`authors[${authorIdx}].signImage`}
+		name={`authors[${authorIdx}].signImage`}
 		accept=".jpg,.jpeg,.png"
 		bind:this={fileInput}
 		onchange={handleFileChange}
 		class="hidden"
 	/>
 
-	<!-- Preview -->
 	{#if file}
 		<div class="mt-2 flex items-center gap-3">
 			{#if file.type.startsWith('image/')}
-				<img
-					src={URL.createObjectURL(file)}
-					alt="Preview"
-					class="h-16 w-16 rounded-md object-cover"
-				/>
+				<img src={blobUrl} alt="Preview" class="h-16 w-16 rounded-lg object-cover" />
 			{/if}
 			<div class="flex flex-col">
-				<p class="max-w-[12rem] truncate text-sm font-medium text-gray-800">{file.name}</p>
+				<p class="800 max-w-48 truncate text-sm font-medium">{file.name}</p>
 				<button
 					type="button"
 					onclick={clearFile}

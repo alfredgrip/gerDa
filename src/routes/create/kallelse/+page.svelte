@@ -1,22 +1,35 @@
 <script lang="ts">
+	import AddButton from '$lib/components/AddButton.svelte';
+	import ArrayTextInput from '$lib/components/ArrayTextInput.svelte';
 	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
+	import DeleteButton from '$lib/components/DeleteButton.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
-	import { getAgendaContext } from '$lib/state/agendaState.svelte';
-	import { getFormContext } from '$lib/state/formState.svelte';
-	import { SvelteDate } from 'svelte/reactivity';
-
-	let formState = getFormContext();
-	formState.documentClass = 'kallelse';
+	import { formState } from '$lib/state/formState.svelte';
+	import { untrack } from 'svelte';
 
 	let adjourn = $state(false);
 	let includeAgenda = $state(false);
 
-	let agendaState = getAgendaContext();
-	// let agendaItems = $state(agendaState.items);
+	function addAgendaItem() {
+		formState.agenda.push({ title: '', type: '', attachments: [] });
+	}
+	function removeAgendaItem(idx: number) {
+		formState.agenda = formState.agenda.filter((_, i) => idx != i);
+	}
+	$effect(() => {
+		if (includeAgenda && formState.agenda.length === 0) {
+			addAgendaItem();
+		}
+	});
 
-	// TODO
-	let today: SvelteDate = new SvelteDate(SvelteDate.now());
+	let agendaAttachmentsRaw = $derived.by(() =>
+		formState.agenda.map((agendaItem) => agendaItem.attachments.join(';'))
+	);
+
+	$inspect(formState);
 </script>
+
+<input type="hidden" name="title" value={`Kallelse till ${formState.meetingType || 'möte'}`} />
 
 <ResizingTextInput
 	name="meeting"
@@ -36,20 +49,24 @@
 				bind:group={formState.meetingType}
 				class="accent-pink-400"
 			/>
-			<label for={option.id} class="text-sm font-medium text-gray-700">{option.label}</label>
+			<label for={option.id} class="text-sm font-medium">{option.label}</label>
 		</div>
 	{/each}
 </div>
 
-<div class="flex flex-row gap-2">
-	<label for="meetingDate" class="text-sm font-medium text-gray-700">Datum && Tid</label>
-	<input
-		type="datetime-local"
-		id="meetingDate"
-		name="meetingDate"
-		bind:value={formState.meetingDate}
-		class="text-sm font-medium text-gray-700"
-	/>
+<div>
+	<label for="meetingDate" class="text-sm font-medium">Datum && Tid</label>
+	<div
+		class="flex w-fit flex-row gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm"
+	>
+		<input
+			type="datetime-local"
+			id="meetingDate"
+			name="meetingDate"
+			bind:value={formState.meetingDate}
+			class="text-sm font-medium"
+		/>
+	</div>
 </div>
 <ResizingTextInput
 	name="meetingPlace"
@@ -63,21 +80,25 @@
 		type="checkbox"
 		id="adjourn"
 		name="adjourn"
-		class="text-sm font-medium text-gray-700"
+		class="accent-dsek text-sm font-medium"
 		bind:checked={adjourn}
 	/>
-	<label for="adjourn" class="text-sm font-medium text-gray-700">Ajournering?</label>
+	<label for="adjourn" class="text-sm font-medium">Ajournering?</label>
 	{#if adjourn}
-		<div class="flex justify-start gap-2">
+		<div class="flex w-fit justify-start gap-2">
 			<div class="flex flex-col">
-				<label for="adjournmentDate" class="text-sm font-medium text-gray-700">Datum && Tid</label>
-				<input
-					type="datetime-local"
-					id="adjournmentDate"
-					name="adjournmentDate"
-					bind:value={formState.adjournmentDate}
-					class="w-48 rounded-lg border border-gray-300 p-2"
-				/>
+				<label for="adjournmentDate" class="text-sm font-medium">Datum && Tid</label>
+				<div
+					class="flex w-fit flex-row gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm"
+				>
+					<input
+						type="datetime-local"
+						id="adjournmentDate"
+						name="adjournmentDate"
+						bind:value={formState.adjournmentDate}
+						class="text-sm font-medium"
+					/>
+				</div>
 			</div>
 			<ResizingTextInput
 				name="adjournmentPlace"
@@ -99,61 +120,50 @@
 
 <div>
 	<input type="checkbox" id="includeAgenda" name="includeAgenda" bind:checked={includeAgenda} />
-	<label for="includeAgenda" class="text-sm font-medium text-gray-700"
-		>Inkludera föredragningslista?</label
-	>
+	<label for="includeAgenda" class="text-sm font-medium">Inkludera föredragningslista?</label>
 	<p class="text-xs font-medium text-gray-500">
-		Föredragningslista ska finnas med vid kallelse av styrelsemöte, men inte sektionsmöte
+		Föredragningslista ska finnas med vid kallelse av styrelsemöte men inte sektionsmöte
 	</p>
 	{#if includeAgenda}
 		<div class="space-y-4">
-			<h2 class="text-lg font-semibold text-gray-800">Föredragningslista</h2>
-			{#each agendaState.items as agendaItem, i (i)}
-				<div class="relative space-y-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-					<!-- Remove button (X) -->
+			<h2 class="text-sm font-medium">Föredragningslista</h2>
+			{#each formState.agenda as agendaItem, i (i)}
+				<div class="relative space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
 					{#if i !== 0}
-						<button
-							type="button"
-							onclick={() => agendaState.removeItem(i)}
-							class="absolute top-2 right-3 text-gray-400 hover:text-red-600"
-							aria-label="Ta bort punkt"
-						>
-							✕
-						</button>
+						<DeleteButton onclick={() => removeAgendaItem(i)} aria-label="Ta bort punkt" />
 					{/if}
 					<div class="grid grid-cols-1 gap-3 md:grid-cols-3">
 						<ResizingTextInput
-							name={`agendaItem_${i}_title`}
+							name={`agenda[${i}].title`}
 							bind:value={agendaItem.title}
 							label="Ärende"
 							placeholder="OFMÖ"
 							class="w-full"
 						/>
 						<ResizingTextInput
-							name={`agendaItem_${i}_type`}
+							name={`agenda[${i}].type`}
 							bind:value={agendaItem.type}
 							label="Åtgärd"
 							placeholder="Beslut, diskussion, information"
 							class="w-full"
 						/>
-						<ResizingTextInput
-							name={`agendaItem_${i}_attachments`}
+						<ArrayTextInput
+							name={`agenda[${i}].attachments`}
 							bind:value={agendaItem.attachments}
 							label="Bilagor (semikolon-separerat)"
-							placeholder="minio.api.dsek.se/..."
-							class="w-full"
+							placeholder="länk1.pdf; länk2.pdf"
+							separator=";"
+							explanation="Separera länkar med semikolon"
 						/>
 					</div>
 				</div>
 			{/each}
 			<div class="flex justify-end">
-				<button
-					type="button"
-					onclick={() => agendaState.addItem()}
-					class="inline-flex items-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-700"
-				>
-					➕ Lägg till punkt
-				</button>
+				<AddButton
+					onclick={addAgendaItem}
+					buttonText="➕ Lägg till punkt"
+					aria-label="Lägg till punkt"
+				/>
 			</div>
 		</div>
 	{/if}
