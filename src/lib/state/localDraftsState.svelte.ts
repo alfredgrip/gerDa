@@ -1,9 +1,8 @@
 // https://www.reddit.com/r/sveltejs/comments/1d43d8p/svelte_5_runes_with_localstorage_thanks_to_joy_of/
 import { browser } from '$app/environment';
-import type { DocumentClass } from '$lib/schemas';
-import type { FormState } from './formState.svelte';
+import type { AllFieldsSchema, DocumentClass } from '$lib/schemas';
 
-export interface Draft extends Partial<FormState> {
+export interface Draft extends Partial<AllFieldsSchema> {
 	id: string;
 	lastEdit: number; // Timestamp of the last edit
 	documentClass: DocumentClass;

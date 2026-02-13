@@ -5,7 +5,7 @@
 	import Toolbar from '$lib/components/Toolbar.svelte';
 	import { gerdaForm } from '$lib/form.remote';
 	import { isDocumentClass, type RequestSchema } from '$lib/schemas';
-	import { iFrameUrl, isCompiling, output } from '$lib/state/appState.svelte';
+	import { pdfViewerUrl, isCompiling } from '$lib/state/appState.svelte';
 	import { formState, resetFormState } from '$lib/state/formState.svelte';
 	import { draftStore } from '$lib/state/localDraftsState.svelte';
 	import { error } from '@sveltejs/kit';
@@ -13,19 +13,26 @@
 
 	let { children } = $props();
 
-	let outputFormat = $derived(output.get());
-
 	let formElement: HTMLFormElement;
 
-	const compileEnhance = async (submit: () => Promise<void>) => {
-		isCompiling.set(true);
+	const compileEnhance = async (submit: () => Promise<void>, data: RequestSchema) => {
+		isCompiling.set(data.output === 'pdf');
 		await submit()
 			.then(() => {
-				iFrameUrl.set(gerdaForm.result?.filePath || '/GUIDE.pdf');
+				if (gerdaForm.result?.filePath) {
+					pdfViewerUrl.set(gerdaForm.result.filePath);
+				} else if (gerdaForm.result?.laTeX) {
+					const a = document.createElement('a');
+					a.href = URL.createObjectURL(new Blob([gerdaForm.result.laTeX], { type: 'text/plain' }));
+					a.download = `${formState.title}-${new Date().toLocaleDateString('sv-SE')}.tex`;
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
+				}
 			})
 			.catch((error) => {
 				console.error('Error during PDF compilation:', error);
-				iFrameUrl.set('/error');
+				pdfViewerUrl.set('/error');
 			})
 			.finally(() => {
 				isCompiling.set(false);
@@ -33,7 +40,7 @@
 	};
 
 	onMount(() => {
-		iFrameUrl.set('/GUIDE.pdf');
+		pdfViewerUrl.set('/GUIDE.pdf');
 
 		const currentDraftId = draftStore.currentDraftId;
 		if (currentDraftId) {
@@ -45,7 +52,6 @@
 			resetFormState();
 		}
 		return () => {
-			// reset draftId when leaving page
 			draftStore.currentDraftId = null;
 		};
 	});
@@ -58,34 +64,22 @@
 			error(404, 'Dokumentklassen finns inte');
 		}
 	});
-
-	$inspect(formState);
 </script>
-
-<svelte:window
-	onkeydown={(e) => {
-		if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-			e.preventDefault();
-			formElement.requestSubmit();
-		}
-	}}
-/>
 
 <NavigationGuard />
 
 <main class="flex min-h-screen flex-col">
 	<form
-		{...gerdaForm.for('root').enhance(async ({ submit }) => {
-			compileEnhance(submit);
+		{...gerdaForm.enhance(async ({ submit, data }) => {
+			compileEnhance(submit, data);
 		})}
 		enctype="multipart/form-data"
 		bind:this={formElement}
 		class="flex flex-1 flex-col"
 	>
-		<Toolbar enhanceFunction={compileEnhance} />
+		<Toolbar enhanceFunction={compileEnhance} {formElement} />
 
 		<input type="hidden" name="documentClass" value={formState.documentClass} />
-		<input type="hidden" name="output" bind:value={outputFormat} />
 
 		<div class="flex min-h-0 flex-1 flex-col gap-y-8 py-3 lg:flex-row">
 			<div class="flex w-full flex-col gap-y-4 px-6 lg:overflow-y-auto">

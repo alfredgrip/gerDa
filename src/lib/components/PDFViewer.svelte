@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { iFrameUrl, isCompiling } from '$lib/state/appState.svelte';
+	import { pdfViewerUrl, isCompiling } from '$lib/state/appState.svelte';
 </script>
 
 <div class="flex h-150 w-full flex-col px-6 lg:h-full">
@@ -9,7 +9,7 @@
 		</div>
 	{:else}
 		<iframe
-			src={`${iFrameUrl.get()}#pagemode=none`}
+			src={`${pdfViewerUrl.get()}#pagemode=none`}
 			class="w-full flex-1 rounded-lg shadow-inner"
 			title="Generated PDF"
 		></iframe>

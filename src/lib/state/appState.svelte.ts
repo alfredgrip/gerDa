@@ -1,5 +1,3 @@
-import type { RequestSchema } from '$lib/schemas';
-
 let isCompilingState = $state(false);
 
 export const isCompiling = {
@@ -11,14 +9,14 @@ export const isCompiling = {
 	}
 };
 
-let iFrameUrlState = $state('/GUIDE.pdf');
+let pdfViewerUrlState = $state('/GUIDE.pdf');
 
-export const iFrameUrl = {
+export const pdfViewerUrl = {
 	get() {
-		return iFrameUrlState;
+		return pdfViewerUrlState;
 	},
 	set(value: string) {
-		iFrameUrlState = value;
+		pdfViewerUrlState = value;
 	}
 };
 
@@ -30,16 +28,5 @@ export const dirty = {
 	},
 	set(value: boolean) {
 		dirtyState = value;
-	}
-};
-
-let outputState: RequestSchema['output'] = $state('pdf');
-
-export const output = {
-	get() {
-		return outputState;
-	},
-	set(value: RequestSchema['output']) {
-		outputState = value;
 	}
 };

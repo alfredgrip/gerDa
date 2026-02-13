@@ -48,7 +48,7 @@
 					name={`proposals[${i}].who`}
 					bind:value={p.who}
 					placeholder={`
-					Råsa Pantern
+					Rosa Pantern
 Cookie Monster`.trim()}
 					label="Vem/Vilka"
 					class="w-full"

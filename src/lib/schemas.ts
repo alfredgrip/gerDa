@@ -189,7 +189,7 @@ export type AllFieldsSchema = {
 	meetingType: string;
 	meetingPlace: string;
 	meetingDate: Date;
-	adjournmentDate: Date | null;
+	adjournmentDate: Date | false;
 	adjournmentPlace: string | null;
 	agenda: AgendaItemSchema[];
 	year: string;
@@ -197,8 +197,8 @@ export type AllFieldsSchema = {
 	demand: string;
 	clauses: ClauseSchema[];
 	authors: AuthorSchema[];
-	position: string;
 	requirements: string[];
 	merits: string[];
 	proposals: ProposalSchema[];
+	groupMotivation: string;
 };

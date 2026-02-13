@@ -1,35 +1,7 @@
-import type {
-	DocumentClass,
-	AuthorSchema,
-	ClauseSchema,
-	AgendaItemSchema,
-	ProposalSchema
-} from '$lib/schemas';
+import type { AllFieldsSchema } from '$lib/schemas';
 import { SvelteDate } from 'svelte/reactivity';
 
-export interface FormState {
-	documentClass: DocumentClass;
-	title: string;
-	shortTitle: string;
-	year: string;
-	meeting: string;
-	meetingType: string;
-	meetingPlace: string;
-	meetingDate: SvelteDate;
-	adjournmentDate: SvelteDate | false;
-	adjournmentPlace: string | null;
-	body: string;
-	demand: string;
-	requirements: string[];
-	merits: string[];
-	authors: AuthorSchema[];
-	clauses: ClauseSchema[];
-	agenda: AgendaItemSchema[];
-	proposals: ProposalSchema[];
-	groupMotivation: string;
-}
-
-export const formState = $state<FormState>({
+export const formState = $state<AllFieldsSchema>({
 	documentClass: 'motion',
 	title: '',
 	shortTitle: '',
@@ -70,4 +42,5 @@ export const resetFormState = () => {
 	formState.clauses = [{ toClause: '', description: '' }];
 	formState.agenda = [];
 	formState.proposals = [];
+	formState.groupMotivation = '';
 };
