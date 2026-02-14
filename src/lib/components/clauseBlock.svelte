@@ -1,73 +1,60 @@
 <script lang="ts">
-	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
-	import RemoveButton from '$lib/components/removeButton.svelte';
-	import AddButton from '$lib/components/addButton.svelte';
-	import type { Clause } from '$lib/drafts/types';
+	import AddButton from '$lib/components/AddButton.svelte';
+	import DeleteButton from '$lib/components/DeleteButton.svelte';
+	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
+	import { formState } from '$lib/state/formState.svelte';
 
-	export let clauses: Clause[] = [];
-
-	if (clauses.length === 0) {
-		clauses = [{ name: '', description: '', uuid: Math.random().toString() }];
+	interface Props {
+		clausePlaceHolder?: string;
+		descriptionPlaceHolder?: string;
 	}
 
+	let {
+		clausePlaceHolder = 'sjunga mer...',
+		descriptionPlaceHolder = 'sång är bra för...'
+	}: Props = $props();
+
+	function removeClause(idx: number) {
+		formState.clauses = formState.clauses.filter((_, i) => idx != i);
+	}
 	function addClause() {
-		clauses = [...clauses, { name: '', description: '', uuid: Math.random().toString() }];
-	}
-	function removeClause(uuid: string) {
-		clauses = clauses.filter((clause) => clause.uuid !== uuid);
+		formState.clauses.push({ toClause: '', description: '' });
 	}
 </script>
 
-<!-- svelte-ignore a11y-label-has-associated-control -->
-<div class="clause-wrapper">
-	<label>
-		Att-satser
-		{#each clauses as clause, i (clause.uuid)}
-			<div class="clause-div">
-				<div class="inner-clause-div">
-					<ResizingTextInput
-						idName={`to-clause-${i.toString()}`}
-						bind:value={clause.name}
-						labelName=""
-						required="true"
-						placeholder="sjunga mer..."
-					/>
-					<ResizingTextInput
-						idName={`to-clause-${i.toString()}-description`}
-						bind:value={clause.description}
-						placeholder="Beskrivning (frivillig)"
-						labelName=""
-					/>
-				</div>
-				{#if i !== 0}
-					<RemoveButton
-						buttonText={`Ta bort att-sats ${(i + 1).toString()}`}
-						uuid={clause.uuid}
-						removeFunction={removeClause}
-					/>
-				{/if}
+<div class="space-y-4">
+	<h2 class="text-lg font-semibold">Att-satser</h2>
+
+	{#each formState.clauses as c, i (i)}
+		<div class="relative rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+			{#if i !== 0}
+				<DeleteButton onclick={() => removeClause(i)} aria-label="Ta bort att-sats" />
+			{/if}
+
+			<div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+				<ResizingTextInput
+					name={`clauses[${i}].toClause`}
+					bind:value={c.toClause}
+					placeholder={clausePlaceHolder}
+					label="Att-sats"
+					class="w-full"
+				/>
+				<ResizingTextInput
+					name={`clauses[${i}].description`}
+					bind:value={c.description}
+					placeholder={descriptionPlaceHolder}
+					label="Beskrivning (frivillig)"
+					class="w-full"
+				/>
 			</div>
-		{/each}
-		<AddButton buttonText="Lägg till att-sats" addFunction={addClause} />
-	</label>
+		</div>
+	{/each}
+
+	<div class="flex justify-end">
+		<AddButton
+			onclick={addClause}
+			buttonText="➕ Lägg till att-sats"
+			aria-label="Lägg till att-sats"
+		/>
+	</div>
 </div>
-
-<style>
-	.clause-wrapper {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	.clause-div {
-		display: flex;
-		flex-direction: column;
-		margin: 0.5rem 0;
-	}
-
-	.inner-clause-div {
-		display: flex;
-		flex-direction: column;
-		/* gap: 1rem; */
-	}
-</style>

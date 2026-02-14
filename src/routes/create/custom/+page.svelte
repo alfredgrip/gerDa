@@ -1,49 +1,36 @@
 <script lang="ts">
-	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
-	import DocumentTypeInput from '$lib/components/documentTypeInput.svelte';
-	import AuthorBlock from '$lib/components/authorBlock.svelte';
-	import SaveDraft from '$lib/components/saveDraft.svelte';
-	import { importDraft } from '$lib/drafts/functions';
-	import type { Draft } from '$lib/drafts/types';
-	import { selectedDraft } from '$lib/drafts/store';
-
-	let currentDraft: Draft = importDraft('custom', $selectedDraft);
+	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
+	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
+	import { formState } from '$lib/state/formState.svelte';
 </script>
 
-<DocumentTypeInput documentType="custom" />
-
 <ResizingTextInput
-	required="true"
-	idName="title"
-	labelName="Titel"
+	name="title"
+	label="Titel"
 	placeholder="Titeln på dokumentet"
-	bind:value={currentDraft.title}
+	bind:value={formState.title}
 />
 
 <ResizingTextInput
-	idName="shortTitle"
-	labelName="Kort titel"
-	required="false"
-	placeholder="Handling, Motion..."
-	bind:value={currentDraft.shortTitle}
+	name="shortTitle"
+	label="Kort titel"
+	placeholder="Ex. Bilaga, Dokument"
+	bind:value={formState.shortTitle}
 />
 
 <ResizingTextInput
-	idName="meeting"
-	labelName="Möte"
-	required="false"
+	name="meeting"
+	label="Möte"
 	placeholder="Ex. HTM-val, S02, VTM1"
-	bind:value={currentDraft.meeting}
+	bind:value={formState.meeting}
 />
 
 <ResizingTextInput
-	idName="body"
-	labelName="Brödtext"
-	numRows="8"
-	placeholder="Jag tycker att det sjungs alldeles för lite på sektionen. Därför vill jag att sektionen ska..."
-	bind:value={currentDraft.body}
+	name="body"
+	label="Brödtext"
+	numRows={8}
+	placeholder="Beskrivning av dokumentet"
+	bind:value={formState.body}
 />
 
-<AuthorBlock bind:authors={currentDraft.authors} signmessage="Lund, dag som ovan" />
-
-<SaveDraft draftType="custom" bind:currentDraft />
+<AuthorBlock />

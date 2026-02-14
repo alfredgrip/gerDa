@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-dsek: #F280A1;
+  --color-dsek-highlight: #F8B8C9;
+  --color-dsek-pale: #FFF1F1;
+  --color-gerda-text: oklch(27.8% 0.033 256.848);
+}
+
+@layer base {
+  html, body {
+    /* This ensures every piece of text starts with your color */
+    color: var(--color-gerda-text);
+    
+    /* Optional: Set the background here too for a clean start */
+    background-color: var(--color-gerda-pale);
+    
+    /* Standard font smoothing for a "pro" look */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* 3. Ensure headings and bold text don't default back to pure black */
+  h1, h2, h3, h4, h5, h6, strong {
+    color: inherit;
+  }
+}

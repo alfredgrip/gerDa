@@ -1,5 +1,8 @@
-<svelte:head>
-	<title>Gerda</title>
-</svelte:head>
+<script lang="ts">
+	import '../app.css';
+	let { children } = $props();
+</script>
 
-<slot />
+<main class="bg-dsek-pale">
+	{@render children()}
+</main>

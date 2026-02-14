@@ -7,8 +7,8 @@
 
 <ResizingTextInput
 	name="title"
-	label="Titel"
-	placeholder="Titeln på propositionen"
+	label="Titeln på motionen som ska besvaras"
+	placeholder="Sjung mer!"
 	bind:value={formState.title}
 />
 

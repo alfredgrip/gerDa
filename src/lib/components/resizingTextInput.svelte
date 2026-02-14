@@ -1,69 +1,80 @@
 <script lang="ts">
-	import { error } from '@sveltejs/kit';
+	import type { AllFieldsSchema } from '$lib/schemas';
+	import { dirty } from '$lib/state/appState.svelte';
 	import { onMount } from 'svelte';
 
-	export let labelName: string;
-	export let idName: string;
-	export let required: 'true' | 'false' = 'false';
-	export let placeholder: string = '';
-	export let numRows: string = '1';
-	export let explaination: string | null = null;
-	export let value = '';
-	export let width: string = 'auto';
+	interface Props {
+		name: keyof AllFieldsSchema | (string & {}); // https://medium.com/@florian.schindler_47749/typescript-hacks-1-string-suggestions-58806363afeb
+		label?: string;
+		value: string | number | null | undefined;
+		placeholder?: string;
+		numRows?: number;
+		explanation?: string;
+		errors?: string[];
+		class?: string;
+	}
+
+	let {
+		name,
+		label,
+		value = $bindable(),
+		placeholder,
+		numRows,
+		explanation,
+		errors,
+		class: clazz,
+		...rest
+	}: Props = $props();
+
+	let textareaElement: HTMLTextAreaElement;
+
+	function resizeTextarea() {
+		if (textareaElement) {
+			textareaElement.style.height = 'auto';
+			textareaElement.style.height = textareaElement.scrollHeight + 'px';
+		}
+	}
 
 	onMount(() => {
-		const input = document.getElementById(idName) as HTMLInputElement;
-		if (input == null) error(500);
-		input.addEventListener('input', () => {
-			input.style.height = 'auto';
-			input.style.height = `calc(${input.scrollHeight}px - 1rem)`;
-		});
-		input.dispatchEvent(new Event('input'));
+		if (textareaElement) {
+			resizeTextarea();
+			textareaElement.addEventListener('input', resizeTextarea);
+		}
 	});
 </script>
 
-<section style={`width: ${width}; overflow-wrap: break-word;`}>
-	<label>
-		{labelName}
-		{#if required === 'true'}
-			<textarea
-				{...$$restProps}
-				name={idName}
-				required
-				{placeholder}
-				id={idName}
-				rows={parseInt(numRows)}
-				bind:value
-			/>
-		{:else}
-			<textarea
-				{...$$restProps}
-				name={idName}
-				{placeholder}
-				id={idName}
-				rows={parseInt(numRows)}
-				bind:value
-			/>
+<section class={`flex flex-col ${clazz}`}>
+	<label for={name} class="flex flex-col gap-1 text-sm font-medium">
+		{#if label}
+			<span>{label}</span>
 		{/if}
-		{#if explaination !== null}
-			<span><small>{explaination}</small></span>
+
+		<textarea
+			{name}
+			{placeholder}
+			rows={numRows}
+			bind:value
+			bind:this={textareaElement}
+			class="w-full resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder-gray-400 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+			style="height: auto;"
+			oninput={() => {
+				resizeTextarea();
+				dirty.set(true);
+			}}
+			{...rest}
+			aria-invalid={errors ? 'true' : undefined}
+		></textarea>
+
+		{#if explanation}
+			<small class="text-xs text-gray-600">{explanation}</small>
 		{/if}
 	</label>
+
+	{#if errors && errors.length > 0}
+		<ul class="mt-1 text-xs text-red-600">
+			{#each errors as err (err)}
+				<li>{err}</li>
+			{/each}
+		</ul>
+	{/if}
 </section>
-
-<style>
-	label {
-		display: flex;
-		flex-direction: column;
-	}
-
-	textarea {
-		height: auto;
-		resize: none;
-		border: 1px solid rgb(209, 209, 209);
-		border-radius: 0.5rem;
-		padding: 0.5rem;
-		overflow: hidden;
-		width: auto;
-	}
-</style>

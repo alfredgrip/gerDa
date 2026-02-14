@@ -1,6 +1,5 @@
 <script lang="ts">
 	import AuthorBlock from '$lib/components/AuthorBlock.svelte';
-	import ClauseBlock from '$lib/components/ClauseBlock.svelte';
 	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
 	import { formState } from '$lib/state/formState.svelte';
 </script>
@@ -8,7 +7,7 @@
 <ResizingTextInput
 	name="title"
 	label="Titel"
-	placeholder="Titeln på propositionen"
+	placeholder="Titeln på dokumentet"
 	bind:value={formState.title}
 />
 
@@ -23,18 +22,8 @@
 	name="body"
 	label="Brödtext"
 	numRows={8}
-	placeholder="Styrelsen tycker att det sjungs alldeles för lite på sektionen. Därför vill styrelsen att sektionen ska..."
+	placeholder="Beskrivning av dokumentet"
 	bind:value={formState.body}
 />
-
-<ResizingTextInput
-	name="demand"
-	label="Krav"
-	placeholder="Undertecknad yrkar att mötet må besluta"
-	explanation="Kan utelämnas om det framgår i brödtexten"
-	bind:value={formState.demand}
-/>
-
-<ClauseBlock />
 
 <AuthorBlock />

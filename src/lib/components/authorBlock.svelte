@@ -1,101 +1,68 @@
 <script lang="ts">
-	import ResizingTextInput from '$lib/components/resizingTextInput.svelte';
-	import RemoveButton from '$lib/components/removeButton.svelte';
-	import AddButton from '$lib/components/addButton.svelte';
-	import type { Author } from '$lib/types';
-	import { uuid } from '$lib/utils';
-	import SignMessageUpload from './signMessageUpload.svelte';
+	import AddButton from '$lib/components/AddButton.svelte';
+	import DeleteButton from '$lib/components/DeleteButton.svelte';
+	import ResizingTextInput from '$lib/components/ResizingTextInput.svelte';
+	import SignImageUpload from '$lib/components/SignImageUpload.svelte';
+	import { formState } from '$lib/state/formState.svelte';
 
-	export let authors: Author[] = [];
-	export let signmessage: string;
-
-	if (authors.length === 0) {
-		authors = [{ signmessage: '', name: '', position: '', uuid: uuid() }];
+	function removeAuthor(idx: number) {
+		formState.authors = formState.authors.filter((_, i) => idx != i);
 	}
-
 	function addAuthor() {
-		authors = [...authors, { signmessage: '', name: '', position: '', uuid: uuid() }];
-	}
-
-	function removeAuthor(uuid: string) {
-		authors = authors.filter((author) => author.uuid !== uuid);
+		formState.authors.push({ name: '', position: '', signMessage: '', signImage: false });
 	}
 </script>
 
-<!-- svelte-ignore a11y-label-has-associated-control -->
-<div class="author-wrapper">
-	<label>
-		{#each authors as author, i (author.uuid)}
-			<div class="author-div">
-				<div class="inner-author-div">
-					<div class="author-text-inputs">
-						<div>
-							<ResizingTextInput
-								idName={`author-${i.toString()}-signmessage`}
-								bind:value={author.signmessage}
-								placeholder={signmessage}
-								labelName="Signaturmeddelande"
-								required="true"
-							/>
-							<SignMessageUpload {i} />
-						</div>
-						<ResizingTextInput
-							idName={`author-${i.toString()}-name`}
-							bind:value={author.name}
-							placeholder="Råsa Pantern"
-							labelName="Namn"
-							required="true"
-						/>
-						<ResizingTextInput
-							idName={`author-${i.toString()}-position`}
-							bind:value={author.position}
-							placeholder="Ordförande"
-							labelName="Post"
-							explaination="Kan utelämnas eller helt enkelt vara 'Sektionsmedlem'"
-						/>
-					</div>
+<div class="space-y-4">
+	<h2 class="text-lg font-semibold">Författare</h2>
+
+	{#each formState.authors as a, i (i)}
+		<div class="relative space-y-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+			{#if i !== 0}
+				<DeleteButton onclick={() => removeAuthor(i)} aria-label="Ta bort författare" />
+			{/if}
+
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+				<ResizingTextInput
+					name={`authors[${i}].signMessage`}
+					bind:value={a.signMessage}
+					placeholder="Lund, dag som ovan"
+					label="Signaturmeddelande"
+					explanation="Förslagsvis ort och datum, eller något annat kul"
+					class="w-full"
+				/>
+
+				<div class="flex flex-col gap-1">
+					<label class="mb-0 text-sm font-medium" for={`sign-image-upload-${i}`}>Signatur</label>
+					<SignImageUpload authorIdx={i} />
 				</div>
-				{#if i !== 0}
-					<RemoveButton
-						buttonText={`Ta bort författare ${(i + 1).toString()}`}
-						uuid={author.uuid}
-						removeFunction={removeAuthor}
-					/>
-				{/if}
 			</div>
-		{/each}
-		<AddButton buttonText="Lägg till författare" addFunction={addAuthor} />
-	</label>
+
+			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+				<ResizingTextInput
+					name={`authors[${i}].name`}
+					bind:value={a.name}
+					placeholder="Råsa Pantern"
+					label="Namn"
+					class="w-full"
+				/>
+				<ResizingTextInput
+					name={`authors[${i}].position`}
+					bind:value={a.position}
+					placeholder="Ordförande"
+					label="Post"
+					explanation="Kan utelämnas eller helt enkelt vara 'Sektionsmedlem'"
+					class="w-full"
+				/>
+			</div>
+		</div>
+	{/each}
+
+	<div class="flex justify-end">
+		<AddButton
+			onclick={addAuthor}
+			buttonText="➕ Lägg till författare"
+			aria-label="Lägg till författare"
+		/>
+	</div>
 </div>
-
-<style>
-	.author-wrapper {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	.author-div {
-		display: flex;
-		flex-direction: column;
-		margin: 0.5rem 0;
-	}
-
-	.inner-author-div {
-		display: flex;
-		flex-direction: column;
-		/* gap: 1rem; */
-	}
-
-	.author-text-inputs {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1rem;
-	}
-
-	@media only screen and (max-width: 600px) {
-		.author-text-inputs {
-			grid-template-columns: 1fr;
-		}
-	}
-</style>
