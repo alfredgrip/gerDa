@@ -3,11 +3,24 @@
 	import { dirty } from '$lib/state/appState.svelte';
 	import { formState } from '$lib/state/formState.svelte';
 	import { draftStore } from '$lib/state/localDraftsState.svelte';
+	import { onMount } from 'svelte';
 
 	let showModal = $state(false);
 	let pendingNavigation = $state<{ to: string } | null>(null);
 	let confirmed = false;
 	let currentDraft = $derived(draftStore.getDraft(draftStore.currentDraftId));
+
+	onMount(() => {
+		const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+			if (dirty.get() && !confirmed) {
+				e.preventDefault();
+				return (e.returnValue = '');
+			}
+		};
+
+		window.addEventListener('beforeunload', handleBeforeUnload);
+		return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+	});
 
 	beforeNavigate((navigation) => {
 		if (confirmed || navigation.willUnload) return;
@@ -29,8 +42,9 @@
 
 	function completeNavigation() {
 		const url = pendingNavigation?.to;
+		confirmed = true;
+
 		if (url) {
-			confirmed = true;
 			showModal = false;
 			goto(url).then(() => {
 				confirmed = false;
@@ -41,6 +55,7 @@
 	}
 
 	function handleDiscardAndExit() {
+		dirty.set(false);
 		completeNavigation();
 	}
 

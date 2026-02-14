@@ -28,7 +28,7 @@ export type AuthorSchema = v.InferOutput<typeof authorSchema>;
 
 export const clauseSchema = v.object({
 	toClause: v.string(),
-	description: v.string()
+	description: v.optional(v.string(), '')
 });
 
 export type ClauseSchema = v.InferOutput<typeof clauseSchema>;

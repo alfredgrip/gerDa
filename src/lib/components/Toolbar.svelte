@@ -26,7 +26,7 @@
 
 	let saveSuccess = $state(false);
 
-	async function saveDraft() {
+	const saveDraft = async () => {
 		let draft = draftStore.getDraft(draftStore.currentDraftId);
 		if (draft != null) {
 			draftStore.updateDraft(draft.id, { ...formState });
@@ -35,24 +35,23 @@
 		}
 		dirty.set(false);
 
-		// Trigger Success Animation
 		saveSuccess = true;
 		setTimeout(() => {
 			saveSuccess = false;
-		}, 2000); // Reset after 2 seconds
-	}
+		}, 2000);
+	};
 
-	function downloadPdf() {
-		const filePath = pdfViewerUrl.get();
-		if (filePath) {
-			const a = document.createElement('a');
-			a.href = filePath;
-			a.download = 'document.pdf';
-			document.body.appendChild(a);
-			a.click();
-			document.body.removeChild(a);
-		}
-	}
+	const downloadPdf = () => {
+		const currentUrl = pdfViewerUrl.get();
+		if (!currentUrl) return;
+
+		const a = document.createElement('a');
+		a.href = currentUrl;
+		a.download = `${formState.documentClass}-${formState.title || 'dokument'}-${new Date().toLocaleDateString('sv-SE')}.pdf`;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+	};
 
 	let naturalDocumentClass = $state('');
 	onMount(() => {
@@ -78,6 +77,12 @@
 					{getNaturalDocumentClass(page.route.id?.split('/').pop() ?? '')}
 				</span>
 			</h3>
+			<div class="hidden items-center gap-2 px-3 py-1 text-sm sm:flex">
+				<span class="hidden italic opacity-80 lg:inline">
+					Psst... du kan skriva i både Markdown och LaTeX samtidigt, programmet löser det
+					automagiskt!
+				</span>
+			</div>
 		</div>
 
 		<div class="mt-2 flex flex-wrap items-center gap-2 sm:mt-0 sm:gap-4">

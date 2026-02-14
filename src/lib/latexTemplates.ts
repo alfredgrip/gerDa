@@ -56,7 +56,6 @@ function attListTemplate(clauses: ClauseSchema[]): string {
 }
 
 function authorsTemplate(authors: AuthorSchema[]): string {
-	console.log('authors', authors);
 	const authorList = authors.map((author) => {
 		const signMessage =
 			author.signMessage.length > 0 ? author.signMessage : '\\phantom{placeholder}';
@@ -115,7 +114,6 @@ function timeAndPlaceTemplate(
 		parsedAdjournmentDate = false;
 	const prefix = '\\section*{Tid och plats}';
 	const suffix = '\n';
-	console.log('meetingDate:', meetingDate);
 	const adjournment = parsedAdjournmentDate
 		? `
 \\textbf{Ajourneringstid:} ${parsedAdjournmentDate.toLocaleDateString('sv-SE', {
@@ -181,7 +179,6 @@ function meritsTemplate(merits: string[]): string {
 function proposalsTemplate(body: string, proposals: ProposalSchema[]): string {
 	const prefix = (body?.trim().length ? `${body}\n` : '') + '\\begin{vemsection}';
 	const suffix = '\\end{vemsection}';
-	console.log('props: ', proposals);
 	const result =
 		prefix +
 		proposals
@@ -194,7 +191,6 @@ function proposalsTemplate(body: string, proposals: ProposalSchema[]): string {
 			.join('\n\n') +
 		'\n' +
 		suffix;
-	console.log('proposalsTemplate result', result);
 	return result;
 }
 

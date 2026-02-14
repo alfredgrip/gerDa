@@ -1,12 +1,18 @@
 import { handleCompileRequest } from '$lib/compile.server';
 import { generateLaTeX } from '$lib/latexTemplates';
 import { requestSchema } from '$lib/schemas';
-import { readFileSync } from 'fs';
-import path from 'path';
 import { safeParseAsync } from 'valibot';
 import type { RequestHandler } from './$types';
 
 export const POST: RequestHandler = async ({ request }) => {
+	const contentType = request.headers.get('content-type');
+	if (!contentType || !contentType.includes('application/json')) {
+		return new Response(
+			JSON.stringify({ error: 'Content-Type must be application/json' }),
+			{ status: 415 } // 415 Unsupported Media Type
+		);
+	}
+
 	try {
 		const json = await request.json();
 		const parsed = await safeParseAsync(requestSchema, json);
@@ -23,20 +29,14 @@ export const POST: RequestHandler = async ({ request }) => {
 		const { output } = parsed.output;
 
 		if (parsed.output.output === 'pdf') {
-			const relativePath = await handleCompileRequest(parsed.output);
-
-			const absolutePath = path.resolve(
-				process.cwd(),
-				relativePath.startsWith('/') ? relativePath.slice(1) : relativePath
-			);
-
-			const fileBuffer = readFileSync(absolutePath);
-
-			return new Response(fileBuffer, {
+			const pdfBuffer = await handleCompileRequest(parsed.output);
+			return new Response(new Uint8Array(pdfBuffer), {
 				status: 200,
 				headers: {
 					'Content-Type': 'application/pdf',
-					'Content-Disposition': `inline; filename="document.pdf"`
+					'Content-Disposition': `inline; filename="document.pdf"`,
+					// Content-Length helps the browser show a progress bar
+					'Content-Length': pdfBuffer.length.toString()
 				}
 			});
 		} else if (output === 'latex') {

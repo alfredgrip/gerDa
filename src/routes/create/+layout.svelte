@@ -4,8 +4,8 @@
 	import PDFViewer from '$lib/components/PDFViewer.svelte';
 	import Toolbar from '$lib/components/Toolbar.svelte';
 	import { gerdaForm } from '$lib/form.remote';
-	import { isDocumentClass, type RequestSchema } from '$lib/schemas';
-	import { pdfViewerUrl, isCompiling } from '$lib/state/appState.svelte';
+	import { isDocumentClass } from '$lib/schemas';
+	import { isCompiling, pdfViewerUrl } from '$lib/state/appState.svelte';
 	import { formState, resetFormState } from '$lib/state/formState.svelte';
 	import { draftStore } from '$lib/state/localDraftsState.svelte';
 	import { error, type RemoteFormInput } from '@sveltejs/kit';
@@ -13,21 +13,42 @@
 
 	let { children } = $props();
 
+	// svelte-ignore non_reactive_update
 	let formElement: HTMLFormElement;
 
 	const compileEnhance = async (submit: () => Promise<void>, data: RemoteFormInput) => {
 		isCompiling.set(data.output === 'pdf');
 		await submit()
 			.then(() => {
-				if (gerdaForm.result?.filePath) {
-					pdfViewerUrl.set(gerdaForm.result.filePath);
-				} else if (gerdaForm.result?.laTeX) {
+				const result = gerdaForm.result;
+				if (!result) return;
+				if (result.buffer) {
+					const blob = new Blob([new Uint8Array(result.buffer)], { type: 'application/pdf' });
+
+					// CLEAN UP PREVIOUS BLOB URL
+					const oldUrl = pdfViewerUrl.get();
+					if (oldUrl?.startsWith('blob:')) {
+						URL.revokeObjectURL(oldUrl);
+					}
+
+					const url = URL.createObjectURL(blob);
+					pdfViewerUrl.set(url);
+				}
+
+				// 2. HANDLE LATEX (Text)
+				else if (result.laTeX) {
+					const blob = new Blob([result.laTeX], { type: 'text/plain' });
+					const url = URL.createObjectURL(blob);
+
 					const a = document.createElement('a');
-					a.href = URL.createObjectURL(new Blob([gerdaForm.result.laTeX], { type: 'text/plain' }));
-					a.download = `${formState.title}-${new Date().toLocaleDateString('sv-SE')}.tex`;
+					a.href = url;
+					a.download = `${formState.title || 'utkast'}-${new Date().toLocaleDateString('sv-SE')}.tex`;
 					document.body.appendChild(a);
 					a.click();
+
+					// CLEANUP: Remove element and revoke the temporary download URL immediately
 					document.body.removeChild(a);
+					URL.revokeObjectURL(url);
 				}
 			})
 			.catch((error) => {

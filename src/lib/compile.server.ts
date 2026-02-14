@@ -1,20 +1,32 @@
+import { NODE_ENV } from '$env/static/private';
 import { generateLaTeX } from '$lib/latexTemplates';
 import type { AnySchema } from '$lib/schemas';
 import { generateFileName } from '$lib/utils';
 import { execaCommand } from 'execa';
-import { mkdir, readdir, stat, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises';
 import path from 'path';
 
 const TEX_DIR = 'output/tex';
 const PDF_DIR = 'output/pdf';
 const IMAGE_DIR = 'output/img';
 
-export async function compileTex(tex: string, fileName: string): Promise<string> {
-	console.log(`Compiling LaTeX to PDF: ${fileName}`);
+export async function handleCompileRequest(formData: AnySchema): Promise<Buffer> {
+	if (NODE_ENV !== 'production') {
+		await ensureDirs();
+	}
+	await handleMarkdown(formData);
+	const fileName = generateFileName(formData);
+	const fileNames = await writeImageFiles(formData);
+	const tex = generateLaTeX(formData);
 
-	await ensureDirs();
-	await deleteOldestFile(PDF_DIR);
+	const pdfBuffer = await compileTex(tex, fileName);
 
+	await removeImageFiles(fileNames);
+	console.log(`Sucessfully compiled ${fileName}.tex to PDF.`);
+	return pdfBuffer;
+}
+
+export async function compileTex(tex: string, fileName: string): Promise<Buffer> {
 	const texFilePath = path.join(TEX_DIR, `${fileName}.tex`);
 	await writeFile(texFilePath, tex);
 
@@ -27,8 +39,7 @@ export async function compileTex(tex: string, fileName: string): Promise<string>
 		`-Z continue-on-errors`
 	].join(' ');
 
-	const { stdout: compileStdOut, stderr: compileStdErr } = await execaCommand(compileCommand);
-	console.log(compileStdOut);
+	const { stderr: compileStdErr } = await execaCommand(compileCommand);
 
 	unlink(texFilePath).catch((err) => {
 		console.error(`Failed to delete temporary file ${texFilePath}:`, err);
@@ -36,38 +47,24 @@ export async function compileTex(tex: string, fileName: string): Promise<string>
 
 	if (compileStdErr) console.error(compileStdErr);
 
-	// Move PDF to output directory
-	const { stdout: mvStdOut, stderr: mvStdErr } = await execaCommand(
-		`mv ${TEX_DIR}/${fileName}.pdf ${PDF_DIR}`
-	);
-	console.log(mvStdOut);
-	if (mvStdErr) console.error(mvStdErr);
+	const tempPdfPath = path.join(TEX_DIR, `${fileName}.pdf`);
+	const finalPdfPath = path.join(PDF_DIR, `${fileName}.pdf`);
 
-	const result = path.join('/', PDF_DIR, `${fileName}.pdf`);
-	console.log(`PDF compiled successfully: ${result}`);
-	return result;
+	await execaCommand(`mv ${tempPdfPath} ${finalPdfPath}`);
+
+	const pdfBuffer = await readFile(finalPdfPath);
+
+	unlink(finalPdfPath).catch((err) => console.error(`Cleanup error:`, err));
+
+	return pdfBuffer;
 }
 
-async function ensureDirs() {
+export async function ensureDirs() {
 	await Promise.all([
 		mkdir(TEX_DIR, { recursive: true }),
 		mkdir(PDF_DIR, { recursive: true }),
 		mkdir(IMAGE_DIR, { recursive: true })
 	]);
-}
-
-async function deleteOldestFile(dir: string, keep: number = 10) {
-	const files = await readdir(dir);
-	if (files.length >= keep) {
-		const withStats = await Promise.all(
-			files.map(async (file) => ({
-				name: file,
-				time: (await stat(path.join(dir, file))).mtimeMs
-			}))
-		);
-		const oldest = withStats.reduce((a, b) => (a.time < b.time ? a : b));
-		await unlink(path.join(dir, oldest.name));
-	}
 }
 
 export async function markdownToLatex(markdown: string): Promise<string> {
@@ -78,18 +75,6 @@ export async function markdownToLatex(markdown: string): Promise<string> {
 		input: markdown
 	});
 	return stdout;
-}
-
-export async function handleCompileRequest(formData: AnySchema): Promise<string> {
-	console.log('Handling compile request with formData:', formData);
-	await handleMarkdown(formData);
-	console.log('Finalizing form data:', formData);
-	const fileName = generateFileName(formData);
-	const fileNames = await writeImageFiles(formData);
-	const tex = generateLaTeX(formData);
-	const filePath = await compileTex(tex, fileName);
-	await removeImageFiles(fileNames);
-	return filePath;
 }
 
 async function handleMarkdown(formData: AnySchema): Promise<void> {
