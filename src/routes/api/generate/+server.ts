@@ -26,9 +26,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			);
 		}
 
-		const { output } = parsed.output;
+		const { output: outputFormat } = parsed.output;
 
-		if (parsed.output.output === 'pdf') {
+		if (outputFormat === 'pdf') {
 			const pdfBuffer = await handleCompileRequest(parsed.output);
 			return new Response(new Uint8Array(pdfBuffer), {
 				status: 200,
@@ -39,7 +39,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					'Content-Length': pdfBuffer.length.toString()
 				}
 			});
-		} else if (output === 'latex') {
+		} else if (outputFormat === 'latex') {
 			const laTeX = generateLaTeX(parsed.output);
 			return new Response(JSON.stringify({ laTeX }), {
 				status: 200,

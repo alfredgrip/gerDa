@@ -11,6 +11,7 @@ const PDF_DIR = 'output/pdf';
 const IMAGE_DIR = 'output/img';
 
 export async function handleCompileRequest(formData: AnySchema): Promise<Buffer> {
+	// The Dockerfile creates these directories at build time
 	if (NODE_ENV !== 'production') {
 		await ensureDirs();
 	}
@@ -22,7 +23,7 @@ export async function handleCompileRequest(formData: AnySchema): Promise<Buffer>
 	const pdfBuffer = await compileTex(tex, fileName);
 
 	await removeImageFiles(fileNames);
-	console.log(`Sucessfully compiled ${fileName}.tex to PDF.`);
+	console.log(`Successfully compiled ${fileName}.tex to PDF.`);
 	return pdfBuffer;
 }
 
