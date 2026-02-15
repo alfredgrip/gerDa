@@ -49,6 +49,8 @@ ENV CI=false
 ENV NODE_ENV=production
 ENV TZ=Etc/UTC
 ENV ORIGIN=http://localhost:3000
+# 10MB, request can become big due to large images
+ENV BODY_SIZE_LIMIT=10485760
 EXPOSE 3000
 
 CMD ["node", "build/index.js"]

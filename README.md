@@ -17,34 +17,24 @@ Händelseförloppet för när backend tar emot en request ser ungefär ut enligt
 
 ### API
 
-Programmet har ett öppet api som kan användas för att generera PDFer eller LaTeX-filer utan att använda frontend. För att göra detta, skicka en POST-request till `/api/generate` med en JSON-body som matchar schemat i `schemas.ts`. Exempelvis:
+Programmet har ett öppet api som kan användas för att generera PDFer eller LaTeX-filer utan att använda frontend. För att göra detta, skicka en POST-request till `/api/generate` med en FormData-body som matchar schemat i `schemas.ts`. Exempelvis:
 
 ```bash
 curl -X POST http://localhost:3000/api/generate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "output": "pdf",
-    "documentClass": "motion",
-    "title": "Min motion",
-    "body": "Detta är min motion.",
-    "meeting": "S03",
-    "clauses": [
-      {
-        "toClause": "sjunga mer!"
-      }
-    ],
-    "authors": [
-      {
-        "name": "Rosa Pantern",
-        "position": "Sektionsmedlem",
-        "signMessage": "Lund, dag som ovan"
-      }
+  -F 'data={
+  "output": "pdf",
+  "documentClass": "motion",
+  "title": "Min motion",
+  "body": "Detta är min motion.",
+  "meeting": "S03",
+  "clauses": [{ "toClause": "sjunga mer" }],
+  "authors": [
+      { "name": "Rosa Pantern", "position": "abc", "signMessage": "Lund" }
     ]
-  }' \
-  --output test.pdf
+  };type=application/json' \
+  -F 'authors[0].signImage=@/absolute/path/to/my/file.jpg;type=image/jpeg' \
+  --output motion.pdf
 ```
-
-API:et stödjer tyvärr inte bildfiler i nuläget.
 
 ### Frontend
 
@@ -88,3 +78,8 @@ docker run --name gerda -p <host port>:3000 gerda:latest
 ## Deployment
 
 Programmet kan stoppas i en Docker-container med hjälp av `Dockerfile`. Se till att värdena i den är rätt. Någonting med PDF:er och CORS gör att i production så sätts `ORIGIN=http://localhost:3000`. Porten kan uppdateras fritt, men url:en bör fortfarande vara `localhost`, inte `gerda.dsek.se` eller liknande.
+
+`Dockerfile` definierar en `BODY_SIZE_LIMIT` på 10MB, vilket är ganska stort, men krävs för att kunna ta emot bilder via API:et.
+
+Även CRSF/CORS har ändrats för att tillåta alla origins.
+Se `svelte.config.js` och [SvelteKits dokumentation](https://svelte.dev/docs/kit/configuration#csrf).

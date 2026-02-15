@@ -17,23 +17,20 @@ export const isDocumentClass = (s: unknown): s is DocumentClass => {
 	return typeof s === 'string' && DOCUMENT_CLASSES.includes(s);
 };
 
+export const signImageSchema = v.pipe(
+	v.instance(File),
+	// Max size: 5MB (5 * 1024 * 1024 bytes)
+	v.maxSize(1024 * 1024 * 5, 'Image must be smaller than 5MB.'),
+	// Mime type check
+	v.mimeType(['image/jpeg', 'image/png'], 'Only JPEG, or PNG are allowed.')
+);
+export type SignImageSchema = v.InferOutput<typeof signImageSchema>;
+
 export const authorSchema = v.object({
 	name: v.string(),
 	position: v.string(),
 	signMessage: v.string(),
-	signImage: v.optional(
-		v.union([
-			v.pipe(
-				v.instance(File),
-				// Max size: 5MB (5 * 1024 * 1024 bytes)
-				v.maxSize(1024 * 1024 * 5, 'Image must be smaller than 5MB.'),
-				// Mime type check
-				v.mimeType(['image/jpeg', 'image/png'], 'Only JPEG, or PNG are allowed.')
-			),
-			v.literal(false)
-		]),
-		false
-	)
+	signImage: v.optional(v.union([signImageSchema, v.literal(false)]), false)
 });
 
 export type AuthorSchema = v.InferOutput<typeof authorSchema>;
