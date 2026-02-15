@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 import { safeParseAsync } from 'valibot';
 import type { RequestHandler } from './$types';
 
-export const POST: RequestHandler = async ({ request, setHeaders }) => {
+export const POST: RequestHandler = async ({ request }) => {
 	const formData = await request.formData();
 	const data = formData.get('data');
 	if (!data) {
