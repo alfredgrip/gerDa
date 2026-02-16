@@ -45,6 +45,14 @@ RUN mkdir -p /app/output/tex && \
     mkdir -p /app/output/pdf && \
     mkdir -p /app/output/img
 
+# Set permissions for output directories
+RUN chgrp -R 0 /app/output && \
+    chmod -R g+rwX /app/output
+
+# Tectonic needs this
+RUN chgrp -R 0 /root && chmod -R g+rwX /root
+ENV XDG_CACHE_HOME=/tmp/.cache
+
 ENV CI=false
 ENV NODE_ENV=production
 ENV TZ=Etc/UTC
