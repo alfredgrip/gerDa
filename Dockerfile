@@ -1,7 +1,7 @@
 # -------------------
 # Builder stage
 # -------------------
-FROM node:25-alpine AS builder
+FROM node:24-alpine AS builder
 
 ENV CI=true
 
@@ -18,7 +18,7 @@ RUN pnpm prune --prod
 # -------------------
 # Runtime stage
 # -------------------
-FROM node:25-alpine
+FROM node:24-alpine
 
 RUN apk add --no-cache \
     tectonic \
