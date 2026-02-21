@@ -52,12 +52,11 @@
 					name={`proposals[${i}].who`}
 					bind:value={p.who}
 					placeholder={`
-					Rosa Pantern
+Rosa Pantern
 Cookie Monster`.trim()}
 					label="Vem/Vilka"
 					class="w-full"
-					separator="\n"
-					explanation="Separera med ny rad"
+					explanation="Separera med radbrytning"
 				/>
 				{#if includeStatistics}
 					<ResizingTextInput

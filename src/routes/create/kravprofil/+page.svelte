@@ -38,7 +38,6 @@
 	explanation="Olika krav separeras med radbrytning"
 	placeholder="Ledarskapsförmåga..."
 	bind:value={formState.requirements}
-	separator="\n"
 />
 
 <ArrayTextInput
@@ -47,5 +46,4 @@
 	explanation="Olika meriter separeras med radbrytning"
 	placeholder="Tidigare erfarenhet av..."
 	bind:value={formState.merits}
-	separator="\n"
 />
