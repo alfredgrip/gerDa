@@ -7,7 +7,6 @@
 		value: string[] | null | undefined;
 		label?: string;
 		placeholder?: string;
-		separator: string;
 		explanation?: string;
 		errors?: string[];
 		class?: string;
@@ -18,7 +17,6 @@
 		value = $bindable([]),
 		label,
 		placeholder,
-		separator,
 		explanation,
 		errors,
 		class: clazz
@@ -27,31 +25,12 @@
 	let textareaElement: HTMLTextAreaElement | undefined = $state();
 	let internalString = $state('');
 
-	const getRegex = () => {
-		const escaped = separator.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-		return new RegExp(`[${escaped}\\n]`);
-	};
-
-	$effect(() => {
-		const joined = (value ?? []).join(`${separator} `);
-
-		const cleanInternal = internalString
-			.split(getRegex())
-			.map((s) => s.trim())
-			.filter(Boolean)
-			.join(`${separator} `);
-
-		if (joined !== cleanInternal) {
-			internalString = joined;
-		}
-	});
-
 	function handleInput(e: Event & { currentTarget: HTMLTextAreaElement }) {
 		const raw = e.currentTarget.value;
 		internalString = raw;
 
 		value = raw
-			.split(getRegex())
+			.split('\n')
 			.map((s) => s.trim())
 			.filter((s) => s !== '');
 

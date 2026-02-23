@@ -150,9 +150,10 @@
 							name={`agenda[${i}].attachments`}
 							bind:value={agendaItem.attachments}
 							label="Bilagor (semikolon-separerat)"
-							placeholder="länk1.pdf; länk2.pdf"
-							separator=";"
-							explanation="Separera länkar med semikolon"
+							placeholder={`
+https://minio.dsek.se/...
+https://minio.dsek.se/...`.trim()}
+							explanation="Separera länkar med radbrytning"
 						/>
 					</div>
 				</div>

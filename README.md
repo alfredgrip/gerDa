@@ -50,7 +50,7 @@ De dokumentmallar som Gerda erbjuder är en utökning av de dokumentmallar som d
 
 OBS! När en mall ändras så är det viktigt att se till att alla HTML-input har rätt `name`-attribut som matchar det som förväntas i schemat.
 
-För att smidigt kunna kunna skicka data i form av Arrayer, använd `ArrayTextInput.svelte`, som wrappar lite logik för att hantera arrayer i formuläret.
+För att smidigt kunna kunna skicka data i form av Arrayer, använd `ArrayTextInput.svelte`, som wrappar lite logik för att hantera arrayer i formuläret. De olika elementen separeras med radbrytning (`\n`).
 
 ## Development
 
