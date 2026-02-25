@@ -63,9 +63,9 @@ Cookie Monster`.trim()}
 						name={`proposals[${i}].statistics`}
 						bind:value={p.statistics}
 						label="Sökintervall"
-						placeholder="5-10"
+						placeholder="5-9"
 						class="w-full"
-						explanation={`Intervallet måste vara av storlek 5 där det första är 0-5. Giltiga intervall är alltså 0-5, 5-10, 10-15 osv. Detta definieras i "Policy för val"`}
+						explanation={`Intervallet måste vara av storlek 5 där det första är 0-4. Giltiga intervall är alltså 0-4, 5-9, 10-14 osv. Detta definieras i "Policy för val"`}
 					/>
 				{:else}
 					<input type="hidden" name={`proposals[${i}].statistics`} value="" />
